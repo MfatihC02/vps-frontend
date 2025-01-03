@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gray-50">
     <!-- Hero Section -->
     <section class="relative bg-primary-dark py-20 text-white">
-      <div class="absolute inset-0 bg-[url('@/assets/pattern.png')] opacity-10"></div>
+      <div class="absolute inset-0 bg-gray-100 opacity-10"></div>
       <div class="container mx-auto px-4 relative">
         <h1 class="text-4xl md:text-5xl font-bold mb-4">Mühendisler Ticaret Hakkında</h1>
         <p class="text-xl md:text-2xl text-gray-200 max-w-2xl">
