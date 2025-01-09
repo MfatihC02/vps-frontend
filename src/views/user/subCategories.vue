@@ -2,50 +2,49 @@
   <div class="min-h-screen bg-gray-100">
     <!-- Mega Header -->
     <div class="bg-gradient-to-r from-green-700 to-green-500 text-white relative overflow-hidden">
-      <div class="absolute inset-0 bg-[url('/pattern.svg')] opacity-10"></div>
-      <div class="max-w-7xl mx-auto py-16 px-4 relative">
-        <h1 class="text-5xl font-bold mb-4">
+      <div class="absolute inset-0 bg-[url('/pattern.svg')] opacity-5"></div>
+      <div class="max-w-7xl mx-auto py-12 sm:py-16 px-4 relative">
+        <h1 class="text-4xl sm:text-5xl font-bold mb-3">
           {{ currentCategory?.name || "Kategoriler" }}
         </h1>
-        <p class="text-xl opacity-90 max-w-2xl">
+        <p class="text-lg sm:text-xl opacity-90 max-w-2xl font-light">
           Profesyonel üreticiler için özenle seçilmiş, yüksek kaliteli
           {{ currentCategory?.name?.toLowerCase() || "ürünler" }}
         </p>
         <!-- Breadcrumb -->
-        <div class="flex items-center gap-2 mt-6 text-sm">
-          <router-link to="/" class="hover:text-white/80"
-            >Ana Sayfa</router-link
-          >
-          <ChevronRight class="w-4 h-4" />
+        <nav class="flex items-center gap-1.5 mt-6 text-sm text-white/90 flex-wrap">
+          <router-link to="/" 
+                      class="flex items-center gap-1.5 hover:text-white transition-colors px-2 py-1 rounded-lg hover:bg-white/10">
+            <Home class="w-4 h-4" />
+            <span class="hidden sm:inline">Ana Sayfa</span>
+          </router-link>
+
           <template v-if="categoryPath && categoryPath.length">
-            <div v-for="(category, index) in categoryPath" :key="category.slug">
+            <div v-for="(category, index) in categoryPath" 
+                 :key="category.slug" 
+                 class="flex items-center">
+              <ChevronRight class="w-4 h-4 opacity-70 mx-1" />
               <router-link
-                :to="`/category/${categoryPath
-                  .slice(0, index + 1)
-                  .map((c) => c.slug)
-                  .join('/')}`"
-                class="hover:text-white/80"
+                :to="`/kategori/${categoryPath.slice(0, index + 1).map((c) => c.slug).join('/')}`"
+                class="px-2 py-1 rounded-lg hover:bg-white/10 hover:text-white transition-colors truncate max-w-[150px] sm:max-w-[200px]"
+                :title="category.name"
               >
                 {{ category.name }}
               </router-link>
-              <ChevronRight
-                v-if="index < categoryPath.length - 1"
-                class="w-4 h-4"
-              />
             </div>
           </template>
-        </div>
+        </nav>
       </div>
     </div>
 
     <!-- Alt kategori varsa kategori listesi, yoksa ürün listesi göster -->
     <template v-if="hasSubCategories">
       <!-- Kontrol Paneli -->
-      <div class="sticky top-0 bg-white border-b z-10 backdrop-blur-sm bg-white/90">
-        <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="sticky top-0 bg-white/95 border-b z-10 backdrop-blur-md shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
-              <span class="text-gray-500">
+              <span class="text-gray-600 font-medium">
                 Toplam {{ totalProducts }} alt kategori
               </span>
             </div>
@@ -56,7 +55,7 @@
                   v-model="searchQuery"
                   type="text"
                   placeholder="Kategori ara..."
-                  class="w-64 pl-10 pr-4 py-2 rounded-full border focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  class="w-64 pl-10 pr-4 py-2 rounded-full border-gray-200 focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all"
                   @input="filterCategories"
                 />
                 <Search class="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
@@ -77,72 +76,44 @@
                 {{ getOrderGroupTitle(orderGroup.order) }}
               </h3>
 
-              <div class="grid grid-cols-1 gap-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 <div v-for="category in orderGroup.categories" 
                      :key="category._id"
-                     class="category-card bg-white rounded-2xl overflow-hidden flex group">
-                  <!-- Resim Alanı -->
-                  <div class="relative w-1/3 overflow-hidden">
+                     class="category-card bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 flex flex-col">
+                  <div class="relative aspect-[16/9] overflow-hidden">
                     <img :src="category.image || '/api/placeholder/400/300'"
                          :alt="category.name"
-                         class="category-image w-full h-full object-cover" />
-                    <div class="gradient-overlay"></div>
-                    <div class="absolute bottom-4 left-4 flex gap-2">
-                      <span class="px-3 py-1 bg-white/90 rounded-full text-sm font-medium">
-                        {{ getCategoryLevel(category.level) }}
-                      </span>
-                    </div>
+                         class="w-full h-full object-cover transition-transform duration-500" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </div>
-
-                  <!-- İçerik Alanı -->
-                  <div class="p-6 w-2/3">
-                    <div class="flex items-center justify-between mb-4">
-                      <h2 class="text-2xl font-bold">{{ category.name }}</h2>
-                      <span class="text-green-600 font-medium">
+                  <div class="flex-1 p-4 sm:p-5 flex flex-col">
+                    <div class="flex items-start justify-between mb-3">
+                      <h2 class="text-lg font-semibold text-gray-800 line-clamp-2">{{ category.name }}</h2>
+                      <span class="px-2.5 py-1 bg-green-50 text-green-700 rounded-lg text-sm font-medium whitespace-nowrap ml-2">
                         {{ category.productCount || 0 }} Ürün
                       </span>
                     </div>
-
-                    <div class="flex flex-wrap gap-2 mb-6">
-                      <span
-                        v-for="feature in getCategoryFeatures(category)"
-                        :key="feature"
-                        class="px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm"
-                      >
-                        {{ feature }}
-                      </span>
-                    </div>
-
-                    <div v-if="category.children?.length" 
-                         class="space-y-3 mb-6 custom-scrollbar max-h-48 overflow-y-auto">
-                      <div v-for="child in category.children"
+                    
+                    <div v-if="category.children?.length" class="mt-2 space-y-2 flex-1">
+                      <div v-for="(child, index) in category.children.slice(0, 3)"
                            :key="child._id"
-                           class="flex items-center justify-between hover:bg-gray-50 p-2 rounded-lg cursor-pointer group"
-                           @click="navigateToCategory(child)">
-                        <span class="text-gray-700 flex items-center gap-2">
-                          <component :is="getCategoryTypeIcon(child)" 
-                                   class="w-4 h-4 text-gray-400" />
-                          {{ child.name }}
-                        </span>
-                        <div class="flex items-center gap-2">
-                          <span class="text-sm text-gray-500">
-                            {{ child.productCount || 0 }} ürün
-                          </span>
-                          <ArrowRight class="w-4 h-4 text-green-600 opacity-0 group-hover:opacity-100 
-                                           transition-opacity transform group-hover:translate-x-1" />
-                        </div>
+                           class="flex items-center gap-2 text-sm text-gray-600 hover:text-green-600 transition-colors">
+                        <component :is="getCategoryTypeIcon(child)" class="w-4 h-4 text-gray-400" />
+                        <span class="truncate">{{ child.name }}</span>
+                      </div>
+                      <div v-if="category.children.length > 3" 
+                           class="text-sm text-gray-500 flex items-center gap-1.5">
+                        <Folder class="w-4 h-4" />
+                        +{{ category.children.length - 3 }} alt kategori
                       </div>
                     </div>
-
-                    <!-- İnceleme Butonu -->
+                    
                     <button @click="navigateToCategory(category)"
-                            class="w-full bg-green-600 text-white py-3 rounded-xl 
-                                   hover:bg-green-700 transition-all duration-300 
-                                   transform hover:scale-[1.02] flex items-center 
-                                   justify-center gap-2 group">
+                            class="mt-4 w-full bg-green-600 text-white py-2.5 rounded-lg hover:bg-green-700 
+                                   active:bg-green-800 transition-colors flex items-center justify-center gap-2 
+                                   text-sm font-medium group">
                       <span>Tüm Ürünleri İncele</span>
-                      <ChevronRight class="w-4.5 h-4.5 transform group-hover:translate-x-1 
-                                         transition-transform" />
+                      <ChevronRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </button>
                   </div>
                 </div>
@@ -173,7 +144,8 @@ import {
   Wrench,
   Monitor,
   Box,
-  Folder
+  Folder,
+  Home
 } from "lucide-vue-next";
 import CategoryProduct from "@/views/user/CategoryProducts.vue";
 
@@ -334,69 +306,58 @@ watch(
 </script>
 
 <style scoped>
-/* Kart Animasyonları */
 .category-card {
-  @apply transition-all duration-300 hover:shadow-xl;
+  @apply transition-all duration-300;
 }
 
-.category-card:hover .category-image {
-  @apply scale-105;
+.category-card:hover {
+  transform: translateY(-2px);
 }
 
-.category-card .category-image {
-  @apply transition-transform duration-300;
+.category-card:hover img {
+  transform: scale(1.05);
 }
 
-/* Loading Skeleton */
-.skeleton {
-  @apply animate-pulse bg-gray-200;
+.category-card img {
+  @apply transition-transform duration-500;
 }
 
-/* Özel Scrollbar */
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #22c55e #e5e7eb;
+/* Tipografi */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.custom-scrollbar::-webkit-scrollbar {
-  @apply w-2;
+/* Animasyonlar */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  @apply bg-gray-200 rounded-full;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-green-500 rounded-full hover:bg-green-600;
+/* Responsive */
+@media (max-width: 640px) {
+  .category-card {
+    @apply shadow-sm;
+  }
+  
+  .category-card:hover {
+    transform: none;
+  }
 }
 
-/* Fade Animasyonları */
-.fade-enter-active,
-.fade-leave-active {
-  @apply transition-opacity duration-300;
+/* Loading States */
+.loading-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-.fade-enter-from,
-.fade-leave-to {
-  @apply opacity-0;
-}
-
-/* Tooltip */
-.tooltip {
-  @apply invisible absolute;
-}
-
-.has-tooltip:hover .tooltip {
-  @apply visible z-50;
-}
-
-/* Badge */
-.badge {
-  @apply absolute -top-2 -right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full;
-}
-
-/* Gradient Overlay */
-.gradient-overlay {
-  @apply absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent;
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
 }
 </style>

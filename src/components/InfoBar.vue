@@ -4,37 +4,36 @@
     <div class="container mx-auto py-4 lg:py-6 px-3 lg:px-4">
       <!-- Mobile Auto Sliding View -->
       <div class="block lg:hidden">
-        <div class="relative h-[120px]">
-          <!-- Sabit yükseklik tanımı -->
-          <TransitionGroup name="slide" tag="div" class="relative w-full">
+        <div class="relative h-[90px]">
+          <TransitionGroup name="slide" tag="div" class="relative w-full h-full">
             <div
               v-for="item in visibleItems"
               :key="item.id"
               v-show="item.isActive"
-              class="w-full absolute inset-0"
+              class="absolute inset-0 w-full h-full"
             >
               <div
-                class="flex items-center gap-3 group cursor-pointer bg-white/50 backdrop-blur-sm rounded-xl p-4 shadow-sm h-full"
+                class="flex items-center h-full gap-3 group cursor-pointer bg-white/50 backdrop-blur-sm rounded-xl p-3 shadow-sm"
                 @click="navigateToInfo(item.link)"
               >
                 <div class="relative flex-none">
                   <div
-                    class="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-br from-emerald-50 to-green-50 group-hover:from-emerald-100 group-hover:to-green-100 transition-colors duration-300"
+                    class="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-br from-emerald-50 to-green-50 group-hover:from-emerald-100 group-hover:to-green-100 transition-colors duration-300"
                   >
                     <component
                       :is="item.icon"
-                      class="w-6 h-6 text-emerald-600 group-hover:text-emerald-700"
+                      class="w-5 h-5 text-emerald-600 group-hover:text-emerald-700"
                     />
                   </div>
                 </div>
 
-                <div class="flex-1">
+                <div class="flex-1 min-w-0">
                   <p
-                    class="font-medium text-gray-900 group-hover:text-emerald-700"
+                    class="font-medium text-gray-900 group-hover:text-emerald-700 text-sm truncate"
                   >
                     {{ item.title }}
                   </p>
-                  <p class="text-sm text-gray-500 group-hover:text-gray-600">
+                  <p class="text-xs text-gray-500 group-hover:text-gray-600 truncate">
                     {{ item.description }}
                   </p>
                 </div>
@@ -44,14 +43,14 @@
         </div>
 
         <!-- Slide Indicators -->
-        <div class="flex justify-center gap-2 mt-4">
+        <div class="flex justify-center gap-1.5 mt-2">
           <button
             v-for="(item, index) in infoItems"
             :key="item.id"
-            class="w-2 h-2 rounded-full transition-all duration-300"
+            class="w-1.5 h-1.5 rounded-full transition-all duration-300"
             :class="[
               currentIndex === index
-                ? 'bg-emerald-500 w-4'
+                ? 'bg-emerald-500 w-3'
                 : 'bg-emerald-200 hover:bg-emerald-300',
             ]"
             @click="setCurrentSlide(index)"
@@ -106,41 +105,40 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import {
-  Truck,
   Clock,
   ShieldCheck,
-  UserCheck,
   ChevronRight,
+  History,
+  Shield,
 } from "lucide-vue-next";
 
 const infoItems = [
   {
     id: 1,
-    icon: Truck,
-    title: "Ücretsiz Kargo",
-    description: "500 TL üzeri alışverişlerde",
-    link: "/shipping-info",
+    icon: History,
+    title: "70+ Yıllık Tecrübe",
+    description: "Tarım sektöründe güvenilir hizmet",
+    link: "/about-us",
   },
   {
     id: 2,
     icon: Clock,
     title: "Hızlı Teslimat",
-    description: "24 saat içinde teslimat",
     link: "/delivery-info",
   },
   {
     id: 3,
-    icon: ShieldCheck,
+    icon: Shield,
     title: "Güvenli Alışveriş",
-    description: "256 bit SSL sertifikası",
+    description: "100% Güvenli Ödeme",
     link: "/security",
   },
   {
     id: 4,
-    icon: UserCheck,
-    title: "Müşteri Memnuniyeti",
-    description: "4.8/5 ortalama puan",
-    link: "/reviews",
+    icon: ShieldCheck,
+    title: "Kalite Garantisi",
+    description: "Sertifikalı Ürünler",
+    link: "/quality",
   },
 ];
 

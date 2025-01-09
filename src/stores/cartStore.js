@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia';
 import api from '@/services/axiosInstance.js';
 import { useToast } from 'vue-toastification';
-
+import { useStockStore } from '@/stores/stockStore';
 const toast = useToast();
 
 export const useCartStore = defineStore('cart', {
@@ -87,13 +87,17 @@ export const useCartStore = defineStore('cart', {
                             images: item.product.images,
                             sku: item.product.sku,
                             stock: item.product.stock,
-                            slug: item.product.slug
+                            slug: item.product.slug,
+                            productType: item.product.productType // Ürün tipini ekledik
                         },
                         quantity: item.quantity,
                         price: item.price,
                         unit: item.unit,
                         _id: item._id
                     }));
+
+                    // Toplam tutarı cart'tan al
+                    this.totalAmount = this.cart.totalAmount;
 
                     return this.cart;
                 }
@@ -102,7 +106,7 @@ export const useCartStore = defineStore('cart', {
             } catch (error) {
                 console.error('Cart fetch error:', error);
                 this.error = error.message;
-                throw error;
+                return null;
             } finally {
                 this.loading = false;
             }
@@ -614,6 +618,9 @@ export const useCartStore = defineStore('cart', {
                 
                 return total;
             }, 0);
+
+            // Toplam tutarı yuvarla
+            this.totalAmount = Math.round(this.totalAmount * 100) / 100;
         },
 
         // Component destroyed olduğunda

@@ -27,42 +27,47 @@
           </div>
 
           <!-- Filtreler ve Sıralama -->
-          <div class="bg-white rounded-xl shadow-md border border-green-100 p-4 mb-6 transition-all duration-300 hover:shadow-lg">
-            <div class="flex flex-wrap items-center justify-between gap-4">
-              <div class="flex items-center gap-4">
-                <button 
-                  @click="showFilters = !showFilters"
-                  class="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors group"
-                >
-                  <SlidersHorizontal class="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                  Filtreler
-                </button>
-
-                <!-- Aktif Filtreler -->
-                <div class="flex items-center gap-2">
-                  <span 
-                    v-if="filters.productType" 
-                    class="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm"
+          <div class="bg-white rounded-xl shadow-sm border border-green-100 mb-6">
+            <div class="p-3 sm:p-4">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex flex-wrap items-center gap-2 sm:gap-4">
+                  <button 
+                    @click="showFilters = !showFilters"
+                    class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 
+                           active:bg-green-200 transition-colors group text-sm sm:text-base"
                   >
-                    <Sprout class="w-4 h-4" />
-                    {{ filters.productType }}
-                    <X 
-                      class="w-4 h-4 cursor-pointer hover:text-red-500 transition-colors" 
-                      @click="clearFilter('productType')" 
-                    />
-                  </span>
-                </div>
-              </div>
+                    <SlidersHorizontal class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform" />
+                    <span class="hidden xs:inline">Filtreler</span>
+                  </button>
 
-              <select 
-                v-model="sortBy"
-                class="px-4 py-2 bg-green-50 text-green-700 rounded-lg focus:ring-2 focus:ring-green-500 border-none transition-all"
-              >
-                <option value="price_asc">Fiyat: Düşükten Yükseğe</option>
-                <option value="price_desc">Fiyat: Yüksekten Düşüğe</option>
-                <option value="name_asc">İsim: A-Z</option>
-                <option value="name_desc">İsim: Z-A</option>
-              </select>
+                  <!-- Aktif Filtreler -->
+                  <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar">
+                    <span 
+                      v-if="filters.productType" 
+                      class="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 bg-green-100 text-green-800 
+                             rounded-lg text-sm whitespace-nowrap"
+                    >
+                      <Sprout class="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      {{ filters.productType }}
+                      <X 
+                        class="w-3.5 h-3.5 sm:w-4 sm:h-4 cursor-pointer hover:text-red-500 transition-colors" 
+                        @click="clearFilter('productType')" 
+                      />
+                    </span>
+                  </div>
+                </div>
+
+                <select 
+                  v-model="sortBy"
+                  class="px-3 sm:px-4 py-2 bg-green-50 text-green-700 rounded-lg focus:ring-2 focus:ring-green-500/20 
+                         focus:border-green-500 border-none transition-all text-sm sm:text-base cursor-pointer"
+                >
+                  <option value="price_asc">Fiyat: Düşükten Yükseğe</option>
+                  <option value="price_desc">Fiyat: Yüksekten Düşüğe</option>
+                  <option value="name_asc">İsim: A-Z</option>
+                  <option value="name_desc">İsim: Z-A</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -88,65 +93,69 @@
             <div 
               v-for="product in displayProducts" 
               :key="product._id"
-              class="product-card bg-white rounded-xl overflow-hidden shadow-md border border-green-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
+              class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-green-100 hover:shadow-lg transition-all duration-300"
             >
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <!-- Ürün Resmi -->
-                <div class="relative md:col-span-1">
+                <div class="relative md:col-span-1 aspect-[4/3] md:aspect-auto overflow-hidden">
                   <img 
                     :src="product.images?.[0]?.url || '/api/placeholder/400/300'"
                     :alt="product.name"
-                    class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    class="w-full h-full object-cover transition-transform duration-500"
                   />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <div 
                     v-if="product.stock?.quantity > 0" 
-                    class="absolute top-3 right-3 px-2 py-1 bg-green-500 text-white text-xs rounded-full"
+                    class="absolute top-3 right-3 px-3 py-1 bg-green-500/90 backdrop-blur-sm text-white text-sm rounded-lg shadow-sm"
                   >
-                    Stokta
+                    Stokta: {{ product.stock.quantity }}
                   </div>
                 </div>
 
                 <!-- Ürün Bilgileri -->
-                <div class="p-6 md:col-span-2 flex flex-col justify-between">
-                  <div>
-                    <span class="text-sm text-gray-500 block mb-2">{{ product.brand }}</span>
-                    <h3 class="text-2xl font-semibold text-green-900 mb-4">{{ product.name }}</h3>
+                <div class="p-4 md:p-6 md:col-span-2 flex flex-col h-full">
+                  <div class="flex-1">
+                    <div class="flex items-start justify-between mb-3">
+                      <div>
+                        <span class="text-sm text-gray-500 block mb-1">{{ product.brand }}</span>
+                        <h3 class="text-xl md:text-2xl font-semibold text-gray-800 line-clamp-2">{{ product.name }}</h3>
+                      </div>
+                      <div class="flex flex-col items-end">
+                        <span class="text-2xl md:text-3xl font-bold text-green-700">
+                          {{ formatPrice(product.price?.current) }} ₺
+                        </span>
+                        <span class="text-sm text-gray-500">
+                          / {{ product.stock?.unit }}
+                        </span>
+                      </div>
+                    </div>
 
-                    <div class="flex flex-wrap gap-2 mb-6">
+                    <div class="flex flex-wrap gap-2 mb-4">
                       <span 
                         v-if="product.productType"
-                        class="px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm"
+                        class="px-3 py-1 bg-green-50 text-green-700 rounded-lg text-sm font-medium"
                       >
                         {{ product.productType }}
                       </span>
                     </div>
                   </div>
 
-                  <!-- Fiyat ve Butonlar -->
-                  <div class="mt-auto flex items-center justify-between">
-                    <div class="flex flex-col">
-                      <span class="text-3xl font-bold text-green-700">
-                        {{ formatPrice(product.price?.current) }} ₺
-                      </span>
-                      <span class="text-sm text-gray-500">
-                        / {{ product.stock?.unit }}
-                      </span>
-                    </div>
-
-                    <div class="flex items-center gap-3">
-                      <button 
-                        class="flex items-center gap-2 px-4 py-2.5 border border-green-200 text-green-700 rounded-lg hover:bg-green-50 transition-colors group"
-                      >
-                        <Eye class="w-5 h-5 group-hover:rotate-6 transition-transform" />
-                        Detay
-                      </button>
-                      <button 
-                        class="flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all transform hover:scale-105"
-                      >
-                        <ShoppingCart class="w-5 h-5" />
-                        Sepete Ekle
-                      </button>
-                    </div>
+                  <!-- Butonlar -->
+                  <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4">
+                    <button 
+                      class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 active:bg-green-800 transition-colors text-sm sm:text-base font-medium"
+                    >
+                      <ShoppingCart class="w-4 h-4 sm:w-5 sm:h-5" />
+                      <span class="hidden sm:inline">Sepete Ekle</span>
+                      <span class="sm:hidden">Sepet</span>
+                    </button>
+                    <button 
+                      class="flex items-center justify-center gap-2 px-4 py-2.5 border border-green-200 text-green-700 rounded-lg hover:bg-green-50 transition-colors text-sm sm:text-base"
+                    >
+                      <Eye class="w-4 h-4 sm:w-5 sm:h-5" />
+                      <span class="hidden sm:inline">Detayları Gör</span>
+                      <span class="sm:hidden">Detay</span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -182,7 +191,7 @@
       </div>
     </div>
   </div>
-</template>  
+</template>
   <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { useProductStore } from "@/stores/productStore";
@@ -302,7 +311,100 @@ watch([() => props.categorySlug, sortBy], () => {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.product-card:hover .product-image {
+/* Özel Scrollbar */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ürün Kartı Animasyonları */
+.product-card {
+  @apply transition-all duration-300;
+}
+
+.product-card:hover {
+  @apply shadow-lg;
+}
+
+.product-card img {
+  @apply transition-transform duration-500;
+}
+
+.product-card:hover img {
   transform: scale(1.05);
+}
+
+/* Responsive Tasarım */
+@screen xs {
+  .product-card {
+    @apply hover:-translate-y-1;
+  }
+}
+
+@media (max-width: 425px) {
+  .product-card button {
+    @apply text-sm py-2;
+  }
+  
+  .product-card .button-text {
+    @apply hidden;
+  }
+  
+  .product-card .button-icon {
+    @apply w-4 h-4;
+  }
+}
+
+/* Tipografi ve Spacing */
+h1, h2, h3 {
+  @apply tracking-tight leading-tight;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Animasyonlar */
+.group-hover\:rotate-12:hover {
+  transform: rotate(12deg);
+}
+
+.active\:scale-95:active {
+  transform: scale(0.95);
+}
+
+/* Loading ve Error States */
+.loading-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+
+/* Özel Scrollbar */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #22c55e #e5e7eb;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  @apply w-1.5;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded-full;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-green-500/70 rounded-full hover:bg-green-600/70;
 }
 </style>

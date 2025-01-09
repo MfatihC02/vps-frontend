@@ -80,17 +80,24 @@
                       <div 
                         class="stock-status"
                         :class="{
-                          'available': item.product.stock.quantity >= 10,
-                          'low': item.product.stock.quantity < 10 && item.product.stock.quantity > 0,
-                          'out': item.product.stock.quantity <= 0
+                          'available': getStockStatus(item.product._id) === 'available',
+                          'low': getStockStatus(item.product._id) === 'low',
+                          'out': getStockStatus(item.product._id) === 'out'
                         }"
                       >
-                        <div v-if="item.product.stock.quantity > 0" class="flex items-center">
-                          <span class="mr-1">Stokta: {{ item.product.stock.quantity }} adet</span>
-                        </div>
-                        <div v-else class="flex items-center">
-                          <AlertCircle class="w-4 h-4 mr-1" />
-                          <span>Stokta yok</span>
+                        <div class="flex items-center">
+                          <span v-if="getStockStatus(item.product._id) === 'out'" class="flex items-center text-red-600">
+                            <AlertCircle class="w-4 h-4 mr-1" />
+                            <span>Stokta yok</span>
+                          </span>
+                          <span v-else-if="getStockStatus(item.product._id) === 'low'" class="flex items-center text-orange-600">
+                            <AlertTriangle class="w-4 h-4 mr-1" />
+                            <span>Stok tükeniyor</span>
+                          </span>
+                          <span v-else class="flex items-center text-green-600">
+                            <Check class="w-4 h-4 mr-1" />
+                            <span>Stokta var</span>
+                          </span>
                         </div>
                       </div>
                       <!-- Rezervasyon Durumu -->
@@ -128,9 +135,9 @@
                     <button
                       @click="updateQuantity(item.product, item.quantity + 1)"
                       class="p-1 rounded-md hover:bg-gray-100"
-                      :disabled="item.quantity >= item.product.stock.quantity || loading"
+                      :disabled="!canIncreaseQuantity(item.product._id, item.quantity) || loading"
                     >
-                      <Plus class="w-4 h-4" :class="item.quantity >= item.product.stock.quantity || loading ? 'text-gray-300' : 'text-gray-600'" />
+                      <Plus class="w-4 h-4" :class="!canIncreaseQuantity(item.product._id, item.quantity) || loading ? 'text-gray-300' : 'text-gray-600'" />
                     </button>
                   </div>
                 </div>
@@ -194,13 +201,33 @@
               </div>
             </div>
 
+            <div class="mt-2 flex items-center">
+              <input
+                type="checkbox"
+                id="contract-checkbox"
+                v-model="contractAccepted"
+                class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+              />
+              <label for="contract-checkbox" class="ml-2 text-sm text-gray-600">
+                <span class="mr-1">Mesafeli satış sözleşmesini</span>
+                <button
+                  @click="showContract = true"
+                  class="text-blue-600 hover:text-blue-800 inline-block"
+                >
+                  görüntüle
+                </button>
+                <span> kabul ediyorum</span>
+              </label>
+            </div>
+
             <button
               @click="completeOrder"
               class="mt-6 w-full bg-green-600 border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              :disabled="loading || !cartStore.hasItems || !hasValidReservations"
+              :disabled="loading || !cartStore.hasItems || !hasValidReservations || !contractAccepted"
             >
               <span v-if="loading">İşleniyor...</span>
               <span v-else-if="!hasValidReservations">Rezervasyon Süresi Doldu</span>
+              <span v-else-if="!contractAccepted">Sözleşmeyi Kabul Edin</span>
               <span v-else>Siparişi Onayla</span>
             </button>
           </div>
@@ -208,6 +235,36 @@
       </div>
     </div>
   </div>
+
+<!-- Sözleşme Modalı -->
+<div v-if="showContract" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-sm p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-medium text-gray-900">Mesafeli Satış Sözleşmesi</h2>
+      <button
+        @click="showContract = false"
+        class="text-gray-400 hover:text-gray-500"
+      >
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    
+    <div class="prose prose-sm max-w-none">
+      <DistanceSalesContract />
+    </div>
+
+    <div class="mt-6 flex justify-end">
+      <button
+        @click="showContract = false"
+        class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+      >
+        Kapat
+      </button>
+    </div>
+  </div>
+</div>
 </template>
 <script setup>
 import { onMounted, ref, onUnmounted, computed, watch } from "vue";
@@ -216,6 +273,7 @@ import { useStockStore } from "@/stores/stockStore";
 import { useOrderStore } from "@/stores/orderStore";
 import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
+import DistanceSalesContract from "@/components/contracts/DistanceSalesContract.vue";
 import {
   ShoppingBag,
   ArrowLeft,
@@ -223,7 +281,10 @@ import {
   Plus,
   Minus,
   Clock,
-  AlertCircle
+  AlertCircle,
+  FileText,
+  Check,
+  AlertTriangle
 } from "lucide-vue-next";
 
 const router = useRouter();
@@ -233,6 +294,8 @@ const stockStore = useStockStore();
 const orderStore = useOrderStore();
 const loading = ref(false);
 const error = ref(null);
+const contractAccepted = ref(false); // Sözleşme kabul durumu
+const showContract = ref(false);
 
 // Hesaplanan özellikler
 const hasValidReservations = computed(() => cartStore.hasValidReservations);
@@ -250,22 +313,57 @@ const formatPrice = (price) => {
   }).format(price);
 };
 
-// Stok kontrolü ve miktar güncelleme
+// Stok kontrolü ve yönetimi
+const getStockStatus = (productId) => {
+  const stock = stockStore.getStockByProductId(productId);
+  if (!stock) return 'out';
+  
+  const availableQuantity = stock.quantity - stock.reservedQuantity;
+  
+  if (availableQuantity <= 0) return 'out';
+  if (availableQuantity <= stock.lowStockThreshold) return 'low';
+  return 'available';
+};
+
+const checkStockAvailability = (productId, requestedQuantity) => {
+  const stock = stockStore.getStockByProductId(productId);
+  if (!stock) return { available: false, message: 'Stok bilgisi bulunamadı' };
+  
+  const availableQuantity = stock.quantity - stock.reservedQuantity;
+  
+  if (availableQuantity < requestedQuantity) {
+    return { 
+      available: false, 
+      message: 'Seçilen miktar için yeterli stok bulunmamaktadır'
+    };
+  }
+  
+  return { available: true };
+};
+
+const canIncreaseQuantity = (productId, currentQuantity) => {
+  const stock = stockStore.stocks.get(productId);
+  if (!stock) return false;
+  
+  const availableQuantity = stock.quantity - (stock.reservedQuantity || 0);
+  return availableQuantity > currentQuantity;
+};
+
+// Miktar güncelleme fonksiyonu
 const updateQuantity = async (product, newQuantity) => {
   try {
     loading.value = true;
     error.value = null;
 
     // Stok kontrolü
-    const stockStatus = await stockStore.checkStockStatus(product._id, newQuantity);
-    if (!stockStatus.available) {
-      toast.error("Seçilen miktar için yeterli stok bulunmamaktadır.");
+    const stockCheck = checkStockAvailability(product._id, newQuantity);
+    if (!stockCheck.available) {
+      toast.error(stockCheck.message);
       return;
     }
 
     // Sepet güncelleme
     await cartStore.updateCartItemQuantity(product._id, newQuantity);
-
     toast.success("Sepet güncellendi");
   } catch (err) {
     error.value = err.message;
@@ -358,6 +456,17 @@ const startReservationTimer = () => {
 onMounted(async () => {
   try {
     await cartStore.fetchCart();
+    
+    // Sepetteki tüm ürünlerin stok bilgilerini yükle
+    await Promise.all(
+      cartStore.items.map(item => 
+        stockStore.fetchStockByProduct(item.product._id)
+      )
+    );
+
+    // Stok değişikliklerini dinlemeye başla
+    stockStore.initializeSocketListeners();
+
     if (cartStore.hasItems) {
       await cartStore.validateCartItems();
       await cartStore.refreshReservations();
@@ -370,6 +479,7 @@ onMounted(async () => {
 
 // Sayfa kapandığında
 onUnmounted(() => {
+  stockStore.cleanup();
   if (reservationInterval) {
     clearInterval(reservationInterval);
   }
@@ -381,19 +491,31 @@ watch(() => cartStore.items, async (newItems) => {
     await cartStore.validateCartItems();
   }
 }, { deep: true });
+
+// Fiyat değişimlerini izle
+watch(() => cartStore.totalAmount, (newValue, oldValue) => {
+  console.log('Toplam tutar değişti:', { 
+    oldValue, 
+    newValue, 
+    items: cartStore.items,
+    cart: cartStore.cart 
+  });
+});
+
+// Stok değişikliklerini izle
+watch(() => stockStore.stocks, (newStocks) => {
+  cartStore.items.forEach(item => {
+    const stockCheck = checkStockAvailability(item.product._id, item.quantity);
+    if (!stockCheck.available) {
+      toast.warning(`"${item.product.name}" ürününün stok durumu değişti. Sepetinizi kontrol ediniz.`);
+    }
+  });
+}, { deep: true });
 </script>
 
 <style scoped>
-.reservation-timer {
-  @apply text-sm text-orange-600 flex items-center mt-2;
-}
-
-.reservation-warning {
-  @apply text-sm text-red-600 flex items-center mt-2;
-}
-
 .stock-status {
-  @apply text-sm flex items-center mt-1;
+  @apply mt-2 text-sm font-medium;
 }
 
 .stock-status.available {
@@ -406,5 +528,13 @@ watch(() => cartStore.items, async (newItems) => {
 
 .stock-status.out {
   @apply text-red-600;
+}
+
+.reservation-timer {
+  @apply text-sm text-orange-600 flex items-center mt-2;
+}
+
+.reservation-warning {
+  @apply text-sm text-red-600 flex items-center mt-2;
 }
 </style>

@@ -4,16 +4,12 @@ import api from '@/services/axiosInstance';
 
 export const useProductStore = defineStore('product', {
     state: () => ({
-        products: [],
+        products: [],           // Önerilen ürünler için
+        newProducts: [],        // Yeni ürünler için
+        discountedProducts: [], // İndirimli ürünler için
         product: null,
         loading: false,
         error: null,
-        pagination: {
-            page: 1,
-            limit: 10,
-            totalPages: 0,
-            totalItems: 0
-        },
         filters: {
             category: '',
             productType: '',
@@ -30,12 +26,11 @@ export const useProductStore = defineStore('product', {
         getProductById: (state) => (id) => {
             return state.products.find(product => product._id === id);
         },
-        getFilteredProducts: (state) => {
-            return state.products;
-        },
+        getRecommendedProducts: (state) => state.products,
+        getNewProducts: (state) => state.newProducts,
+        getDiscountedProducts: (state) => state.discountedProducts,
         isLoading: (state) => state.loading,
-        getError: (state) => state.error,
-        getPagination: (state) => state.pagination
+        getError: (state) => state.error
     },
     actions: {
         // Socket Event Listeners
@@ -123,28 +118,49 @@ export const useProductStore = defineStore('product', {
                 }, {});
 
                 const queryParams = new URLSearchParams({
-                    page: params.page || this.pagination.page,
-                    limit: params.limit || this.pagination.limit,
+                    limit: params.limit || 12,
                     ...validFilters
                 });
 
                 const response = await api.get(`/products?${queryParams}`);
-
-                if (response.data.success) {
-                    this.products = response.data.data.docs;
-                    this.pagination = {
-                        page: response.data.data.page,
-                        limit: response.data.data.limit,
-                        totalPages: response.data.data.totalPages,
-                        totalItems: response.data.data.totalDocs
-                    };
-                }
 
                 return response.data;
             } catch (error) {
                 console.error('Fetch Products Error:', error);
                 this.error = error.response?.data?.message || 'Ürünler yüklenirken bir hata oluştu';
                 throw error;
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        // Tüm bölümleri yükle
+        async fetchAllSections() {
+            this.loading = true;
+            this.error = null;
+            try {
+                const response = await api.get('/products');
+                const allProducts = response.data.data.docs; // Düzeltilmiş veri yolu
+
+                // Şimdilik tüm ürünleri önerilen ürünler olarak kullanıyoruz
+                this.products = allProducts;
+                
+                // Yeni ürünler için son 7 günü kontrol ediyoruz
+                const sevenDaysAgo = new Date();
+                sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                this.newProducts = allProducts.filter(product => {
+                  const createdAt = new Date(product.createdAt);
+                  return createdAt >= sevenDaysAgo;
+                });
+
+                // İndirimli ürünler
+                this.discountedProducts = allProducts.filter(product => {
+                  return product.price?.discount > 0;
+                });
+
+            } catch (err) {
+                console.error('Ürünler yüklenirken hata:', err);
+                this.error = 'Ürünler yüklenirken bir hata oluştu.';
             } finally {
                 this.loading = false;
             }
@@ -182,8 +198,7 @@ export const useProductStore = defineStore('product', {
                 }, {});
 
                 const queryParams = new URLSearchParams({
-                    page: params.page || this.pagination.page,
-                    limit: params.limit || this.pagination.limit,
+                    limit: params.limit || 12,
                     sortBy: params.sortBy || 'price_asc',
                     ...validFilters
                 });
@@ -198,14 +213,6 @@ export const useProductStore = defineStore('product', {
                         // İlk sayfa veya normal yükleme ise, ürünleri değiştir
                         this.products = response.data.data;
                     }
-
-                    // Pagination yapısını API yanıtına göre güncelle
-                    this.pagination = {
-                        page: response.data.pagination.page,
-                        limit: this.pagination.limit,
-                        totalPages: response.data.pagination.pages,
-                        totalItems: response.data.pagination.total
-                    };
                 }
 
                 return response.data;
