@@ -434,6 +434,13 @@ const deleteAddressConfirm = async (addressId) => {
 }
 
 const selectAddress = (address) => {
+  // Eğer adres zaten varsayılan ise sadece seç
+  if (address.isDefault) {
+    selectedAddress.value = address
+    return
+  }
+  
+  // Eğer varsayılan değilse, varsayılan yap ve güncelle
   selectedAddress.value = address
   addressStore.updateAddress(address._id, { ...address, isDefault: true })
 }

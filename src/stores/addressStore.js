@@ -153,20 +153,32 @@ export const useAddressStore = defineStore('address', {
                 this.loading = true;
                 const response = await api.put(`/address/${addressId}`, addressData);
                 if (response.data.success) {
-                    // Adresleri güncelle
-                    await this.fetchAddresses();
+                    // Sadece ilgili adresi güncelle
+                    const updatedAddress = response.data.address;
+                    const index = this.addresses.findIndex(addr => addr._id === addressId);
                     
-                    // Varsayılan adres güncellendiyse defaultAddress'i güncelle
+                    if (index !== -1) {
+                        this.addresses[index] = updatedAddress;
+                    }
+                    
+                    // Eğer varsayılan adres güncellendiyse, diğer adreslerin varsayılan durumunu güncelle
                     if (addressData.isDefault) {
-                        this.defaultAddress = response.data.address;
+                        this.addresses.forEach(addr => {
+                            if (addr._id !== addressId) {
+                                addr.isDefault = false;
+                            }
+                        });
+                        this.defaultAddress = updatedAddress;
                     }
                     
                     toast.success('Adres başarıyla güncellendi');
+                    return true;
                 } else {
                     throw new Error(response.data.message || 'Adres güncellenemedi');
                 }
             } catch (error) {
                 this.handleError(error);
+                return false;
             } finally {
                 this.loading = false;
             }

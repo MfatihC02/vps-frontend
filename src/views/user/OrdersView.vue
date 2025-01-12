@@ -4,39 +4,6 @@
     <!-- Başlık ve Özet Bilgiler -->
     <div class="mb-8">
       <h1 class="text-2xl font-semibold text-gray-900 mb-4">Siparişlerim</h1>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white rounded-lg shadow-sm p-4 border border-green-100">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-500">Toplam Sipariş</p>
-              <p class="text-xl font-semibold text-gray-900">{{ orders.length }}</p>
-            </div>
-            <Package class="w-8 h-8 text-green-500" />
-          </div>
-        </div>
-        <div class="bg-white rounded-lg shadow-sm p-4 border border-blue-100">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-500">Aktif Sipariş</p>
-              <p class="text-xl font-semibold text-gray-900">
-                {{ activeOrders.length }}
-              </p>
-            </div>
-            <Timer class="w-8 h-8 text-blue-500" />
-          </div>
-        </div>
-        <div class="bg-white rounded-lg shadow-sm p-4 border border-purple-100">
-          <div class="flex items-center justify-between">
-          <div>
-              <p class="text-sm text-gray-500">Toplam Harcama</p>
-              <p class="text-xl font-semibold text-gray-900">
-                {{ formatPrice(totalSpent) }}
-              </p>
-          </div>
-            <Wallet class="w-8 h-8 text-purple-500" />
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Filtreler -->

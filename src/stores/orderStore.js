@@ -273,10 +273,12 @@ export const useOrderStore = defineStore('order', {
                     }
                 });
 
-                this.orders = response.data.data.orders;
-                this.pagination.total = response.data.data.total;
-                this.pagination.pages = response.data.data.pages;
-                this.pagination.page = response.data.data.currentPage;
+                if (response.data.success) {
+                    this.orders = response.data.data.orders;
+                    this.pagination.total = response.data.data.total;
+                    this.pagination.pages = response.data.data.pages;
+                    this.pagination.page = response.data.data.currentPage;
+                }
 
                 return this.orders;
             } catch (error) {
@@ -528,8 +530,11 @@ export const useOrderStore = defineStore('order', {
         },
 
         // Pagination güncelle
-        updatePagination(newPage) {
-            this.pagination.page = newPage;
+        async updatePagination(newPage) {
+            if (newPage !== this.pagination.page) {
+                this.pagination.page = newPage;
+                await this.fetchAllOrders();
+            }
         },
 
         // Hata temizleme

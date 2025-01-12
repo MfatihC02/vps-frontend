@@ -1,18 +1,18 @@
 <template>
-  <div class="min-h-screen bg-gray-100">
+  <div class="min-h-screen bg-gray-50/80">
     <!-- Mega Header -->
-    <div class="bg-gradient-to-r from-green-700 to-green-500 text-white relative overflow-hidden">
-      <div class="absolute inset-0 bg-[url('/pattern.svg')] opacity-5"></div>
-      <div class="max-w-7xl mx-auto py-12 sm:py-16 px-4 relative">
-        <h1 class="text-4xl sm:text-5xl font-bold mb-3">
+    <div class="bg-gradient-to-r from-primary-dark to-primary-light text-white relative overflow-hidden">
+      <div class="absolute inset-0 bg-[url('/pattern.svg')] opacity-10"></div>
+      <div class="max-w-7xl mx-auto py-8 sm:py-12 px-4 relative">
+        <h1 class="text-3xl sm:text-4xl font-montserrat font-bold mb-2">
           {{ currentCategory?.name || "Kategoriler" }}
         </h1>
-        <p class="text-lg sm:text-xl opacity-90 max-w-2xl font-light">
+        <p class="text-base sm:text-lg font-inter opacity-90 max-w-2xl">
           Profesyonel üreticiler için özenle seçilmiş, yüksek kaliteli
           {{ currentCategory?.name?.toLowerCase() || "ürünler" }}
         </p>
         <!-- Breadcrumb -->
-        <nav class="flex items-center gap-1.5 mt-6 text-sm text-white/90 flex-wrap">
+        <nav class="flex items-center gap-1.5 mt-4 text-sm text-white/90 flex-wrap font-inter">
           <router-link to="/" 
                       class="flex items-center gap-1.5 hover:text-white transition-colors px-2 py-1 rounded-lg hover:bg-white/10">
             <Home class="w-4 h-4" />
@@ -37,14 +37,14 @@
       </div>
     </div>
 
-    <!-- Alt kategori varsa kategori listesi, yoksa ürün listesi göster -->
+    <!-- Alt kategori varsa kategori listesi -->
     <template v-if="hasSubCategories">
       <!-- Kontrol Paneli -->
-      <div class="sticky top-0 bg-white/95 border-b z-10 backdrop-blur-md shadow-sm">
+      <div class="sticky top-0 bg-white/90 border-b z-10 backdrop-blur-sm shadow-sm">
         <div class="max-w-7xl mx-auto px-4 py-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
-              <span class="text-gray-600 font-medium">
+              <span class="text-gray-700 font-medium font-inter">
                 Toplam {{ totalProducts }} alt kategori
               </span>
             </div>
@@ -55,7 +55,9 @@
                   v-model="searchQuery"
                   type="text"
                   placeholder="Kategori ara..."
-                  class="w-64 pl-10 pr-4 py-2 rounded-full border-gray-200 focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all"
+                  class="w-64 pl-10 pr-4 py-2 rounded-full border-gray-200 bg-gray-50/50
+                         focus:ring-2 focus:ring-primary/20 focus:border-primary 
+                         transition-all font-inter text-sm"
                   @input="filterCategories"
                 />
                 <Search class="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
@@ -66,55 +68,64 @@
       </div>
 
       <!-- Ana İçerik - Kategoriler -->
-      <div class="max-w-7xl mx-auto px-4 py-8">
+      <div class="max-w-7xl mx-auto px-4 py-6 sm:py-8">
         <div class="space-y-8">
           <div v-for="orderGroup in groupedCategories" :key="orderGroup.order" 
                class="category-group">
-            <div class="space-y-6">
-              <h3 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
-                <component :is="getCategoryIcon(orderGroup.order)" class="w-5 h-5 text-green-600" />
+            <div class="space-y-5">
+              <h3 class="text-lg sm:text-xl font-semibold text-gray-800 flex items-center gap-2 font-montserrat">
+                <component :is="getCategoryIcon(orderGroup.order)" class="w-5 h-5 text-primary" />
                 {{ getOrderGroupTitle(orderGroup.order) }}
               </h3>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 <div v-for="category in orderGroup.categories" 
                      :key="category._id"
-                     class="category-card bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 flex flex-col">
-                  <div class="relative aspect-[16/9] overflow-hidden">
-                    <img :src="category.image || '/api/placeholder/400/300'"
-                         :alt="category.name"
-                         class="w-full h-full object-cover transition-transform duration-500" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  </div>
-                  <div class="flex-1 p-4 sm:p-5 flex flex-col">
-                    <div class="flex items-start justify-between mb-3">
-                      <h2 class="text-lg font-semibold text-gray-800 line-clamp-2">{{ category.name }}</h2>
-                      <span class="px-2.5 py-1 bg-green-50 text-green-700 rounded-lg text-sm font-medium whitespace-nowrap ml-2">
-                        {{ category.productCount || 0 }} Ürün
-                      </span>
+                     class="category-card bg-white rounded-xl overflow-hidden border border-gray-100/80 
+                            hover:shadow-lg hover:border-primary/10 transition-all duration-300">
+                  <div class="flex flex-col sm:flex-row h-full">
+                    <div class="relative w-full sm:w-1/3 aspect-[16/9] sm:aspect-auto overflow-hidden bg-gray-50">
+                      <img :src="category.image || '/api/placeholder/400/300'"
+                           :alt="category.name"
+                           class="w-full h-full object-cover transition-all duration-500" />
+                      <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 
+                                group-hover:opacity-100 transition-opacity"></div>
                     </div>
                     
-                    <div v-if="category.children?.length" class="mt-2 space-y-2 flex-1">
-                      <div v-for="(child, index) in category.children.slice(0, 3)"
-                           :key="child._id"
-                           class="flex items-center gap-2 text-sm text-gray-600 hover:text-green-600 transition-colors">
-                        <component :is="getCategoryTypeIcon(child)" class="w-4 h-4 text-gray-400" />
-                        <span class="truncate">{{ child.name }}</span>
+                    <div class="flex-1 p-4 flex flex-col justify-between">
+                      <div>
+                        <div class="flex items-start justify-between mb-3">
+                          <h2 class="text-lg font-semibold text-gray-800 line-clamp-2 font-montserrat">{{ category.name }}</h2>
+                          <span class="px-2.5 py-1 bg-primary/5 text-primary rounded-lg text-sm font-medium 
+                                     whitespace-nowrap ml-2 font-inter">
+                            {{ category.productCount || 0 }} Ürün
+                          </span>
+                        </div>
+                        
+                        <div v-if="category.children?.length" class="mt-2 space-y-2">
+                          <div v-for="(child, index) in category.children.slice(0, 3)"
+                               :key="child._id"
+                               class="flex items-center gap-2 text-sm text-gray-600 hover:text-primary 
+                                      transition-colors font-inter">
+                            <component :is="getCategoryTypeIcon(child)" class="w-4 h-4 text-gray-400" />
+                            <span class="truncate">{{ child.name }}</span>
+                          </div>
+                          <div v-if="category.children.length > 3" 
+                               class="text-sm text-gray-500 flex items-center gap-1.5 font-inter">
+                            <Folder class="w-4 h-4" />
+                            +{{ category.children.length - 3 }} alt kategori
+                          </div>
+                        </div>
                       </div>
-                      <div v-if="category.children.length > 3" 
-                           class="text-sm text-gray-500 flex items-center gap-1.5">
-                        <Folder class="w-4 h-4" />
-                        +{{ category.children.length - 3 }} alt kategori
-                      </div>
+                      
+                      <button @click="navigateToCategory(category)"
+                              class="mt-4 w-full bg-primary text-white py-2.5 rounded-lg hover:bg-primary-dark 
+                                     active:bg-primary-dark/90 transition-colors flex items-center justify-center gap-2 
+                                     text-sm font-medium group font-inter">
+                        <span>Tüm Ürünleri İncele</span>
+                        <ChevronRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </button>
                     </div>
-                    
-                    <button @click="navigateToCategory(category)"
-                            class="mt-4 w-full bg-green-600 text-white py-2.5 rounded-lg hover:bg-green-700 
-                                   active:bg-green-800 transition-colors flex items-center justify-center gap-2 
-                                   text-sm font-medium group">
-                      <span>Tüm Ürünleri İncele</span>
-                      <ChevronRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </button>
                   </div>
                 </div>
               </div>
@@ -311,11 +322,11 @@ watch(
 }
 
 .category-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .category-card:hover img {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
 .category-card img {
@@ -332,11 +343,11 @@ watch(
 
 /* Animasyonlar */
 .animate-fade-in {
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeIn 0.4s ease-out;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
+  from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -349,15 +360,5 @@ watch(
   .category-card:hover {
     transform: none;
   }
-}
-
-/* Loading States */
-.loading-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .5; }
 }
 </style>

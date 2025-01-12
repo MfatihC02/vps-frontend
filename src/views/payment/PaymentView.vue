@@ -90,19 +90,29 @@ onMounted(async () => {
 
 const handlePayment = async (paymentData) => {
   try {
-    loading.value = true;
+    processing.value = true;
     error.value = null;
-
-    // Adres kontrolü
-    if (!selectedAddress.value) {
-      router.push('/adres');
-      throw new Error('Lütfen bir teslimat adresi seçin');
-    }
 
     // Sepet kontrolü
     if (!cartDetails.value?.items?.length) {
       router.push('/sepet');
       throw new Error('Sepetiniz boş');
+    }
+
+    // Rezervasyonları yenile ve kontrol et
+    console.log('Rezervasyon yenileme başlıyor...');
+    console.log('Cart durumu:', cartStore.hasItems);
+    const reservationsValid = await cartStore.refreshReservations();
+    
+    if (!reservationsValid) {
+      throw new Error('Ürün rezervasyonları güncellenemedi. Lütfen tekrar deneyin.');
+    }
+    console.log('Rezervasyon yenileme başarılı');
+
+    // Adres kontrolü
+    if (!selectedAddress.value) {
+      router.push('/adres');
+      throw new Error('Lütfen bir teslimat adresi seçin');
     }
 
     console.log('Payment data received:', {
@@ -116,13 +126,39 @@ const handlePayment = async (paymentData) => {
       cardNumber: paymentData.cardNumber.replace(/\s/g, '')
     });
     
-    if (result.requires3D) {
+    // 3D Secure kontrolü - Hem eski hem yeni yapıyı destekle
+    if (result.requires3D || result.data?.is3DSecure) {
       processing.value = true;
       toast.info('3D Secure doğrulamasına yönlendiriliyorsunuz...');
-      // 3D Secure sayfasına yönlendir
-      setTimeout(() => {
+      
+      // Kısa bir bekleme süresi ekle
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      if (result.data?.is3DSecure) {
+        // Yeni 3D Secure form yapısı
+        const formData = result.data.formData.formData;
+        
+        // Form oluştur
+        const form = document.createElement('form');
+        form.method = formData.method;
+        form.action = formData.action;
+        
+        // Input'ları ekle
+        Object.entries(formData.inputs).forEach(([name, value]) => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = name;
+          input.value = value;
+          form.appendChild(input);
+        });
+        
+        // Formu sayfaya ekle ve submit et
+        document.body.appendChild(form);
+        form.submit();
+      } else if (result.requires3D) {
+        // Eski yapı için URL yönlendirmesi
         window.location.href = result.url;
-      }, 1500); // Kullanıcıya toast mesajını görmesi için kısa bir süre ver
+      }
     }
   } catch (err) {
     error.value = err.message || 'Ödeme işlemi başlatılırken bir hata oluştu';

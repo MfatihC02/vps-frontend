@@ -66,6 +66,11 @@ export const useStockStore = defineStore('stock', () => {
             const response = await api.get(`stocks/product/${productId}`);
             const stockData = response.data;
 
+            // Stok bulunamadı durumu kontrolü
+            if (stockData.error || !stockData._id) {
+                return null;
+            }
+
             // Stok verisini düzenle
             const formattedStock = {
                 _id: stockData._id,
@@ -79,9 +84,13 @@ export const useStockStore = defineStore('stock', () => {
             stocks.value.set(productId, formattedStock);
             return formattedStock;
         } catch (err) {
+            if (err.response?.status === 404) {
+                // 404 durumunda null dön
+                return null;
+            }
             console.error('Stok getirme hatası:', err);
             error.value = err.response?.data?.message || 'Stok bilgisi alınamadı';
-            throw err;
+            return null; // Hata durumunda da null dön
         } finally {
             loading.value = false;
         }

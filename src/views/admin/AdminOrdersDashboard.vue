@@ -2,16 +2,16 @@
   <div class="min-h-screen bg-gray-50/60">
     <!-- Header Section -->
     <div class="bg-white shadow-lg border-b border-gray-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div class="flex flex-col xs:flex-row xs:items-center xs:justify-between space-y-3 xs:space-y-0">
           <div>
-            <h1 class="text-3xl font-bold text-gray-900 font-inter">Sipariş Yönetimi</h1>
+            <h1 class="text-2xl xs:text-3xl font-bold text-gray-900 font-inter">Sipariş Yönetimi</h1>
             <p class="mt-1 text-sm text-gray-500">Siparişlerinizi buradan yönetebilirsiniz</p>
           </div>
-          <div class="flex items-center space-x-4">
+          <div class="flex flex-col xs:flex-row items-center space-y-2 xs:space-y-0 xs:space-x-4">
             <button
               @click="refreshOrders"
-              class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all duration-200 ease-in-out"
+              class="w-full xs:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all duration-200 ease-in-out"
             >
               <RefreshCcw class="w-4.5 h-4.5 mr-2" />
               Yenile
@@ -19,7 +19,7 @@
             <button
               v-if="hasSelectedOrders"
               @click="showBulkActions = true"
-              class="inline-flex items-center px-5 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 ease-in-out shadow-sm hover:shadow-md"
+              class="w-full xs:w-auto inline-flex items-center justify-center px-5 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-lg transition-all duration-200 ease-in-out shadow-sm hover:shadow-md"
             >
               <ClipboardList class="w-4.5 h-4.5 mr-2" />
               Toplu İşlem ({{ selectedOrders.length }})
@@ -30,30 +30,30 @@
     </div>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       <!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-8">
         <div
           v-for="stat in stats"
           :key="stat.name"
-          class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+          class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 lg:p-6 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
         >
           <div class="flex items-center">
-            <div class="p-3 rounded-xl" :class="stat.bgColor">
+            <div class="p-2 sm:p-3 rounded-xl" :class="stat.bgColor">
               <component
                 :is="stat.icon"
-                class="w-10 h-10"
+                class="w-8 h-8 sm:w-10 sm:h-10"
                 :class="stat.iconClass"
               />
             </div>
-            <div class="ml-4">
+            <div class="ml-3 sm:ml-4">
               <p class="text-sm font-medium text-gray-600">{{ stat.name }}</p>
-              <p class="text-2xl font-bold text-gray-900 mt-1">
+              <p class="text-xl sm:text-2xl font-bold text-gray-900 mt-1">
                 {{ stat.value }}
               </p>
             </div>
           </div>
-          <div class="mt-4 flex items-center text-sm">
+          <div class="mt-3 sm:mt-4 flex items-center text-sm">
             <span :class="stat.trendColor">{{ stat.trend }}%</span>
             <span class="text-gray-500 ml-2">geçen haftaya göre</span>
           </div>
@@ -61,45 +61,88 @@
       </div>
 
       <!-- Filters -->
-      <div class="mb-8">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
-          <h2 class="text-lg font-semibold text-gray-900">Filtreler</h2>
+      <div class="mb-4 sm:mb-6 lg:mb-8">
+        <div class="flex flex-col xs:flex-row xs:items-center xs:justify-between mb-3 sm:mb-4">
+          <h2 class="text-base sm:text-lg font-semibold text-gray-900 mb-2 xs:mb-0">Filtreler</h2>
           <button
             @click="clearAllFilters"
-            class="mt-2 sm:mt-0 text-sm text-gray-600 hover:text-gray-900 inline-flex items-center"
+            class="text-sm text-gray-600 hover:text-gray-900 inline-flex items-center"
           >
-            <Trash2 class="w-4 h-4 mr-1" />
+            <Trash2 class="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" />
             Filtreleri Temizle
           </button>
         </div>
         <AdminOrderFilters
           :filters="filters"
           @update:filters="updateFilters"
+          class="animate-fade-in"
         />
       </div>
 
       <!-- Orders Table -->
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
+      <div class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <!-- Mobile View -->
+        <div class="block sm:hidden">
+          <div v-for="order in filteredOrders" :key="order._id" class="p-4 border-b border-gray-200 last:border-b-0">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  v-model="selectedOrders"
+                  :value="order._id"
+                  class="rounded border-gray-300 text-primary focus:ring-primary-light mr-3"
+                />
+                <span class="font-medium text-gray-900">{{ order.orderNumber }}</span>
+              </div>
+              <span
+                class="px-2 py-1 text-xs leading-5 font-semibold rounded-full inline-flex items-center"
+                :class="getStatusClass(order.status)"
+              >
+                <component
+                  :is="getStatusIcon(order.status)"
+                  class="w-3.5 h-3.5 mr-1"
+                  :class="getStatusIconClass(order.status)"
+                />
+                {{ order.status }}
+              </span>
+            </div>
+            <div class="space-y-1 text-sm">
+              <div class="text-gray-600">{{ formatDate(order.createdAt) }}</div>
+              <div class="text-gray-800">{{ order.user?.email }}</div>
+            </div>
+            <div class="mt-3 flex justify-end">
+              <button
+                @click="viewOrderDetails(order._id)"
+                class="inline-flex items-center text-primary hover:text-primary-dark transition-colors text-sm"
+              >
+                <Eye class="w-4 h-4 mr-1" />
+                Detay
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desktop View -->
+        <div class="hidden sm:block overflow-x-auto min-w-full">
+          <table class="w-full divide-y divide-gray-200">
             <thead class="bg-gray-50/80">
               <tr>
-                <th scope="col" class="px-6 py-4 text-left">
+                <th scope="col" class="px-4 sm:px-6 py-3 sm:py-4 text-left">
                   <input
                     type="checkbox"
                     v-model="selectAll"
-                    class="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    class="rounded border-gray-300 text-primary focus:ring-primary-light"
                   />
                 </th>
                 <th
                   v-for="header in tableHeaders"
                   :key="header.key"
                   scope="col"
-                  class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
                 >
                   {{ header.label }}
                 </th>
-                <th scope="col" class="relative px-6 py-4">
+                <th scope="col" class="relative px-4 sm:px-6 py-3 sm:py-4">
                   <span class="sr-only">Actions</span>
                 </th>
               </tr>
@@ -108,45 +151,51 @@
               <tr
                 v-for="order in filteredOrders"
                 :key="order._id"
-                class="hover:bg-gray-50 transition-colors"
+                class="hover:bg-gray-50 transition-colors group"
               >
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                   <input
                     type="checkbox"
                     v-model="selectedOrders"
                     :value="order._id"
-                    class="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    class="rounded border-gray-300 text-primary focus:ring-primary-light"
                   />
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">
+                <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900 group-hover:text-primary-dark transition-colors">
                     {{ order.orderNumber }}
                   </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                   <div class="text-sm text-gray-900">
                     {{ formatDate(order.createdAt) }}
                   </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                   <div class="text-sm text-gray-900">
                     {{ order.user?.email }}
                   </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                   <span
-                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                    class="px-2 py-1 text-xs leading-5 font-semibold rounded-full inline-flex items-center"
                     :class="getStatusClass(order.status)"
                   >
+                    <component
+                      :is="getStatusIcon(order.status)"
+                      class="w-3.5 h-3.5 mr-1"
+                      :class="getStatusIconClass(order.status)"
+                    />
                     {{ order.status }}
                   </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-right text-sm font-medium">
                   <button
                     @click="viewOrderDetails(order._id)"
-                    class="text-green-600 hover:text-green-700"
+                    class="inline-flex items-center text-primary hover:text-primary-dark transition-colors"
                   >
-                    Detay
+                    <Eye class="w-4 h-4 mr-1" />
+                    <span class="hidden xs:inline">Detay</span>
                   </button>
                 </td>
               </tr>
@@ -156,22 +205,31 @@
 
         <!-- Pagination -->
         <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+          <!-- Mobile Pagination -->
           <div class="flex-1 flex justify-between sm:hidden">
             <button
               @click="previousPage"
               :disabled="!canGoPrevious"
-              class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              class="relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed min-w-[100px] justify-center"
             >
+              <ChevronLeft class="h-4 w-4 mr-1" />
               Önceki
             </button>
+            <div class="mx-2 flex items-center">
+              <span class="text-sm text-gray-700">
+                {{ pagination.page }} / {{ pagination.pages }}
+              </span>
+            </div>
             <button
               @click="nextPage"
               :disabled="!canGoNext"
-              class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              class="relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed min-w-[100px] justify-center"
             >
               Sonraki
+              <ChevronRight class="h-4 w-4 ml-1" />
             </button>
           </div>
+          <!-- Desktop Pagination -->
           <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
               <p class="text-sm text-gray-700">
@@ -185,22 +243,33 @@
               </p>
             </div>
             <div>
-              <nav
-                class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-                aria-label="Pagination"
-              >
+              <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
                 <button
                   @click="previousPage"
                   :disabled="!canGoPrevious"
-                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span class="sr-only">Previous</span>
                   <ChevronLeft class="h-5 w-5" />
                 </button>
                 <button
+                  v-for="pageNumber in visiblePages"
+                  :key="pageNumber"
+                  @click="goToPage(pageNumber)"
+                  :class="[
+                    'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
+                    pageNumber === pagination.page
+                      ? 'z-10 bg-primary-light border-primary-light text-white'
+                      : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50',
+                    typeof pageNumber === 'string' ? 'cursor-default' : 'cursor-pointer'
+                  ]"
+                >
+                  {{ pageNumber }}
+                </button>
+                <button
                   @click="nextPage"
                   :disabled="!canGoNext"
-                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span class="sr-only">Next</span>
                   <ChevronRight class="h-5 w-5" />
@@ -294,6 +363,7 @@ import {
   ChevronRight,
   Eye
 } from 'lucide-vue-next'
+import { ClipboardList } from 'lucide-vue-next'
 import AdminOrderFilters from '@/components/admin/orders/AdminOrderFilters.vue'
 
 // Store
@@ -422,35 +492,35 @@ const startIndex = computed(() => (pagination.value.page - 1) * pagination.value
 const endIndex = computed(() => Math.min(startIndex.value + pagination.value.limit, pagination.value.total))
 
 const visiblePages = computed(() => {
-  const total = Math.ceil(pagination.value.total / pagination.value.perPage)
-  const current = pagination.value.currentPage
-  const pages = []
+  const total = pagination.value.pages;
+  const current = pagination.value.page;
+  const pages = [];
   
   if (total <= 7) {
     for (let i = 1; i <= total; i++) {
-      pages.push(i)
+      pages.push(i);
     }
   } else {
     if (current <= 3) {
       for (let i = 1; i <= 5; i++) {
-        pages.push(i)
+        pages.push(i);
       }
-      pages.push('...', total)
+      pages.push('...', total);
     } else if (current >= total - 2) {
-      pages.push(1, '...')
+      pages.push(1, '...');
       for (let i = total - 4; i <= total; i++) {
-        pages.push(i)
+        pages.push(i);
       }
     } else {
-      pages.push(1, '...')
+      pages.push(1, '...');
       for (let i = current - 1; i <= current + 1; i++) {
-        pages.push(i)
+        pages.push(i);
       }
-      pages.push('...', total)
+      pages.push('...', total);
     }
   }
   
-  return pages
+  return pages;
 })
 
 // Methods
@@ -466,15 +536,21 @@ const viewOrderDetails = (orderId) => {
   router.push(`/admin/orders/${orderId}`)
 }
 
-const previousPage = () => {
+const previousPage = async () => {
   if (canGoPrevious.value) {
-    orderStore.updatePagination(pagination.value.page - 1)
+    await orderStore.updatePagination(pagination.value.page - 1);
   }
 }
 
-const nextPage = () => {
+const nextPage = async () => {
   if (canGoNext.value) {
-    orderStore.updatePagination(pagination.value.page + 1)
+    await orderStore.updatePagination(pagination.value.page + 1);
+  }
+}
+
+const goToPage = async (page) => {
+  if (typeof page === 'number') {
+    await orderStore.updatePagination(page);
   }
 }
 
@@ -549,17 +625,6 @@ const clearAllFilters = () => {
 
 const refreshTable = () => {
   refreshOrders()
-}
-
-const goToPage = (page) => {
-  if (typeof page === 'number') {
-    pagination.value.currentPage = page
-    refreshOrders()
-  }
-}
-
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('tr-TR').format(price)
 }
 
 // Watch selectAll changes

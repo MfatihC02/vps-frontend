@@ -12,7 +12,7 @@
         <div class="md:col-span-3">
           <!-- Başlık ve Bilgi -->
           <div class="flex items-center justify-between mb-6 animate-fade-in">
-            <h1 class="text-3xl font-bold text-green-800 flex items-center gap-3">
+            <h1 class="text-3xl font-bold text-green-800 flex items-center gap-3 font-montserrat">
               <Sprout class="w-8 h-8 text-green-600" />
               {{ currentCategory?.name || "Ürünler" }}
             </h1>
@@ -22,51 +22,6 @@
                   <Package class="w-5 h-5 text-green-600" />
                   {{ totalProducts }} Ürün
                 </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Filtreler ve Sıralama -->
-          <div class="bg-white rounded-xl shadow-sm border border-green-100 mb-6">
-            <div class="p-3 sm:p-4">
-              <div class="flex flex-wrap items-center justify-between gap-3">
-                <div class="flex flex-wrap items-center gap-2 sm:gap-4">
-                  <button 
-                    @click="showFilters = !showFilters"
-                    class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 
-                           active:bg-green-200 transition-colors group text-sm sm:text-base"
-                  >
-                    <SlidersHorizontal class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform" />
-                    <span class="hidden xs:inline">Filtreler</span>
-                  </button>
-
-                  <!-- Aktif Filtreler -->
-                  <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar">
-                    <span 
-                      v-if="filters.productType" 
-                      class="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 bg-green-100 text-green-800 
-                             rounded-lg text-sm whitespace-nowrap"
-                    >
-                      <Sprout class="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      {{ filters.productType }}
-                      <X 
-                        class="w-3.5 h-3.5 sm:w-4 sm:h-4 cursor-pointer hover:text-red-500 transition-colors" 
-                        @click="clearFilter('productType')" 
-                      />
-                    </span>
-                  </div>
-                </div>
-
-                <select 
-                  v-model="sortBy"
-                  class="px-3 sm:px-4 py-2 bg-green-50 text-green-700 rounded-lg focus:ring-2 focus:ring-green-500/20 
-                         focus:border-green-500 border-none transition-all text-sm sm:text-base cursor-pointer"
-                >
-                  <option value="price_asc">Fiyat: Düşükten Yükseğe</option>
-                  <option value="price_desc">Fiyat: Yüksekten Düşüğe</option>
-                  <option value="name_asc">İsim: A-Z</option>
-                  <option value="name_desc">İsim: Z-A</option>
-                </select>
               </div>
             </div>
           </div>
@@ -104,12 +59,6 @@
                     class="w-full h-full object-cover transition-transform duration-500"
                   />
                   <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <div 
-                    v-if="product.stock?.quantity > 0" 
-                    class="absolute top-3 right-3 px-3 py-1 bg-green-500/90 backdrop-blur-sm text-white text-sm rounded-lg shadow-sm"
-                  >
-                    Stokta: {{ product.stock.quantity }}
-                  </div>
                 </div>
 
                 <!-- Ürün Bilgileri -->
@@ -117,14 +66,17 @@
                   <div class="flex-1">
                     <div class="flex items-start justify-between mb-3">
                       <div>
-                        <span class="text-sm text-gray-500 block mb-1">{{ product.brand }}</span>
-                        <h3 class="text-xl md:text-2xl font-semibold text-gray-800 line-clamp-2">{{ product.name }}</h3>
+                        <span class="text-sm text-gray-500 block mb-1 font-inter">{{ product.brand }}</span>
+                        <h3 class="text-xl md:text-2xl font-semibold text-gray-800 line-clamp-2 font-montserrat">{{ product.name }}</h3>
                       </div>
                       <div class="flex flex-col items-end">
-                        <span class="text-2xl md:text-3xl font-bold text-green-700">
+                        <span class="text-2xl md:text-3xl font-bold text-green-700 font-inter">
                           {{ formatPrice(product.price?.current) }} ₺
                         </span>
-                        <span class="text-sm text-gray-500">
+                        <span class="text-xs text-gray-500 font-inter italic">
+                          (KDV Dahil)
+                        </span>
+                        <span class="text-sm text-gray-500 font-inter">
                           / {{ product.stock?.unit }}
                         </span>
                       </div>
@@ -133,7 +85,7 @@
                     <div class="flex flex-wrap gap-2 mb-4">
                       <span 
                         v-if="product.productType"
-                        class="px-3 py-1 bg-green-50 text-green-700 rounded-lg text-sm font-medium"
+                        class="px-3 py-1 bg-green-50 text-green-700 rounded-lg text-sm font-medium font-inter"
                       >
                         {{ product.productType }}
                       </span>
@@ -150,6 +102,7 @@
                       <span class="sm:hidden">Sepet</span>
                     </button>
                     <button 
+                      @click="$router.push({ name: 'product-detail', params: { slug: product.slug }})"
                       class="flex items-center justify-center gap-2 px-4 py-2.5 border border-green-200 text-green-700 rounded-lg hover:bg-green-50 transition-colors text-sm sm:text-base"
                     >
                       <Eye class="w-4 h-4 sm:w-5 sm:h-5" />
@@ -200,8 +153,6 @@ import CategoryList from "@/components/CategoryList.vue";
 import {
   Sprout,
   Package,
-  SlidersHorizontal,
-  X,
   Eye,
   ShoppingCart,
   RefreshCw,
@@ -222,14 +173,7 @@ const productStore = useProductStore();
 const categoryStore = useCategoryStore();
 
 // Reactive state
-const showFilters = ref(false);
 const sortBy = ref("price_asc");
-const filters = ref({
-  productType: "",
-  brand: "",
-  minPrice: "",
-  maxPrice: "",
-});
 
 // Computed properties
 const displayProducts = computed(() => {
@@ -237,7 +181,7 @@ const displayProducts = computed(() => {
 });
 
 const totalProducts = computed(() => {
-  return productStore.pagination?.totalItems || 0;
+  return displayProducts.value.length;
 });
 
 const hasMore = computed(() => {
@@ -260,20 +204,6 @@ const formatPrice = (price) => {
   });
 };
 
-const getSpecifications = (product) => {
-  if (!product.specifications) return {};
-  try {
-    return JSON.parse(product.specifications);
-  } catch {
-    return {};
-  }
-};
-
-const clearFilter = (filterName) => {
-  filters.value[filterName] = "";
-  fetchProducts();
-};
-
 const loadMore = async () => {
   const nextPage = (productStore.pagination?.page || 1) + 1;
   await fetchProducts({ page: nextPage, loadMore: true });
@@ -283,7 +213,6 @@ const fetchProducts = async (params = {}) => {
   try {
     await productStore.fetchProductsByCategory(props.categorySlug, {
       ...params,
-      ...filters.value,
       sortBy: sortBy.value,
     });
   } catch (error) {

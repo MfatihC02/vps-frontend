@@ -1,66 +1,68 @@
 <template>
-  <div class="stock-operations">
-    <h2 class="text-lg font-semibold text-slate-800 mb-6">
+  <div class="stock-operations max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-lg sm:text-xl font-semibold text-slate-800 mb-4 sm:mb-6 font-montserrat">
       Stok İşlemleri
     </h2>
 
     <!-- Stok Yok - İlk Stok Oluşturma -->
-    <div v-if="!hasExistingStock" class="space-y-6">
-      <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+    <div v-if="!hasExistingStock" class="space-y-4 sm:space-y-6">
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 sm:p-4">
         <div class="flex items-start">
-          <AlertTriangle class="w-5 h-5 text-amber-500 mt-0.5 mr-3" />
+          <AlertTriangle class="w-5 h-5 text-amber-500 mt-0.5 mr-2 sm:mr-3 flex-shrink-0" />
           <div>
-            <h3 class="text-sm font-medium text-amber-800">
+            <h3 class="text-sm font-medium text-amber-800 font-montserrat">
               Stok Kaydı Bulunamadı
             </h3>
-            <p class="mt-1 text-sm text-amber-700">
+            <p class="mt-1 text-sm text-amber-700 font-inter">
               Bu ürün için henüz stok kaydı oluşturulmamış. Lütfen ilk stok kaydını oluşturun.
             </p>
           </div>
         </div>
       </div>
 
-      <form @submit.prevent="handleCreateStock" class="space-y-6">
-        <!-- Miktar -->
-        <div class="form-group">
-          <label class="block text-sm font-medium text-slate-700 mb-1">
-            Başlangıç Stok Miktarı
-          </label>
-          <div class="relative">
-            <input
-              v-model.number="initialStock.quantity"
-              type="number"
-              min="0"
-              required
-              class="w-full pl-4 pr-12 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-              placeholder="Miktar giriniz"
-            />
-            <span class="absolute right-4 top-2 text-slate-500">
-              {{ initialStock.unit }}
-            </span>
+      <form @submit.prevent="handleCreateStock" class="space-y-4 sm:space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <!-- Miktar -->
+          <div class="form-group">
+            <label class="block text-sm font-medium text-slate-700 mb-1 font-montserrat">
+              Başlangıç Stok Miktarı
+            </label>
+            <div class="relative">
+              <input
+                v-model.number="initialStock.quantity"
+                type="number"
+                min="0"
+                required
+                class="w-full pl-3 sm:pl-4 pr-12 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-inter text-sm"
+                placeholder="Miktar giriniz"
+              />
+              <span class="absolute right-3 sm:right-4 top-2 text-slate-500 font-inter text-sm">
+                {{ initialStock.unit }}
+              </span>
+            </div>
           </div>
-        </div>
 
-        <!-- Birim -->
-        <div class="form-group">
-          <label class="block text-sm font-medium text-slate-700 mb-1">
-            Stok Birimi
-          </label>
-          <select
-            v-model="initialStock.unit"
-            required
-            class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-          >
-            <option value="adet">Adet</option>
-            <option value="kg">Kilogram</option>
-            <option value="lt">Litre</option>
-            <option value="mt">Metre</option>
-          </select>
+          <!-- Birim -->
+          <div class="form-group">
+            <label class="block text-sm font-medium text-slate-700 mb-1 font-montserrat">
+              Stok Birimi
+            </label>
+            <select
+              v-model="initialStock.unit"
+              required
+              class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-inter text-sm"
+            >
+              <option value="adet">Adet</option>
+              <option value="kg">Kilogram</option>
+              <option value="lt">Litre</option>
+              <option value="mt">Metre</option>
+            </select>
+          </div>
         </div>
 
         <!-- Kritik Stok Seviyesi -->
         <div class="form-group">
-          <label class="block text-sm font-medium text-slate-700 mb-1">
+          <label class="block text-sm font-medium text-slate-700 mb-1 font-montserrat">
             Kritik Stok Seviyesi
           </label>
           <div class="relative">
@@ -69,10 +71,10 @@
               type="number"
               min="0"
               required
-              class="w-full pl-4 pr-12 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              class="w-full pl-3 sm:pl-4 pr-12 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-inter text-sm"
               placeholder="Kritik seviye giriniz"
             />
-            <span class="absolute right-4 top-2 text-slate-500">
+            <span class="absolute right-3 sm:right-4 top-2 text-slate-500 font-inter text-sm">
               {{ initialStock.unit }}
             </span>
           </div>
@@ -83,7 +85,7 @@
           <button
             type="submit"
             :disabled="loading || !isValidInitialStock"
-            class="inline-flex items-center px-6 py-2 rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-6 py-2 rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-inter text-sm"
             :class="[
               loading ? 'bg-slate-400' : 'bg-emerald-600 hover:bg-emerald-700',
               'text-white shadow-sm'
@@ -103,94 +105,94 @@
     <!-- Stok Var - Stok İşlemleri -->
     <div v-else>
       <!-- İşlem Tipi Seçimi -->
-      <div class="flex space-x-2 mb-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 sm:mb-6">
         <button
           v-for="type in operationTypes"
           :key="type.value"
           @click="selectedType = type.value"
+          class="flex items-center justify-center px-4 py-2.5 rounded-lg font-medium transition-colors duration-200 font-inter text-sm"
           :class="[
-            'flex-1 py-2 px-4 rounded-lg font-medium transition-colors duration-200',
             selectedType === type.value
               ? 'bg-emerald-600 text-white shadow-sm'
               : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
           ]"
         >
-          <div class="flex items-center justify-center space-x-2">
-            <component :is="type.icon" class="w-5 h-5" />
-            <span>{{ type.label }}</span>
-          </div>
+          <component :is="type.icon" class="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+          <span>{{ type.label }}</span>
         </button>
       </div>
 
       <!-- İşlem Formu -->
-      <form @submit.prevent="handleSubmit" class="space-y-6">
-        <!-- Miktar -->
-        <div class="form-group">
-          <label class="block text-sm font-medium text-slate-700 mb-1">
-            {{ selectedType === 'add' ? 'Eklenecek Miktar' : 'Çıkarılacak Miktar' }}
-          </label>
-          <div class="relative">
-            <input
-              v-model.number="quantity"
-              type="number"
-              min="0"
-              :max="selectedType === 'remove' ? currentStock : undefined"
-              required
-              class="w-full pl-4 pr-12 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-              :placeholder="'Miktar giriniz'"
-            />
-            <span class="absolute right-4 top-2 text-slate-500">
-              {{ stockUnit }}
-            </span>
+      <form @submit.prevent="handleSubmit" class="space-y-4 sm:space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <!-- Miktar -->
+          <div class="form-group">
+            <label class="block text-sm font-medium text-slate-700 mb-1 font-montserrat">
+              {{ selectedType === 'add' ? 'Eklenecek Miktar' : 'Çıkarılacak Miktar' }}
+            </label>
+            <div class="relative">
+              <input
+                v-model.number="quantity"
+                type="number"
+                min="0"
+                :max="selectedType === 'remove' ? currentStock : undefined"
+                required
+                class="w-full pl-3 sm:pl-4 pr-12 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-inter text-sm"
+                :placeholder="'Miktar giriniz'"
+              />
+              <span class="absolute right-3 sm:right-4 top-2 text-slate-500 font-inter text-sm">
+                {{ stockUnit }}
+              </span>
+            </div>
+            <!-- Miktar Validasyon Mesajı -->
+            <p v-if="quantityError" class="mt-1 text-sm text-red-500 font-inter">
+              {{ quantityError }}
+            </p>
           </div>
-          <!-- Miktar Validasyon Mesajı -->
-          <p v-if="quantityError" class="mt-1 text-sm text-red-500">
-            {{ quantityError }}
-          </p>
-        </div>
 
-        <!-- İşlem Nedeni -->
-        <div class="form-group">
-          <label class="block text-sm font-medium text-slate-700 mb-1">
-            İşlem Nedeni
-          </label>
-          <select
-            v-model="reason"
-            required
-            class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-          >
-            <option value="">Neden Seçiniz</option>
-            <template v-if="selectedType === 'add'">
-              <option value="purchase">Satın Alma</option>
-              <option value="return">İade</option>
-              <option value="correction">Stok Düzeltme</option>
-            </template>
-            <template v-else>
-              <option value="sale">Satış</option>
-              <option value="damage">Hasar/Kayıp</option>
-              <option value="expired">Son Kullanma Tarihi</option>
-              <option value="correction">Stok Düzeltme</option>
-            </template>
-          </select>
+          <!-- İşlem Nedeni -->
+          <div class="form-group">
+            <label class="block text-sm font-medium text-slate-700 mb-1 font-montserrat">
+              İşlem Nedeni
+            </label>
+            <select
+              v-model="reason"
+              required
+              class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-inter text-sm"
+            >
+              <option value="">Neden Seçiniz</option>
+              <template v-if="selectedType === 'add'">
+                <option value="purchase">Satın Alma</option>
+                <option value="return">İade</option>
+                <option value="correction">Stok Düzeltme</option>
+              </template>
+              <template v-else>
+                <option value="sale">Satış</option>
+                <option value="damage">Hasar/Kayıp</option>
+                <option value="expired">Son Kullanma Tarihi</option>
+                <option value="correction">Stok Düzeltme</option>
+              </template>
+            </select>
+          </div>
         </div>
 
         <!-- Not -->
         <div class="form-group">
-          <label class="block text-sm font-medium text-slate-700 mb-1">
+          <label class="block text-sm font-medium text-slate-700 mb-1 font-montserrat">
             Not (Opsiyonel)
           </label>
           <textarea
             v-model="note"
             rows="3"
-            class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-inter text-sm resize-none"
             placeholder="İşlem hakkında not ekleyin..."
           ></textarea>
         </div>
 
         <!-- İşlem Özeti -->
-        <div class="bg-slate-50 rounded-lg p-4 border border-slate-200">
-          <h3 class="text-sm font-medium text-slate-700 mb-2">İşlem Özeti</h3>
-          <div class="space-y-1 text-sm">
+        <div class="bg-slate-50 rounded-lg p-3 sm:p-4 border border-slate-200">
+          <h3 class="text-sm font-medium text-slate-700 mb-2 font-montserrat">İşlem Özeti</h3>
+          <div class="space-y-1 text-sm font-inter">
             <p class="text-slate-600">
               Mevcut Stok: {{ currentStock }} {{ stockUnit }}
             </p>
@@ -210,7 +212,7 @@
           <button
             type="submit"
             :disabled="loading || !isValid"
-            class="inline-flex items-center px-6 py-2 rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-6 py-2 rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-inter text-sm"
             :class="[
               loading ? 'bg-slate-400' : 'bg-emerald-600 hover:bg-emerald-700',
               'text-white shadow-sm'
@@ -324,8 +326,15 @@ const calculateFinalStock = computed(() => {
 const checkExistingStock = async () => {
   try {
     const stockData = await stockStore.fetchStockByProduct(props.productId);
-    hasExistingStock.value = !!stockData;
+    
+    // stockData null ise veya error içeriyorsa stok yok demektir
+    hasExistingStock.value = Boolean(stockData && !stockData.error);
+    
+    if (!hasExistingStock.value) {
+      console.log('Stok kaydı bulunamadı. İlk stok oluşturma formu gösteriliyor.');
+    }
   } catch (error) {
+    console.error('Stok kontrol hatası:', error);
     hasExistingStock.value = false;
   }
 };
@@ -383,7 +392,7 @@ const handleSubmit = async () => {
 };
 
 // Lifecycle Hooks
-onMounted(() => {
-  checkExistingStock();
+onMounted(async () => {
+  await checkExistingStock();
 });
 </script>

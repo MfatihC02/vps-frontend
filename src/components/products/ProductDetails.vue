@@ -6,8 +6,8 @@
         {{ product.name }}
       </h1>
 
-      <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-6">
-        <div class="flex items-center">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0 sm:space-x-6">
+        <div class="flex items-center space-x-4 sm:space-x-6">
           <div class="flex space-x-1">
             <Star
               v-for="n in 5"
@@ -56,6 +56,22 @@
 
     <!-- Adet Seçimi ve Sepete Ekleme -->
     <div class="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 space-y-4">
+      <!-- Giriş yapmamış kullanıcılar için bilgilendirme -->
+      <div v-if="!isAuthenticated" class="bg-blue-50 border border-blue-100 rounded-lg p-4">
+        <div class="flex items-center space-x-3">
+          <Info class="w-5 h-5 text-blue-500" />
+          <p class="text-sm text-blue-700">
+            Ürünü sepete eklemek için 
+            <router-link 
+              :to="{ name: 'login', query: { redirect: $route.fullPath }}" 
+              class="font-medium underline hover:text-blue-800"
+            >
+              giriş yapmalısınız
+            </router-link>
+          </p>
+        </div>
+      </div>
+
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
         <div class="flex items-center space-x-4 sm:space-x-6">
           <span class="text-sm sm:text-base text-gray-700 font-medium">Adet</span>
@@ -91,9 +107,14 @@
 
       <div class="space-y-3 sm:space-y-4">
         <button
-          @click="addToCart"
-          :disabled="!isAvailableForPurchase || loading"
-          class="w-full py-3 sm:py-3.5 bg-gradient-to-r from-[#2F5E32] to-[#4A8E4D] text-white rounded-lg sm:rounded-xl hover:from-[#2F5E32]/90 hover:to-[#4A8E4D]/90 transition-all duration-300 font-semibold text-sm sm:text-base flex items-center justify-center space-x-2 sm:space-x-3 disabled:opacity-50 disabled:cursor-not-allowed shadow-md transform hover:scale-[1.02] active:scale-[0.98]"
+          @click="handleAddToCart"
+          :disabled="!isAvailableForPurchase || loading || !isAuthenticated"
+          :class="[
+            'w-full py-3 sm:py-3.5 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base flex items-center justify-center space-x-2 sm:space-x-3 shadow-md transform transition-all duration-300',
+            isAuthenticated 
+              ? 'bg-gradient-to-r from-[#2F5E32] to-[#4A8E4D] text-white hover:from-[#2F5E32]/90 hover:to-[#4A8E4D]/90 hover:scale-[1.02] active:scale-[0.98]' 
+              : 'bg-gray-100 text-gray-500 cursor-not-allowed'
+          ]"
         >
           <template v-if="loading">
             <Loader2 class="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
@@ -106,7 +127,7 @@
         </button>
 
         <a
-          :href="'https://wa.me/905551234567?text=' + encodeURIComponent(`${product.name} ürünü hakkında bilgi almak istiyorum.`)"
+          :href="'https://wa.me/905516419012?text=' + encodeURIComponent(`${product.name} ürünü hakkında bilgi almak istiyorum.`)"
           target="_blank"
           rel="noopener noreferrer"
           class="w-full py-3 sm:py-3.5 bg-[#25D366] hover:bg-[#22BF5B] text-white rounded-lg sm:rounded-xl transition-all duration-300 shadow-md transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center space-x-2 sm:space-x-3"
@@ -133,11 +154,14 @@ import {
   Phone,
   Building2,
   Loader2,
+  Info
 } from "lucide-vue-next";
 import { useProductStore } from "@/stores/productStore";
 import { useCartStore } from "@/stores/cartStore";
 import { useStockStore } from "@/stores/stockStore";
 import { useReviewStore } from "@/stores/reviewStore";
+import { useAuthStore } from "@/stores/authStore";
+import { useRouter } from 'vue-router';
 import { computed, ref, onMounted, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useToast } from 'vue-toastification'
@@ -156,6 +180,7 @@ export default {
     Phone,
     Building2,
     Loader2,
+    Info
   },
 
   props: {
@@ -174,6 +199,8 @@ export default {
     const cartStore = useCartStore();
     const stockStore = useStockStore();
     const reviewStore = useReviewStore();
+    const authStore = useAuthStore();
+    const router = useRouter();
     const toast = useToast();
     const quantity = ref(1);
 
@@ -209,6 +236,7 @@ export default {
     });
 
     const getButtonText = computed(() => {
+      if (!isAuthenticated.value) return "Giriş Yaparak Sepete Ekle";
       if (!isAvailableForPurchase.value) return "Stokta Yok";
       return "Sepete Ekle";
     });
@@ -243,6 +271,19 @@ export default {
     });
 
     const reviewCount = computed(() => productReviews.value?.length || 0);
+
+    const isAuthenticated = computed(() => authStore.isAuthenticated);
+
+    const handleAddToCart = async () => {
+      if (!isAuthenticated.value) {
+        router.push({
+          name: 'login',
+          query: { redirect: router.currentRoute.value.fullPath }
+        });
+        return;
+      }
+      await addToCart();
+    };
 
     const addToCart = async () => {
       if (!product.value?.slug) return;
@@ -326,8 +367,11 @@ export default {
       formatRemainingTime,
       addToCart,
       handleQuantityChange,
+      handleAddToCart,
       averageRating,
       reviewCount,
+      isAuthenticated,
+      router,
     };
   },
 };

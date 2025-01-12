@@ -442,12 +442,12 @@ const validateLuhn = (number) => {
 }
 
 const handleSubmit = async () => {
-  loading.value = true
   try {
-    const result = await v$.value.$validate()
-    if (!result) {
-      throw new Error('Form validasyonu başarısız')
-    }
+    loading.value = true
+
+    // Form validation
+    const isValid = await v$.value.$validate()
+    if (!isValid) return
 
     // Clean card number
     const cleanCardNumber = formData.cardNumber.replace(/\s/g, '')
@@ -469,22 +469,11 @@ const handleSubmit = async () => {
       billingInfo: billingInfo.value
     }
 
-    // Emit the event
+    // Sadece veriyi parent'a gönder
     emit('submit', paymentData)
 
-    // Initiate payment with store
-    const response = await paymentStore.initiatePayment(paymentData)
-
-    // 3D Secure kontrolü
-    if (paymentStore.threeDSecureData.isProcessing) {
-      console.log('3D Secure yönlendirmesi başlatılıyor')
-    } else {
-      // Normal ödeme başarılı
-      emit('success', response)
-    }
-
   } catch (error) {
-    console.error('Ödeme başlatılırken hata:', error)
+    console.error('Form gönderilirken hata:', error)
     emit('error', error)
   } finally {
     loading.value = false

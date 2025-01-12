@@ -17,27 +17,47 @@
 
     <!-- View Mode -->
     <div v-if="!isEditMode" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div v-for="(value, key) in updatedProfile" :key="key" class="space-y-1">
-        <label class="text-sm font-medium text-gray-500 capitalize">
-          {{ key }}
-        </label>
-        <p class="text-gray-900">{{ value || '-' }}</p>
+      <div class="space-y-1">
+        <label class="text-sm font-medium text-gray-500">Kullanıcı Adı</label>
+        <p class="text-gray-900">{{ updatedProfile.username || '-' }}</p>
+      </div>
+      <div class="space-y-1">
+        <label class="text-sm font-medium text-gray-500">E-posta</label>
+        <p class="text-gray-900">{{ updatedProfile.email || '-' }}</p>
+      </div>
+      <div class="space-y-1">
+        <label class="text-sm font-medium text-gray-500">Kayıt Tarihi</label>
+        <p class="text-gray-900">{{ formatDate(updatedProfile.createdAt) || '-' }}</p>
+      </div>
+      <div class="space-y-1">
+        <label class="text-sm font-medium text-gray-500">Son Giriş</label>
+        <p class="text-gray-900">{{ formatDate(updatedProfile.lastLogin) || '-' }}</p>
       </div>
     </div>
 
     <!-- Edit Mode -->
     <form v-else @submit.prevent="handleUpdateProfile" class="space-y-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div v-for="(value, key) in updatedProfile" :key="key">
-          <label :for="key" class="block text-sm font-medium text-gray-700 capitalize mb-1">
-            {{ key }}
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Kullanıcı Adı
           </label>
           <input
-            :id="key"
-            v-model="updatedProfile[key]"
+            v-model="updatedProfile.username"
             type="text"
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600"
-            :placeholder="`${key} giriniz`"
+            placeholder="Kullanıcı adı giriniz"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            E-posta
+          </label>
+          <input
+            v-model="updatedProfile.email"
+            type="email"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600"
+            placeholder="E-posta giriniz"
           />
         </div>
       </div>
@@ -70,10 +90,21 @@ const emit = defineEmits(['success', 'error']);
 const updatedProfile = ref({
   username: '',
   email: '',
-  firstName: '',
-  lastName: '',
-  phone: ''
+  createdAt: '',
+  lastLogin: ''
 });
+
+const formatDate = (dateString) => {
+  if (!dateString) return '-';
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('tr-TR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date);
+};
 
 onMounted(async () => {
   try {
@@ -82,9 +113,8 @@ onMounted(async () => {
     updatedProfile.value = {
       username: user.username || '',
       email: user.email || '',
-      firstName: user.firstName || '',
-      lastName: user.lastName || '',
-      phone: user.phone || ''
+      createdAt: user.createdAt || '',
+      lastLogin: user.lastLogin || ''
     };
   } catch (error) {
     emit('error', error.message);

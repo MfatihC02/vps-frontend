@@ -45,16 +45,15 @@ export const useCartStore = defineStore('cart', {
         },
         // Ürün rezervasyon ID'sini güvenli bir şekilde getir
         getReservationId: (state) => (productId) => {
-            const reservation = state.activeReservations[productId];
+            const reservationInfo = state.reservationStatus[productId];
             console.log('Rezervasyon kontrolü:', {
                 productId,
-                reservation,
-                hasId: reservation?._id ? true : false
+                reservationInfo,
+                hasId: reservationInfo?.reservationId ? true : false
             });
-            if (reservation && 
-                reservation.status === 'CHECKOUT' && 
-                new Date(reservation.expiresAt) > new Date()) {
-                return reservation._id;
+            
+            if (reservationInfo?.isValid && reservationInfo?.reservationId) {
+                return reservationInfo.reservationId;
             }
             return null;
         }
@@ -129,13 +128,14 @@ export const useCartStore = defineStore('cart', {
 
         // Rezervasyonları yenile
         async refreshReservations() {
-            if (!this.hasItems) return;
+            if (!this.hasItems) return false;
 
             try {
                 const response = await api.post('/cart/reservations/refresh');
+                console.log('Rezervasyon yanıtı:', response.data);
 
-                if (response.data.success) {
-                    const results = response.data.data;
+                if (response.data.success && response.data.data.items) {
+                    const results = response.data.data.items;
                     
                     results.forEach(result => {
                         this.reservationStatus[result.productId] = {
@@ -143,17 +143,23 @@ export const useCartStore = defineStore('cart', {
                             message: result.message || '',
                             reservationId: result.reservationId
                         };
+                        console.log(`Rezervasyon güncellendi - Ürün: ${result.productId}, ID: ${result.reservationId}`);
                     });
 
-                    // Başarısız rezervasyonlar için uyarı göster
+                    // Başarısız rezervasyonları kontrol et
                     const failedReservations = results.filter(r => !r.success);
                     if (failedReservations.length > 0) {
                         toast.warning('Bazı ürünlerin rezervasyonları güncellenemedi');
+                        return false;
                     }
+
+                    return true; // Tüm rezervasyonlar başarılı
                 }
+                return false;
             } catch (error) {
                 console.error('Rezervasyon yenileme hatası:', error);
                 toast.error('Rezervasyonlar yenilenirken bir hata oluştu');
+                return false;
             }
         },
 
@@ -544,39 +550,6 @@ export const useCartStore = defineStore('cart', {
             }
         },
 
-        // Rezervasyonları yenile
-        async refreshReservations() {
-            try {
-                const checkPromises = this.items.map(item => 
-                    api.get(`/stocks/reservations/${item.product._id}/availability?quantity=${item.quantity}`)
-                );
-                
-                const responses = await Promise.all(checkPromises);
-                
-                responses.forEach((response, index) => {
-                    const item = this.items[index];
-                    const productId = item.product._id;
-                    
-                    if (response.data.success) {
-                        const { isAvailable, availableQuantity } = response.data.data;  
-                        
-                        this.reservationStatus[productId] = {
-                            isValid: isAvailable,
-                            message: isAvailable 
-                                ? 'Ürün rezerve edildi' 
-                                : `Stokta ${availableQuantity} adet var`
-                        };
-                    }
-                });
-        
-                return true;
-            } catch (error) {
-                console.error('Rezervasyon yenileme hatası:', error);
-                this.error = 'Rezervasyonlar güncellenirken bir hata oluştu';
-                toast.error(this.error);
-                return false;
-            }
-        },
         // Rezervasyonu iptal et
         async cancelReservation(productId) {
             const reservation = this.reservationStatus[productId];

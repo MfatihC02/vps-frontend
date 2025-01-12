@@ -51,32 +51,10 @@
         @click="$emit('manage-product', product)"
       />
     </div>
-
-    <!-- Pagination -->
-    <div
-      v-if="productStore.pagination.totalPages > 1"
-      class="mt-6 flex justify-center"
-    >
-      <div class="flex space-x-2">
-        <button
-          v-for="page in productStore.pagination.totalPages"
-          :key="page"
-          @click="handlePageChange(page)"
-          :class="[
-            'px-4 py-2 rounded-lg',
-            page === productStore.pagination.page
-              ? 'bg-green-600 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
-          ]"
-        >
-          {{ page }}
-        </button>
-      </div>
-    </div>
   </div>
 </template>
-  
-  <script setup>
+
+<script setup>
 import { ref, computed, watch } from "vue";
 import { useProductStore } from "@/stores/productStore";
 import { PlusCircle } from "lucide-vue-next";
@@ -111,8 +89,4 @@ const handleFilterChange = debounce(async () => {
   productStore.setFilters(filters.value);
   await productStore.fetchProducts({ page: 1 });
 }, 300);
-
-const handlePageChange = async (page) => {
-  await productStore.fetchProducts({ page });
-};
 </script>

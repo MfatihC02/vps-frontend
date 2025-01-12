@@ -7,7 +7,8 @@
       :class="[
         'fixed left-0 top-0 z-40 h-screen transition-all duration-300 ease-in-out',
         isSidebarExpanded ? 'w-64' : 'w-20',
-        'bg-white border-r border-gray-200 overflow-hidden'
+        'bg-white border-r border-gray-200',
+        { 'opacity-0 pointer-events-none': isFooterVisible }
       ]"
     >
       <div class="flex h-16 items-center px-4 border-b">
@@ -177,71 +178,114 @@
           </div>
           <div class="p-4">
             <div class="overflow-x-auto">
-              <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                  <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sipariş No</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Müşteri</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ürünler</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tutar</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
-                  </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                  <template v-if="isOrdersLoading">
-                    <tr v-for="i in 3" :key="i">
-                      <td colspan="6" class="px-6 py-4 whitespace-nowrap">
-                        <div class="animate-pulse flex space-x-4">
-                          <div class="h-4 bg-gray-200 rounded w-3/4"></div>
-                        </div>
-                      </td>
+              <div class="hidden lg:block">
+                <!-- Masaüstü Görünümü -->
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sipariş No</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Müşteri</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ürünler</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tutar</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
                     </tr>
-                  </template>
-                  <template v-else>
-                    <tr v-for="order in recentOrders" :key="order.id">
-                      <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">#{{ order.id }}</div>
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{{ order.customer }}</div>
-                      </td>
-                      <td class="px-6 py-4">
-                        <div class="text-sm text-gray-900">
-                          <div v-for="item in order.items" :key="item.name" class="mb-1">
-                            {{ item.name }} ({{ item.quantity }})
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    <template v-if="isOrdersLoading">
+                      <tr v-for="i in 3" :key="i">
+                        <td colspan="6" class="px-6 py-4 whitespace-nowrap">
+                          <div class="animate-pulse flex space-x-4">
+                            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
                           </div>
-                        </div>
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{{ order.date }}</div>
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{{ order.amount }}</div>
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                        </td>
+                      </tr>
+                    </template>
+                    <template v-else>
+                      <tr v-for="order in recentOrders" :key="order.id">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <div class="text-sm text-gray-900">#{{ order.id }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <div class="text-sm text-gray-900">{{ order.customer }}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                          <div class="text-sm text-gray-900">
+                            <div v-for="item in order.items" :key="item.name" class="mb-1">
+                              {{ item.name }} ({{ item.quantity }})
+                            </div>
+                          </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <div class="text-sm text-gray-900">{{ order.date }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <div class="text-sm text-gray-900">{{ order.amount }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                            :class="{
+                              'bg-green-100 text-green-800': order.status === 'COMPLETED',
+                              'bg-yellow-100 text-yellow-800': ['PROCESSING', 'PENDING'].includes(order.status),
+                              'bg-red-100 text-red-800': order.status === 'CANCELLED'
+                            }">
+                            {{ order.status }}
+                          </span>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- Mobil Görünümü -->
+              <div class="block lg:hidden space-y-4">
+                <div v-for="order in recentOrders" 
+                     :key="order.id" 
+                     class="border rounded-lg p-4">
+                  <div class="flex justify-between mb-3">
+                    <span class="font-medium">#{{ order.id }}</span>
+                    <span class="px-2 py-1 text-xs rounded-full"
                           :class="{
                             'bg-green-100 text-green-800': order.status === 'COMPLETED',
                             'bg-yellow-100 text-yellow-800': ['PROCESSING', 'PENDING'].includes(order.status),
                             'bg-red-100 text-red-800': order.status === 'CANCELLED'
                           }">
-                          {{ order.status }}
-                        </span>
-                      </td>
-                    </tr>
-                  </template>
-                </tbody>
-              </table>
+                      {{ mapOrderStatus(order.status) }}
+                    </span>
+                  </div>
+                  <div class="space-y-2 text-sm">
+                    <p><span class="font-medium">Müşteri:</span> {{ order.customer }}</p>
+                    <p><span class="font-medium">Tarih:</span> {{ order.date }}</p>
+                    <p><span class="font-medium">Tutar:</span> {{ order.amount }}</p>
+                    <div>
+                      <span class="font-medium">Ürünler:</span>
+                      <div class="ml-2 mt-1">
+                        <div v-for="item in order.items" :key="item.name">
+                          {{ item.name }} ({{ item.quantity }})
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Footer -->
+    <footer ref="footerRef" class="bg-white border-t border-gray-200 p-4 mt-8">
+      <div class="text-center text-gray-600">
+        2024 Admin Panel. Tüm hakları saklıdır.
+      </div>
+    </footer>
   </div>
 </template>
+
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, onUnmounted } from "vue";
 import { useOrderStore } from '@/stores/orderStore';
 import { useProductStore } from '@/stores/productStore';
 import { useStockStore } from '@/stores/stockStore';
@@ -275,6 +319,10 @@ const stats = ref([]);
 const recentOrders = ref([]);
 const isOrdersLoading = ref(false);
 const isSidebarExpanded = ref(false);
+const showSidebar = ref(true);
+const footerHeight = ref(0);
+const footerRef = ref(null);
+const isFooterVisible = ref(false);
 
 // Kritik stok seviyesindeki ürünleri al
 const lowStockProducts = computed(() => stockStore.getLowStockProducts);
@@ -462,10 +510,39 @@ const mapOrderStatus = (status) => {
   return statusMap[status] || status;
 };
 
+// Footer görünürlüğünü kontrol eden IntersectionObserver
+const setupFooterObserver = () => {
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      isFooterVisible.value = entry.isIntersecting;
+    },
+    {
+      threshold: 0.1 // Footer'ın %10'u görünür olduğunda tetiklenecek
+    }
+  );
+
+  if (footerRef.value) {
+    observer.observe(footerRef.value);
+  }
+
+  return () => {
+    if (footerRef.value) {
+      observer.unobserve(footerRef.value);
+    }
+  };
+};
+
 // Sayfa yüklendiğinde verileri getir
 onMounted(() => {
   loadDashboardStats();
   loadRecentOrders();
+  
+  const cleanup = setupFooterObserver();
+  onUnmounted(cleanup);
+});
+
+// Component unmount olduğunda event listener'ı kaldır
+onUnmounted(() => {
 });
 
 // Menü öğeleri

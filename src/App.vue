@@ -11,11 +11,12 @@
 import Header from "@/components/Header.vue";
 import testSocketVue from "./components/testSocket.vue";
 import Footer from "@/components/Footer.vue";
+
 export default {
   components: {
     Header,
     testSocketVue,
-    Footer
+    Footer,
   },
 };
 </script>

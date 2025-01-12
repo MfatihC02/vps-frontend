@@ -71,8 +71,8 @@
         </div>
 
         <!-- Sağ İçerik Alanı -->
-        <div class="flex-1 min-w-0">
-          <ProductTabs />
+        <div class="flex-1 min-w-0 -mx-4 md:mx-0">
+          <TabNavigation />
         </div>
       </div>
     </main>
@@ -83,8 +83,8 @@
 import { ref } from 'vue';
 import InfoBar from "@/components/InfoBar.vue";
 import CategoryList from "@/components/CategoryList.vue";
-import ProductTabs from "@/components/ProductTabs.vue";
 import { Icon } from '@iconify/vue'
+import TabNavigation from '@/components/products/TabNavigation.vue';
 
 const isSidebarOpen = ref(false);
 </script>

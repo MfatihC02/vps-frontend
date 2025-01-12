@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useAuthStore } from '@/stores/authStore';
 
-const BASE_URL = 'https://muhendislerticaret-backend.onrender.com/api';
+const BASE_URL = 'http://localhost:3000/api';
 
 const api = axios.create({
     baseURL: BASE_URL,

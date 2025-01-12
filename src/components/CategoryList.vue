@@ -2,97 +2,103 @@
 <template>
   <div class="w-full">
     <!-- Kategori Listesi -->
-    <div class="divide-y divide-gray-100">
+    <div class="divide-y divide-gray-100/70">
       <div v-for="category in processedCategories"
            :key="category._id"
            class="relative group">
         <!-- Ana Kategori Butonu -->
         <button @click="handleCategoryClick(category)"
-                class="w-full flex items-center justify-between px-4 py-3 transition-all duration-200 hover:bg-gray-50"
+                class="w-full flex items-center justify-between px-4 py-3 transition-all duration-200 hover:bg-gray-50/90"
                 :class="{
-                  'bg-emerald-50': openCategories.includes(category._id),
-                  'text-emerald-600 font-medium': isActiveCategory(category.slug),
+                  'bg-emerald-50/90 hover:bg-emerald-50': openCategories.includes(category._id),
+                  'text-emerald-600 font-medium border-l-2 border-emerald-500': isActiveCategory(category.slug),
                 }">
-          <div class="flex items-center gap-2.5">
-            <Icon :icon="getCategoryIcon(category.name)"
-                  class="w-5 h-5 text-gray-400 group-hover:text-emerald-500 transition-colors"
-                  :class="{ 'text-emerald-500': isActiveCategory(category.slug) }" />
-            <span class="text-sm text-gray-700 group-hover:text-gray-900 transition-colors truncate max-w-[150px]">
-              {{ category.name }}
-            </span>
-          </div>
-          <div class="flex items-center"
-               :class="{ 'gap-2': category.children?.length }">
-            <span class="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500 group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors"
-                  :class="{ 'mr-2': !category.children?.length }">
-              {{ category.totalProductCount }}
+          <span class="text-sm text-gray-700 group-hover:text-gray-900 transition-colors truncate max-w-[200px]">
+            {{ category.name }}
+          </span>
+          <div class="flex items-center gap-3 flex-shrink-0">
+            <span v-if="category.children?.length" 
+                  class="text-xs px-1.5 py-0.5 rounded-full bg-gray-100/80 text-gray-500 
+                      group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-all duration-200 
+                      shadow-sm shadow-gray-100/50">
+              {{ category.totalSubCategories }}
             </span>
             <Icon v-if="category.children?.length"
-                  :icon="openCategories.includes(category._id) ? 'heroicons:chevron-up' : 'heroicons:chevron-right'"
-                  class="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-all duration-200"
-                  :class="{ 'rotate-90': openCategories.includes(category._id) }" />
+                  :icon="openCategories.includes(category._id) ? 'heroicons:chevron-up' : 'heroicons:chevron-down'"
+                  class="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-all duration-300"
+                  :class="{ 'rotate-180': openCategories.includes(category._id) }" />
           </div>
         </button>
 
         <!-- Alt Kategoriler -->
         <Transition
-          enter="transition-all duration-200 ease-out"
+          enter="transition-all duration-300 ease-out"
           enter-from="transform -translate-y-1 opacity-0"
           enter-to="transform translate-y-0 opacity-100"
-          leave="transition-all duration-150 ease-in"
+          leave="transition-all duration-200 ease-in"
           leave-from="transform translate-y-0 opacity-100"
           leave-to="transform -translate-y-1 opacity-0"
         >
           <div v-if="openCategories.includes(category._id) && category.children"
-               class="bg-gray-50">
+               class="bg-gray-50/70">
             <div v-for="subCategory in category.children"
                  :key="subCategory._id"
-                 class="relative group">
+                 class="relative group/sub">
               <!-- Alt Kategori Butonu -->
               <button @click="handleCategoryClick(subCategory)"
-                      class="w-full flex items-center justify-between px-4 py-2.5 pl-10 transition-all duration-200 hover:bg-gray-100"
+                      class="w-full flex items-center justify-between px-4 py-2.5 pl-10 transition-all duration-200 
+                             hover:bg-gray-100/90"
                       :class="{
-                        'bg-emerald-50': openSubCategories.includes(subCategory._id),
-                        'text-emerald-600 font-medium': isActiveCategory(subCategory.slug),
+                        'bg-emerald-50/80 hover:bg-emerald-50': openSubCategories.includes(subCategory._id),
+                        'text-emerald-600 font-medium border-l-2 border-emerald-500': isActiveCategory(subCategory.slug),
                       }">
-                <span class="text-sm text-gray-600 group-hover:text-gray-900 transition-colors truncate max-w-[150px]">
+                <span class="text-sm text-gray-600 group-hover/sub:text-gray-900 transition-colors truncate max-w-[180px]">
                   {{ subCategory.name }}
                 </span>
-                <div class="flex items-center gap-2 flex-shrink-0">
-                  <span class="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500 group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors">
-                    {{ subCategory.totalProductCount }}
+                <div class="flex items-center gap-3 flex-shrink-0">
+                  <span v-if="subCategory.children?.length"
+                        class="text-xs px-1.5 py-0.5 rounded-full bg-gray-100/80 text-gray-500 
+                              group-hover/sub:bg-emerald-100 group-hover/sub:text-emerald-600 
+                              transition-all duration-200 shadow-sm shadow-gray-100/50">
+                    {{ subCategory.children.length }}
                   </span>
                   <Icon v-if="subCategory.children?.length"
-                        :icon="openSubCategories.includes(subCategory._id) ? 'heroicons:chevron-up' : 'heroicons:chevron-right'"
-                        class="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-all duration-200"
-                        :class="{ 'rotate-90': openSubCategories.includes(subCategory._id) }" />
+                        :icon="openSubCategories.includes(subCategory._id) ? 'heroicons:chevron-up' : 'heroicons:chevron-down'"
+                        class="w-4 h-4 text-gray-400 group-hover/sub:text-gray-600 transition-all duration-300"
+                        :class="{ 'rotate-180': openSubCategories.includes(subCategory._id) }" />
                 </div>
               </button>
 
               <!-- 3. Seviye Kategoriler -->
               <Transition
-                enter="transition-all duration-200 ease-out"
+                enter="transition-all duration-300 ease-out"
                 enter-from="transform -translate-y-1 opacity-0"
                 enter-to="transform translate-y-0 opacity-100"
-                leave="transition-all duration-150 ease-in"
+                leave="transition-all duration-200 ease-in"
                 leave-from="transform translate-y-0 opacity-100"
                 leave-to="transform -translate-y-1 opacity-0"
               >
                 <div v-if="openSubCategories.includes(subCategory._id) && subCategory.children"
-                     class="bg-gray-100">
+                     class="bg-gray-100/70">
                   <button v-for="childCategory in subCategory.children"
                           :key="childCategory._id"
                           @click="handleCategoryClick(childCategory)"
-                          class="w-full flex items-center justify-between px-4 py-2.5 pl-12 transition-all duration-200 hover:bg-gray-200 group"
+                          class="w-full flex items-center justify-between px-4 py-2.5 pl-12 
+                                 transition-all duration-200 hover:bg-gray-200/90 group/child"
                           :class="{
-                            'text-emerald-600 font-medium': isActiveCategory(childCategory.slug),
+                            'text-emerald-600 font-medium border-l-2 border-emerald-500': isActiveCategory(childCategory.slug),
                           }">
-                    <span class="text-sm text-gray-600 group-hover:text-gray-900 transition-colors truncate max-w-[150px]">
+                    <span class="text-sm text-gray-600 group-hover/child:text-gray-900 transition-colors truncate max-w-[160px]">
                       {{ childCategory.name }}
                     </span>
-                    <span class="text-xs px-1.5 py-0.5 rounded-full bg-gray-200 text-gray-500 group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors flex-shrink-0">
-                      {{ childCategory.totalProductCount }}
-                    </span>
+                    <div class="flex items-center gap-3 flex-shrink-0">
+                      <span v-if="childCategory.children?.length"
+                            class="text-xs px-1.5 py-0.5 rounded-full bg-gray-200/80 text-gray-500 
+                                   group-hover/child:bg-emerald-100 group-hover/child:text-emerald-600 
+                                   transition-all duration-200 shadow-sm shadow-gray-100/50">
+                        {{ childCategory.children.length }}
+                      </span>
+                    </div>
                   </button>
                 </div>
               </Transition>
@@ -117,34 +123,17 @@ const categoryStore = useCategoryStore();
 const openCategories = ref([]);
 const openSubCategories = ref([]);
 
-// Kategorileri işleyip hierarchical yapıya dönüştüren computed property
+// Kategorileri işleyip alt kategori sayılarını hesaplayan computed property
 const processedCategories = computed(() => {
   return categoryStore.categoryTree.map(category => ({
     ...category,
-    totalProductCount: calculateTotalProducts(category)
+    totalSubCategories: calculateSubCategories(category)
   }));
 });
 
-// Toplam ürün sayısını hesaplayan yardımcı fonksiyon
-const calculateTotalProducts = (category) => {
-  let total = category.productCount || 0
-  if (category.children) {
-    category.children.forEach(child => {
-      total += calculateTotalProducts(child)
-    })
-  }
-  return total
-}
-
-// Kategori ikonlarını belirleyen yardımcı fonksiyon
-const getCategoryIcon = (categoryName) => {
-  const iconMap = {
-    Gübreler: "game-icons:fertilizer-bag",
-    "Tarım Aletleri": "material-symbols:agriculture",
-    Tohumlar: "game-icons:seed",
-    Fide: "mdi:sprout",
-  };
-  return iconMap[categoryName] || "heroicons:folder";
+// Alt kategori sayısını hesaplayan yardımcı fonksiyon
+const calculateSubCategories = (category) => {
+  return category.children ? category.children.length : 0;
 };
 
 // Parent kategoriyi bulan yardımcı fonksiyon
@@ -316,19 +305,27 @@ watch(
   },
   { immediate: true }
 );
+
+// Sayı formatlama yardımcı fonksiyonu
+const formatCount = (count) => {
+  if (count >= 1000) {
+    return `${(count / 1000).toFixed(1)}K`;
+  }
+  return count;
+};
 </script>
 
 <style scoped>
 .list-move,
 .list-enter-active,
 .list-leave-active {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
-  transform: translateX(-30px);
+  transform: translateX(-20px);
 }
 
 .list-leave-active {

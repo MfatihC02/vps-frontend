@@ -2,25 +2,25 @@
   <div class="min-h-screen bg-gray-50/30">
     <!-- Header -->
     <header class="bg-white shadow-sm border-b border-gray-200/80">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex items-center justify-between">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
           <div>
-            <h1 class="text-2xl font-semibold text-gray-900">Kullanıcı Yönetimi</h1>
-            <p class="mt-1 text-sm text-gray-500">Sistemdeki kullanıcıları yönetin ve rolleri düzenleyin</p>
+            <h1 class="text-xl sm:text-2xl font-semibold text-gray-900 font-montserrat">Kullanıcı Yönetimi</h1>
+            <p class="mt-1 text-sm text-gray-500 font-inter">Sistemdeki kullanıcıları yönetin ve rolleri düzenleyin</p>
           </div>
-          <div class="flex items-center space-x-4">
-            <div class="relative">
+          <div class="flex flex-col xs:flex-row items-start xs:items-center space-y-3 xs:space-y-0 xs:space-x-4">
+            <div class="relative w-full xs:w-auto">
               <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 v-model="searchQuery"
                 type="text"
                 placeholder="Kullanıcı ara..."
-                class="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 w-64 text-sm"
+                class="w-full xs:w-64 pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm font-inter"
               />
             </div>
             <button
               @click="refreshUsers"
-              class="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+              class="inline-flex items-center justify-center p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
               :class="{ 'animate-spin': isRefreshing }"
             >
               <RefreshCw class="h-5 w-5" />
@@ -49,7 +49,7 @@
       </div>
 
       <!-- Users Table -->
-      <div v-else class="bg-white rounded-lg shadow-sm border border-gray-200/80 overflow-hidden">
+      <div v-else class="hidden md:block bg-white rounded-lg shadow-sm border border-gray-200/80 overflow-hidden">
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50/50">
@@ -144,6 +144,81 @@
           <p class="mt-1 text-sm text-gray-500">Arama kriterlerinize uygun kullanıcı bulunmamaktadır.</p>
         </div>
       </div>
+
+      <!-- Mobile View -->
+      <div class="block md:hidden">
+        <div class="divide-y divide-gray-200">
+          <div v-for="user in filteredUsers" 
+               :key="user._id" 
+               class="p-4 hover:bg-gray-50/50 transition-colors">
+            <!-- User Header -->
+            <div class="flex items-start justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
+                  <User2 class="h-5 w-5 text-gray-500" />
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-gray-900 font-inter">{{ user.username }}</div>
+                  <div class="text-sm text-gray-500 font-inter">{{ user.email }}</div>
+                </div>
+              </div>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-inter"
+                :class="{
+                  'bg-primary-light/20 text-primary-dark': user.role === 'admin',
+                  'bg-gray-100 text-gray-800': user.role === 'user'
+                }">
+                {{ user.role === 'admin' ? 'Admin' : 'Kullanıcı' }}
+              </span>
+            </div>
+            
+            <!-- User Details -->
+            <div class="mt-3 grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <div class="text-gray-500 font-inter">Son Giriş</div>
+                <div class="font-medium font-inter">{{ formatDate(user.lastLogin) }}</div>
+                <div class="text-xs text-gray-500 font-inter">{{ formatTimeAgo(user.lastLogin) }}</div>
+              </div>
+              <div>
+                <div class="text-gray-500 font-inter">Durum</div>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-inter mt-1"
+                  :class="{
+                    'bg-green-100 text-green-800': user.isActive,
+                    'bg-red-100 text-red-800': !user.isActive
+                  }">
+                  {{ user.isActive ? 'Aktif' : 'Pasif' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-4 flex justify-end space-x-3">
+              <button
+                @click="confirmEdit(user)"
+                class="text-primary hover:text-primary-dark inline-flex items-center text-sm font-medium font-inter transition-colors"
+                :disabled="!canEditUser(user)"
+              >
+                <Edit2 class="h-4 w-4 mr-1" />
+                Düzenle
+              </button>
+              <button
+                v-if="canDeleteUser(user)"
+                @click="confirmDelete(user)"
+                class="text-red-600 hover:text-red-700 inline-flex items-center text-sm font-medium font-inter transition-colors"
+              >
+                <Trash2 class="h-4 w-4 mr-1" />
+                Sil
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div v-if="filteredUsers.length === 0" class="text-center py-12">
+          <Users class="mx-auto h-12 w-12 text-gray-400" />
+          <h3 class="mt-2 text-sm font-medium text-gray-900 font-montserrat">Kullanıcı Bulunamadı</h3>
+          <p class="mt-1 text-sm text-gray-500 font-inter">Arama kriterlerinize uygun kullanıcı bulunmamaktadır.</p>
+        </div>
+      </div>
     </main>
 
     <!-- Edit User Modal -->
@@ -173,16 +248,16 @@
               leave-to="opacity-0 scale-95"
             >
               <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900">
+                <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900 font-montserrat">
                   Kullanıcı Düzenle
                 </DialogTitle>
                 <div class="mt-4 space-y-4">
                   <div>
-                    <label class="block text-sm font-medium text-gray-700">Rol</label>
+                    <label class="block text-sm font-medium text-gray-700 font-inter">Rol</label>
                     <select
                       v-if="editingUser"
                       v-model="editingUser.role"
-                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm font-inter"
                     >
                       <option value="user">Kullanıcı</option>
                       <option value="admin">Admin</option>
@@ -193,14 +268,14 @@
                 <div class="mt-6 flex justify-end space-x-3">
                   <button
                     @click="closeEditModal"
-                    class="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2"
+                    class="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 font-inter transition-colors"
                   >
                     İptal
                   </button>
                   <button
                     @click="saveUserChanges"
                     :disabled="isSaving"
-                    class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    class="inline-flex justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 font-inter transition-colors"
                     :class="{ 'opacity-75 cursor-not-allowed': isSaving }"
                   >
                     {{ isSaving ? 'Kaydediliyor...' : 'Kaydet' }}
@@ -240,11 +315,11 @@
               leave-to="opacity-0 scale-95"
             >
               <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900">
+                <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900 font-montserrat">
                   Kullanıcıyı Sil
                 </DialogTitle>
                 <div class="mt-2">
-                  <p class="text-sm text-gray-500">
+                  <p class="text-sm text-gray-500 font-inter">
                     Bu kullanıcıyı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
                   </p>
                 </div>
@@ -252,14 +327,14 @@
                 <div class="mt-6 flex justify-end space-x-3">
                   <button
                     @click="closeDeleteModal"
-                    class="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2"
+                    class="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 font-inter transition-colors"
                   >
                     İptal
                   </button>
                   <button
                     @click="deleteSelectedUser"
                     :disabled="isDeleting"
-                    class="inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                    class="inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 font-inter transition-colors"
                     :class="{ 'opacity-75 cursor-not-allowed': isDeleting }"
                   >
                     {{ isDeleting ? 'Siliniyor...' : 'Sil' }}
@@ -299,11 +374,11 @@
               leave-to="opacity-0 scale-95"
             >
               <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900">
+                <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900 font-montserrat">
                   {{ confirmModalTitle }}
                 </DialogTitle>
                 <div class="mt-2">
-                  <p class="text-sm text-gray-500">
+                  <p class="text-sm text-gray-500 font-inter">
                     {{ confirmModalMessage }}
                   </p>
                 </div>
@@ -311,13 +386,13 @@
                 <div class="mt-6 flex justify-end space-x-3">
                   <button
                     @click="closeConfirmModal"
-                    class="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2"
+                    class="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 font-inter transition-colors"
                   >
                     İptal
                   </button>
                   <button
                     @click="handleConfirmAction"
-                    class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    class="inline-flex justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 font-inter transition-colors"
                   >
                     Onayla
                   </button>
