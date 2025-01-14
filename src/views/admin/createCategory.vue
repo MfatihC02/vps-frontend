@@ -513,9 +513,11 @@ export default {
 
     const openEditForm = (category) => {
       selectedCategory.value = category;
+      // API'den gelen parent değerini direkt kullanıyoruz
       form.value = {
         ...category,
-        parent: category.parent?._id || null,
+        // Eğer parent bir string (ID) ise onu kullan, değilse null
+        parent: typeof category.parent === 'string' ? category.parent : null,
         metadata: {
           ...category.metadata,
           keywords: category.metadata?.keywords || [],

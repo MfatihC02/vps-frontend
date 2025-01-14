@@ -70,63 +70,68 @@
       <!-- Ana İçerik - Kategoriler -->
       <div class="max-w-7xl mx-auto px-4 py-6 sm:py-8">
         <div class="space-y-8">
-          <div v-for="orderGroup in groupedCategories" :key="orderGroup.order" 
-               class="category-group">
-            <div class="space-y-5">
-              <h3 class="text-lg sm:text-xl font-semibold text-gray-800 flex items-center gap-2 font-montserrat">
-                <component :is="getCategoryIcon(orderGroup.order)" class="w-5 h-5 text-primary" />
-                {{ getOrderGroupTitle(orderGroup.order) }}
-              </h3>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                <div v-for="category in orderGroup.categories" 
-                     :key="category._id"
-                     class="category-card bg-white rounded-xl overflow-hidden border border-gray-100/80 
-                            hover:shadow-lg hover:border-primary/10 transition-all duration-300">
-                  <div class="flex flex-col sm:flex-row h-full">
-                    <div class="relative w-full sm:w-1/3 aspect-[16/9] sm:aspect-auto overflow-hidden bg-gray-50">
-                      <img :src="category.image || '/api/placeholder/400/300'"
-                           :alt="category.name"
-                           class="w-full h-full object-cover transition-all duration-500" />
-                      <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 
-                                group-hover:opacity-100 transition-opacity"></div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div v-for="category in groupedCategories" 
+                 :key="category._id"
+                 class="category-card bg-white rounded-xl overflow-hidden border border-gray-100/80 
+                        hover:shadow-lg hover:border-primary/10 transition-all duration-300">
+              <div class="flex flex-col sm:flex-row h-full">
+                <div class="relative w-full sm:w-1/3 aspect-[16/9] sm:aspect-auto overflow-hidden bg-gray-50">
+                  <img :src="category.image || '/api/placeholder/400/300'"
+                       :alt="category.name"
+                       class="w-full h-full object-cover transition-all duration-500" />
+                </div>
+                
+                <div class="flex-1 p-4 flex flex-col justify-between">
+                  <div>
+                    <div class="flex items-start justify-between mb-2">
+                      <h2 class="text-lg font-semibold text-gray-800 line-clamp-2 font-montserrat">
+                        {{ category.name }}
+                      </h2>
                     </div>
                     
-                    <div class="flex-1 p-4 flex flex-col justify-between">
-                      <div>
-                        <div class="flex items-start justify-between mb-3">
-                          <h2 class="text-lg font-semibold text-gray-800 line-clamp-2 font-montserrat">{{ category.name }}</h2>
-                          <span class="px-2.5 py-1 bg-primary/5 text-primary rounded-lg text-sm font-medium 
-                                     whitespace-nowrap ml-2 font-inter">
-                            {{ category.productCount || 0 }} Ürün
-                          </span>
-                        </div>
-                        
-                        <div v-if="category.children?.length" class="mt-2 space-y-2">
-                          <div v-for="(child, index) in category.children.slice(0, 3)"
-                               :key="child._id"
-                               class="flex items-center gap-2 text-sm text-gray-600 hover:text-primary 
-                                      transition-colors font-inter">
-                            <component :is="getCategoryTypeIcon(child)" class="w-4 h-4 text-gray-400" />
-                            <span class="truncate">{{ child.name }}</span>
-                          </div>
-                          <div v-if="category.children.length > 3" 
-                               class="text-sm text-gray-500 flex items-center gap-1.5 font-inter">
-                            <Folder class="w-4 h-4" />
-                            +{{ category.children.length - 3 }} alt kategori
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <button @click="navigateToCategory(category)"
-                              class="mt-4 w-full bg-primary text-white py-2.5 rounded-lg hover:bg-primary-dark 
-                                     active:bg-primary-dark/90 transition-colors flex items-center justify-center gap-2 
-                                     text-sm font-medium group font-inter">
-                        <span>Tüm Ürünleri İncele</span>
-                        <ChevronRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                      </button>
+                    <!-- Meta Description -->
+                    <p v-if="category.metadata?.description" 
+                       class="text-sm text-gray-600 mb-2 line-clamp-2">
+                      {{ category.metadata.description }}
+                    </p>
+                    <p v-else-if="category.description" 
+                       class="text-sm text-gray-600 mb-2 line-clamp-2">
+                      {{ category.description }}
+                    </p>
+
+                    <!-- Meta Keywords -->
+                    <div v-if="category.metadata?.keywords?.length" 
+                         class="flex flex-wrap gap-1 mb-2">
+                      <span v-for="keyword in category.metadata.keywords" 
+                            :key="keyword"
+                            class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+                        {{ keyword }}
+                      </span>
+                    </div>
+
+                    <!-- Category Stats -->
+                    <div class="flex items-center gap-3 text-sm text-gray-500">
+                      <span v-if="category.subCategoryCount > 0" 
+                            class="flex items-center gap-1">
+                        <FolderTree class="w-4 h-4" />
+                        {{ category.subCategoryCount }} Alt Kategori
+                      </span>
+                      <span v-if="category.productCount > 0" 
+                            class="flex items-center gap-1">
+                        <Package class="w-4 h-4" />
+                        {{ category.productCount }} Ürün
+                      </span>
                     </div>
                   </div>
+                  
+                  <button @click="navigateToCategory(category)"
+                          class="mt-4 w-full bg-primary text-white py-2.5 rounded-lg hover:bg-primary-dark 
+                                 active:bg-primary-dark/90 transition-colors flex items-center justify-center gap-2 
+                                 text-sm font-medium group font-inter">
+                    <span>Tüm Ürünleri İncele</span>
+                    <ChevronRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
                 </div>
               </div>
             </div>
@@ -159,6 +164,7 @@ import {
   Home
 } from "lucide-vue-next";
 import CategoryProduct from "@/views/user/CategoryProducts.vue";
+import { useHead } from '@vueuse/head';
 
 const route = useRoute();
 const router = useRouter();
@@ -205,27 +211,7 @@ const groupedCategories = computed(() => {
       category.name.toLowerCase().includes(searchQuery.value.toLowerCase())
     ) || [];
 
-  // Order'a göre grupla
-  const grouped = filteredCategories.reduce((acc, category) => {
-    const orderGroup = acc.find((group) => group.order === category.order);
-    if (orderGroup) {
-      orderGroup.categories.push(category);
-    } else {
-      acc.push({
-        order: category.order,
-        categories: [category],
-      });
-    }
-    return acc;
-  }, []);
-
-  return grouped
-    .map((group) => ({
-
-      ...group,
-      categories: group.categories.sort((a, b) => a.name.localeCompare(b.name)),
-    }))
-    .sort((a, b) => a.order - b.order);
+  return filteredCategories;
 });
 
 // Toplam ürün sayısı
@@ -237,6 +223,40 @@ const totalProducts = computed(() => {
     ) || 0
   );
 });
+
+// SEO meta tags
+const getMetaData = computed(() => {
+  if (!currentCategory.value) {
+    return {
+      title: 'Tüm Kategoriler | E-Ticaret',
+      description: 'Profesyonel üreticiler için özenle seçilmiş, yüksek kaliteli ürünler',
+      keywords: 'e-ticaret, ürünler, kategoriler'
+    }
+  }
+
+  const category = currentCategory.value;
+  return {
+    title: category.metadata?.title || `${category.name} | E-Ticaret`,
+    description: category.metadata?.description || category.description || `${category.name} kategorisinde yer alan ürünlerimizi keşfedin`,
+    keywords: Array.isArray(category.metadata?.keywords) && category.metadata.keywords.length > 0
+      ? category.metadata.keywords.join(', ')
+      : `${category.name}, e-ticaret, ürünler`
+  }
+});
+
+useHead(() => ({
+  title: getMetaData.value.title,
+  meta: [
+    {
+      name: 'description',
+      content: getMetaData.value.description
+    },
+    {
+      name: 'keywords',
+      content: getMetaData.value.keywords
+    }
+  ]
+}));
 
 // Yardımcı fonksiyonlar
 const getOrderGroupTitle = (order) => {

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import api from '@/services/axiosInstance';
 import { socketManager } from '@/plugins/socket';
 
-const API_URL = 'https://muhendislerticaret-backend.onrender.com/api';
+const API_URL = 'http://localhost:3000/api';
 
 export const useCategoryStore = defineStore('category', {
     state: () => ({
