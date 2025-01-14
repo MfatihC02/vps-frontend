@@ -1,5 +1,6 @@
 // main.js
 import { createApp } from 'vue'
+import { createHead } from '@vueuse/head'
 import App from './App.vue'
 import router from './router'
 import { createPinia } from 'pinia'
@@ -12,6 +13,7 @@ import Vuelidate from '@vuelidate/core'
 import { Icon } from '@iconify/vue'
 
 const app = createApp(App)
+const head = createHead()
 
 const pinia = createPinia()
 
@@ -35,6 +37,7 @@ app.use(pinia)
 app.use(router)
 app.use(socketPlugin)
 app.use(Toast, toastOptions)
+app.use(head)  
 app.use(Vuelidate)
 app.component('Icon', Icon)
 
