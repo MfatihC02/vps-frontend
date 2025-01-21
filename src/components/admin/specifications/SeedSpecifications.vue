@@ -150,6 +150,7 @@
           <option value="">Birim Seçin</option>
           <option value="gr">Gram</option>
           <option value="kg">Kilogram</option>
+          <option value="adet">Adet</option>
         </select>
       </div>
     </div>

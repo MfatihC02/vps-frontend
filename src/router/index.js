@@ -33,21 +33,28 @@ const routes = [
     path: '/',
     name: 'home',
     component: HomePage,
-    meta: { title: 'Ana Sayfa' }
+    meta: {
+      title: 'Ana Sayfa',
+      description: 'Profesyonel sera ve tarım üretimi için kaliteli tohumlar. En iyi tohum çeşitleri, uygun fiyatlar ve ücretsiz kargo avantajıyla sizlerle.'
+    }
   },
   {
     path: '/hakkimizda',
     name: 'about',
     component: AboutView,
-    meta: { title: 'Hakkımızda' }
+    meta: {
+      title: 'Hakkımızda',
+      description: 'Türkiye\'nin güvenilir tohum tedarikçisi. Kaliteli ürünler, profesyonel hizmet ve uzman kadromuzla çiftçilerimizin yanındayız.'
+    }
   },
   {
     path: '/sepet',
     name: 'cart',
     component: CartPage,
     meta: {
-      requiresAuth: true,  // Sadece giriş yapmış kullanıcılar erişebilir
-      title: 'Sepetim'
+      requiresAuth: true,
+      title: 'Sepetim',
+      description: 'Alışveriş sepetiniz. Seçtiğiniz kaliteli tohumları inceleyin, güvenli ödeme seçenekleriyle siparişinizi tamamlayın.'
     }
   },
   {
@@ -115,7 +122,8 @@ const routes = [
     meta: {
       requiresAuth: true,
       requiresAdmin: true,
-      title: 'Admin Panel'
+      title: 'Admin Panel',
+      description: 'Yönetici kontrol paneli. Ürün yönetimi, stok kontrolü, sipariş takibi ve kullanıcı yönetimi.'
     }
   },
   {
@@ -125,7 +133,8 @@ const routes = [
     meta: {
       requiresAuth: true,
       requiresAdmin: true,
-      title: 'Kategori Oluştur'
+      title: 'Kategori Oluştur',
+      description: 'Yeni kategori oluşturma ve düzenleme paneli. Kategori hiyerarşisi ve ürün organizasyonu yönetimi.'
     }
   },
   {
@@ -135,7 +144,18 @@ const routes = [
     meta: {
       requiresAuth: true,
       requiresAdmin: true,
-      title: 'Ürünleri Yönet'
+      title: 'Ürünleri Yönet',
+      description: 'Ürün yönetim paneli. Yeni ürün ekleme, düzenleme, stok yönetimi ve ürün detayları.'
+    }
+  },
+  {
+    path: '/admin/product/new',
+    name: 'product-new',
+    component: ProductForm,
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Yeni Ürün Ekle'
     }
   },
   {
@@ -174,7 +194,8 @@ const routes = [
     meta: {
       requiresAuth: true,
       requiresAdmin: true,
-      title: 'Siparişleri Yönet'
+      title: 'Siparişleri Yönet',
+      description: 'Sipariş yönetim paneli. Sipariş takibi, durum güncellemesi ve müşteri siparişlerinin yönetimi.'
     }
   },
   {
@@ -195,7 +216,8 @@ const routes = [
     meta: {
       requiresAuth: true,
       requiresAdmin: true,
-      title: 'Kullanıcı Yönetimi'
+      title: 'Kullanıcı Yönetimi',
+      description: 'Kullanıcı yönetim paneli. Müşteri hesapları, yetkiler ve kullanıcı bilgilerinin yönetimi.'
     }
   },
   {
@@ -205,7 +227,8 @@ const routes = [
     meta: {
       requiresAuth: true,
       title: 'Ödeme',
-      requiresCart: true // Sepet kontrolü için yeni meta field
+      description: 'Güvenli ödeme sayfası. Kredi kartı, havale/EFT ve diğer ödeme seçenekleriyle güvenle alışverişinizi tamamlayın.',
+      requiresCart: true
     }
   },
   {
@@ -214,14 +237,9 @@ const routes = [
     component: PaymentSuccess,
     meta: {
       requiresAuth: true,
-      title: 'Ödeme Başarılı'
-    },
-    // Form verilerini props olarak geçir
-    props: route => ({
-      orderId: route.query.orderId,
-      status: route.query.status,
-      paymentId: route.query.paymentId
-    })
+      title: 'Ödeme Başarılı',
+      description: 'Siparişiniz başarıyla tamamlandı. Sipariş detaylarınızı görüntüleyin ve kargo takibini başlatın.'
+    }
   },
   {
     path: '/siparislerim',
@@ -229,7 +247,8 @@ const routes = [
     component: OrdersView,
     meta: {
       requiresAuth: true,
-      title: 'Siparişlerim'
+      title: 'Siparişlerim',
+      description: 'Tüm siparişlerinizi takip edin. Sipariş durumu, kargo takibi ve geçmiş siparişlerinize kolayca ulaşın.'
     }
   },
   {
@@ -237,7 +256,8 @@ const routes = [
     name: 'contact',
     component: ContactView,
     meta: {
-      title: 'İletişim'
+      title: 'İletişim',
+      description: '7/24 müşteri hizmetleri, teknik destek ve satış ekibimizle yanınızdayız. Adres bilgilerimiz ve iletişim kanallarımız için tıklayın.'
     }
   },
   {

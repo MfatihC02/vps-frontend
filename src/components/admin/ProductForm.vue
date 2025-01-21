@@ -201,6 +201,11 @@
             </div>
           </div>
         </div>
+        <ProductDescription
+  v-model="formData.description"
+  ref="descriptionForm"
+  class="mt-6"
+/>
 
         <!-- Dinamik Özellikler Komponenti -->
         <component
@@ -258,10 +263,12 @@ import {
 import { ArrowLeft } from "lucide-vue-next";
 import { useProductStore } from "@/stores/productStore";
 import { useCategoryStore } from "@/stores/categoryStore";
+import ProductDescription from './product/ProductDescription.vue';
 
 const productStore = useProductStore();
 const categoryStore = useCategoryStore();
 const selectedFile = ref(null);
+const descriptionForm = ref(null); // script başına eklenecek
 
 const props = defineProps({
   product: {
@@ -292,6 +299,12 @@ const formData = reactive({
     discount: 0,
     discountEndDate: null,
   },
+  description: {
+    meta: "",
+    detailed: "",
+    keywords: []
+},
+
   stock: {
     quantity: 0,
     unit: "adet",
@@ -330,6 +343,16 @@ const loadProductData = () => {
         lowStockAlert: Number(props.product.stock.lowStockAlert) || 0
       };
     }
+// Description bilgileri
+if (props.product.description) {
+    formData.description = {
+        meta: props.product.description.meta || '',
+        detailed: props.product.description.detailed || '',
+        keywords: Array.isArray(props.product.description.keywords) 
+            ? [...props.product.description.keywords] 
+            : []
+    };
+}
 
     // Özellikler
     if (props.product.specifications) {
@@ -621,6 +644,9 @@ const handleSubmit = async () => {
     if (!formData.price?.current || formData.price.current <= 0) {
       throw new Error("Lütfen geçerli bir fiyat giriniz");
     }
+    if (!descriptionForm.value?.validate()) {
+    throw new Error("Lütfen açıklama alanlarını kontrol edin");
+}
 
     console.log('Form gönderilmeden önce formData:', formData);
 
@@ -643,6 +669,12 @@ const handleSubmit = async () => {
           unit: formData.stock.unit,
           lowStockAlert: Number(formData.stock.lowStockAlert)
         },
+        description: {
+    meta: formData.description.meta,
+    detailed: formData.description.detailed,
+    keywords: formData.description.keywords
+},
+
         specifications: formData.specifications
       };
 
@@ -677,6 +709,11 @@ const handleSubmit = async () => {
         unit: formData.stock.unit,
         lowStockAlert: Number(formData.stock.lowStockAlert)
       }));
+      productData.append("description", JSON.stringify({
+    meta: formData.description.meta,
+    detailed: formData.description.detailed,
+    keywords: formData.description.keywords
+}));
 
       productData.append("specifications", JSON.stringify(formData.specifications));
 

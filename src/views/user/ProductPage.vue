@@ -149,10 +149,8 @@
               <TabPanels class="mt-4">
                 <TabPanel>
                   <ProductSpecifications
-                    :productType="product.productType"
-                    :specs="product.specifications"
-                    :productName="product.name"
-                    :brand="product.brand"
+                    v-if="product.description"
+                    :description="product.description"
                   />
                 </TabPanel>
                 <TabPanel>

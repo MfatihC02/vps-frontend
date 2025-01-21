@@ -35,9 +35,6 @@ const handleManageProduct = (product) => {
 };
 
 const handleAddProduct = () => {
-  router.push({ 
-    name: 'product-edit',
-    params: { id: 'new' }
-  });
+  router.push({ name: 'product-new' });
 };
 </script>

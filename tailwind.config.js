@@ -19,6 +19,7 @@ export default {
       fontFamily: {
         'montserrat': ['Montserrat', 'sans-serif'],
         'inter': ['Inter', 'sans-serif'],
+        'serif': ['Source Serif Pro', 'Georgia', 'serif'],
       },
       colors: {
         'primary': {
