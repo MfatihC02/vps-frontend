@@ -157,7 +157,7 @@
             <div class="container mx-auto">
               <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                 <div class="text-sm text-gray-400">
-                  {{ new Date().getFullYear() }} Mühendisler Ticaret. Tüm hakları saklıdır.
+                  &copy; {{ new Date().getFullYear() }} Mühendisler Ticaret. Tüm hakları saklıdır.
                 </div>
                 <div class="flex items-center space-x-2 text-sm text-gray-400"> <br>
                   <span class="mr-2">Tasarım & Geliştirme:</span>

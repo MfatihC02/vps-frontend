@@ -1,29 +1,31 @@
 <template>
-  <form @submit.prevent="handleSubmit" class="space-y-6">
+  <form @submit.prevent="handleSubmit" class="space-y-4 sm:space-y-6">
     <!-- Rating Section -->
     <div class="space-y-2">
       <label class="block text-sm font-medium text-gray-700">Puanınız</label>
-      <div class="flex items-center gap-2">
-        <template v-for="star in 5" :key="star">
-          <button
-            type="button"
-            @click="rating = star"
-            @mouseenter="hoverRating = star"
-            @mouseleave="hoverRating = 0"
-            class="focus:outline-none transition-transform duration-200 hover:scale-110"
-          >
-            <Icon
-              :icon="(hoverRating || rating) >= star ? 'material-symbols:star' : 'material-symbols:star-outline'"
-              class="w-8 h-8"
-              :class="[
-                (hoverRating || rating) >= star ? 'text-yellow-400' : 'text-gray-400',
-                'hover:text-yellow-300 transition-colors duration-200'
-              ]"
-            />
-          </button>
-        </template>
+      <div class="flex flex-wrap items-center gap-2">
+        <div class="flex items-center">
+          <template v-for="star in 5" :key="star">
+            <button
+              type="button"
+              @click="rating = star"
+              @mouseenter="hoverRating = star"
+              @mouseleave="hoverRating = 0"
+              class="focus:outline-none transition-transform duration-200 hover:scale-110 p-1"
+            >
+              <Icon
+                :icon="(hoverRating || rating) >= star ? 'material-symbols:star' : 'material-symbols:star-outline'"
+                class="w-6 h-6 sm:w-8 sm:h-8"
+                :class="[
+                  (hoverRating || rating) >= star ? 'text-yellow-400' : 'text-gray-400',
+                  'hover:text-yellow-300 transition-colors duration-200'
+                ]"
+              />
+            </button>
+          </template>
+        </div>
         <span
-          class="ml-2 text-sm"
+          class="text-sm"
           :class="rating ? 'text-yellow-600' : 'text-gray-500'"
         >
           {{ getRatingText(rating || hoverRating) }}
@@ -48,7 +50,7 @@
           v-model="comment"
           rows="4"
           :maxlength="maxCommentLength"
-          class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm resize-none transition-all duration-200"
+          class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm resize-none transition-all duration-200 px-3 py-2"
           :class="{
             'border-red-300 focus:border-red-500 focus:ring-red-500':
               v$.comment.$error,
@@ -71,42 +73,19 @@
       </p>
     </div>
 
-    <!-- Emoji Picker -->
-    <div class="flex items-center gap-2">
-      <button
-        type="button"
-        v-for="emoji in quickEmojis"
-        :key="emoji"
-        @click="addEmoji(emoji)"
-        class="p-1.5 hover:bg-gray-100 rounded-full transition-colors duration-200"
-      >
-        {{ emoji }}
-      </button>
-      <button
-        type="button"
-        @click="showEmojiPicker = !showEmojiPicker"
-        class="p-1.5 hover:bg-gray-100 rounded-full transition-colors duration-200"
-      >
-        <Icon
-          icon="material-symbols:smiley"
-          class="w-5 h-5 text-gray-500"
-        />
-      </button>
-    </div>
-
     <!-- Action Buttons -->
-    <div class="flex items-center justify-end gap-4 pt-4">
+    <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 sm:gap-4 pt-4">
       <button
         type="button"
         @click="$emit('cancel')"
-        class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+        class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
       >
         İptal
       </button>
       <button
         type="submit"
         :disabled="isSubmitting"
-        class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-green-500 border border-transparent rounded-md shadow-sm hover:from-green-700 hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-green-500 border border-transparent rounded-md shadow-sm hover:from-green-700 hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <Icon
           v-if="isSubmitting"
@@ -128,7 +107,7 @@
       :show="showSuccess"
       as="template"
     >
-      <div class="fixed bottom-4 right-4 z-50">
+      <div class="fixed bottom-4 right-4 z-50 max-w-[90vw] sm:max-w-md">
         <TransitionChild
           enter="transform transition duration-300"
           enter-from="translate-y-full opacity-0"
@@ -182,12 +161,8 @@ const comment = ref(props.initialComment);
 const hoverRating = ref(0);
 const isSubmitting = ref(false);
 const showSuccess = ref(false);
-const showEmojiPicker = ref(false);
 const textareaRef = ref(null);
 const maxCommentLength = 500;
-
-// Quick emoji selection
-const quickEmojis = ['👍', '❤️', '😊', '🌟', '👏'];
 
 // Form validation rules
 const rules = {
@@ -213,13 +188,6 @@ const autoGrow = () => {
   if (textareaRef.value) {
     textareaRef.value.style.height = 'auto';
     textareaRef.value.style.height = textareaRef.value.scrollHeight + 'px';
-  }
-};
-
-const addEmoji = (emoji) => {
-  comment.value += emoji;
-  if (textareaRef.value) {
-    textareaRef.value.focus();
   }
 };
 
@@ -271,12 +239,5 @@ const handleSubmit = async () => {
 textarea {
   min-height: 100px;
   transition: height 0.2s ease;
-}
-
-.emoji-picker {
-  position: absolute;
-  bottom: 100%;
-  right: 0;
-  margin-bottom: 8px;
 }
 </style>

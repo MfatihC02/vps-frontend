@@ -2,6 +2,7 @@
 <template>
   <div class="min-h-screen bg-white transition-colors duration-300">
     <InfoBar /> <br>
+    <PartnerLogos />
     <main class="container mx-auto max-w-[1920px] transition-all duration-300">
       <!-- Mobil Kategori Butonu -->
       <button
@@ -85,6 +86,7 @@ import InfoBar from "@/components/InfoBar.vue";
 import CategoryList from "@/components/CategoryList.vue";
 import { Icon } from '@iconify/vue'
 import TabNavigation from '@/components/products/TabNavigation.vue';
+import PartnerLogos from '@/components/PartnerLogos.vue';
 
 const isSidebarOpen = ref(false);
 </script>

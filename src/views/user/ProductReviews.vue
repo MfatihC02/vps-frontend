@@ -1,43 +1,51 @@
 <template>
-  <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 font-inter">
     <!-- Yorum Özeti Bölümü -->
-    <div class="bg-white rounded-2xl shadow-sm border border-green-100 p-6 mb-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <!-- Ortalama Puan -->
-        <div class="flex flex-col items-center justify-center">
-          <div class="text-4xl font-bold text-green-800 mb-2">
-            {{ averageRating.toFixed(1) }}
-          </div>
-          <div class="flex items-center gap-1 mb-2">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 mb-4">
+      <!-- Ana Container - Mobilde dikey, tablet ve üstünde yatay -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+        <!-- Sol Taraf: Yıldız ve Değerlendirme -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div class="flex items-center gap-1.5">
             <template v-for="i in 5" :key="i">
               <Icon
-                :name="i <= Math.round(averageRating) ? 'ph:star-fill' : 'ph:star'"
-                class="w-6 h-6"
-                :class="i <= Math.round(averageRating) ? 'text-yellow-400' : 'text-gray-400'"
+                icon="material-symbols:star"
+                class="w-5 h-5"
+                :class="i <= Math.round(averageRating) ? 'text-amber-400' : 'text-gray-300'"
               />
             </template>
+            <span class="text-base font-medium text-gray-700 ml-1">{{ averageRating.toFixed(1) }}</span>
           </div>
-          <p class="text-sm text-gray-600">
+          <div class="text-sm text-gray-500 border-l border-gray-200 pl-2 sm:pl-3">
             {{ totalReviews }} değerlendirme
-          </p>
+          </div>
         </div>
 
-        <!-- Puan Dağılımı -->
-        <div class="col-span-2">
-          <div v-for="rating in [5, 4, 3, 2, 1]" :key="rating" class="flex items-center gap-2 mb-2">
-            <span class="text-sm text-gray-600 w-8">{{ rating }}</span>
-            <Icon name="ph:star-fill" class="w-4 h-4 text-yellow-400" />
-            <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-              <div
-                class="h-full bg-green-500 rounded-full transition-all duration-500"
-                :style="{
-                  width: `${getRatingPercentage(rating)}%`,
-                  backgroundColor: getRatingColor(rating)
-                }"
-              ></div>
+        <!-- Sağ Taraf: İstatistikler - Mobilde alt alta, tablet ve üstünde yan yana -->
+        <div class="flex flex-col sm:flex-row sm:ml-auto gap-2 sm:gap-4 mt-2 sm:mt-0 text-sm">
+          <!-- Onaylı Alışveriş -->
+          <div class="flex items-center gap-1.5">
+            <div class="flex items-center justify-center w-6 h-6 rounded-full bg-green-100">
+              <Icon
+                icon="material-symbols:shopping-bag"
+                class="w-3.5 h-3.5 text-green-600"
+              />
             </div>
-            <span class="text-sm text-gray-600 w-12">
-              {{ getRatingPercentage(rating) }}%
+            <span class="text-gray-600">
+              <span class="font-medium text-green-600">{{ getVerifiedReviewCount }}</span> onaylı alışveriş
+            </span>
+          </div>
+
+          <!-- Son Yorum - Mobilde gizli değil -->
+          <div class="flex items-center gap-1.5">
+            <div class="flex items-center justify-center w-6 h-6 rounded-full bg-purple-100">
+              <Icon
+                icon="material-symbols:schedule"
+                class="w-3.5 h-3.5 text-purple-600"
+              />
+            </div>
+            <span class="text-gray-600">
+              Son yorum: <span class="font-medium text-purple-600">{{ getLatestReviewDate }}</span>
             </span>
           </div>
         </div>
@@ -45,15 +53,21 @@
     </div>
 
     <!-- Filtreleme ve Sıralama -->
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
-      <div class="flex items-center gap-4">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+      <div class="flex flex-wrap items-center gap-2 sm:gap-4 w-full sm:w-auto">
         <Menu as="div" class="relative">
           <MenuButton
-            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
           >
-            <Icon name="ph:funnel" class="w-5 h-5 mr-2" />
+            <Icon
+              icon="material-symbols:filter-list"
+              class="w-5 h-5 mr-2 text-gray-500"
+            />
             {{ selectedFilter }}
-            <Icon name="ph:caret-down" class="w-5 h-5 ml-2" />
+            <Icon
+              icon="material-symbols:arrow-drop-down"
+              class="w-5 h-5 ml-2 text-gray-500"
+            />
           </MenuButton>
 
           <transition
@@ -65,7 +79,7 @@
             leave-to-class="transform scale-95 opacity-0"
           >
             <MenuItems
-              class="absolute left-0 z-10 mt-2 w-56 origin-top-left bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              class="absolute left-0 z-10 mt-2 w-56 origin-top-left bg-white rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-gray-100"
             >
               <div class="py-1">
                 <MenuItem v-for="filter in filterOptions" :key="filter.value">
@@ -73,9 +87,9 @@
                     @click="selectedFilter = filter.label"
                     :class="[
                       selectedFilter === filter.label
-                        ? 'bg-green-50 text-green-700'
-                        : 'text-gray-700',
-                      'block px-4 py-2 text-sm w-full text-left hover:bg-green-50'
+                        ? 'bg-primary/5 text-primary'
+                        : 'text-gray-700 hover:bg-gray-50',
+                      'block px-4 py-2 text-sm w-full text-left transition-colors duration-200'
                     ]"
                   >
                     {{ filter.label }}
@@ -88,11 +102,17 @@
 
         <Menu as="div" class="relative">
           <MenuButton
-            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
           >
-            <Icon name="ph:sort-ascending" class="w-5 h-5 mr-2" />
+            <Icon
+              icon="material-symbols:sort"
+              class="w-5 h-5 mr-2 text-gray-500"
+            />
             {{ selectedSort }}
-            <Icon name="ph:caret-down" class="w-5 h-5 ml-2" />
+            <Icon
+              icon="material-symbols:arrow-drop-down"
+              class="w-5 h-5 ml-2 text-gray-500"
+            />
           </MenuButton>
 
           <transition
@@ -104,7 +124,7 @@
             leave-to-class="transform scale-95 opacity-0"
           >
             <MenuItems
-              class="absolute left-0 z-10 mt-2 w-56 origin-top-left bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              class="absolute left-0 z-10 mt-2 w-56 origin-top-left bg-white rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-gray-100"
             >
               <div class="py-1">
                 <MenuItem v-for="sort in sortOptions" :key="sort.value">
@@ -112,9 +132,9 @@
                     @click="selectedSort = sort.label"
                     :class="[
                       selectedSort === sort.label
-                        ? 'bg-green-50 text-green-700'
-                        : 'text-gray-700',
-                      'block px-4 py-2 text-sm w-full text-left hover:bg-green-50'
+                        ? 'bg-primary/5 text-primary'
+                        : 'text-gray-700 hover:bg-gray-50',
+                      'block px-4 py-2 text-sm w-full text-left transition-colors duration-200'
                     ]"
                   >
                     {{ sort.label }}
@@ -128,15 +148,18 @@
 
       <button
         @click="showReviewForm = true"
-        class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+        class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-dark border border-transparent rounded-lg shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary w-full sm:w-auto justify-center"
       >
-        <Icon name="ph:plus" class="w-5 h-5 mr-2" />
+        <Icon
+          icon="material-symbols:add"
+          class="w-5 h-5 mr-2"
+        />
         Yorum Yaz
       </button>
     </div>
 
     <!-- Yorum Listesi -->
-    <div class="space-y-6">
+    <div class="space-y-4 sm:space-y-6">
       <TransitionGroup
         enter-active-class="transition-all duration-300 ease-out"
         enter-from-class="opacity-0 transform translate-y-4"
@@ -148,34 +171,37 @@
         <div
           v-for="review in filteredReviews"
           :key="review._id"
-          class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 transition duration-300 hover:shadow-md"
+          class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 transition-all duration-300 hover:shadow-md hover:border-gray-200"
         >
-          <div class="flex items-start justify-between">
-            <div class="flex items-center">
+          <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 sm:gap-0">
+            <div class="flex items-start">
               <div
-                class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-800 font-medium mr-4"
+                class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-semibold mr-4"
               >
                 {{ review.userId.username.charAt(0).toUpperCase() }}
               </div>
               <div>
-                <h3 class="text-sm font-medium text-gray-900">
+                <h3 class="text-sm font-medium text-gray-900 break-words">
                   {{ review.userId.username }}
                 </h3>
-                <div class="flex items-center mt-1">
+                <div class="flex flex-wrap items-center mt-1.5 gap-2">
                   <div class="flex items-center">
                     <template v-for="i in 5" :key="i">
                       <Icon
-                        :name="i <= review.rating ? 'ph:star-fill' : 'ph:star'"
+                        :icon="i <= review.rating ? 'material-symbols:star' : 'material-symbols:star-outline'"
                         class="w-4 h-4"
-                        :class="i <= review.rating ? 'text-yellow-400' : 'text-gray-400'"
+                        :class="i <= review.rating ? 'text-yellow-400' : 'text-gray-300'"
                       />
                     </template>
                   </div>
                   <span
                     v-if="review.isVerifiedPurchase"
-                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800"
+                    class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-green-50 text-green-700"
                   >
-                    <Icon name="ph:check-circle" class="w-4 h-4 mr-1" />
+                    <Icon
+                      icon="material-symbols:check-circle"
+                      class="w-3.5 h-3.5 mr-1"
+                    />
                     Doğrulanmış Alışveriş
                   </span>
                 </div>
@@ -188,18 +214,23 @@
               {{ formatDate(review.createdAt) }}
             </time>
           </div>
-          <p class="mt-4 text-sm text-gray-600">
+          <p class="mt-4 text-sm text-gray-600 break-words whitespace-pre-line leading-relaxed">
             {{ review.comment }}
           </p>
 
           <!-- Admin yanıtı varsa göster -->
-          <div v-if="review.adminReply" class="mt-4 bg-green-50 p-4 rounded-lg">
-            <div class="flex items-center gap-2 text-green-800">
-              <Icon name="ph:shield-check" class="w-5 h-5" />
+          <div v-if="review.adminReply" class="mt-4 bg-primary/5 p-4 rounded-lg">
+            <div class="flex items-center gap-2 text-primary">
+              <Icon
+                icon="material-symbols:shield-check"
+                class="w-5 h-5"
+              />
               <span class="font-medium">Admin Yanıtı</span>
             </div>
-            <p class="mt-2 text-gray-700">{{ review.adminReply }}</p>
-            <div class="mt-1 text-sm text-gray-500">
+            <p class="mt-2 text-gray-700 break-words whitespace-pre-line leading-relaxed">
+              {{ review.adminReply }}
+            </p>
+            <div class="mt-2 text-sm text-gray-500">
               {{ formatDate(review.adminReplyDate) }}
             </div>
           </div>
@@ -231,7 +262,7 @@
         </TransitionChild>
 
         <div class="fixed inset-0 overflow-y-auto">
-          <div class="flex min-h-full items-center justify-center p-4">
+          <div class="flex min-h-full items-center justify-center p-2 sm:p-4">
             <TransitionChild
               enter="duration-300 ease-out"
               enter-from="opacity-0 scale-95"
@@ -240,7 +271,7 @@
               leave-from="opacity-100 scale-100"
               leave-to="opacity-0 scale-95"
             >
-              <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+              <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-4 sm:p-6 text-left align-middle shadow-xl transition-all">
                 <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900">
                   Ürün Değerlendirmesi
                 </DialogTitle>
@@ -374,23 +405,24 @@ const filteredReviews = computed(() => {
 });
 
 // Methods
-const getRatingPercentage = (rating) => {
+const getVerifiedReviewCount = computed(() => {
   const reviews = reviewStore.getProductReviews;
-  if (!reviews.length) return 0;
-  const count = reviews.filter(review => review.rating === rating).length;
-  return Math.round((count / reviews.length) * 100);
-};
+  return reviews.filter(review => review.isVerifiedPurchase).length;
+});
 
-const getRatingColor = (rating) => {
-  const colors = {
-    5: '#FBBF24', // yellow-400
-    4: '#FCD34D', // yellow-300
-    3: '#FDE68A', // yellow-200
-    2: '#FEF3C7', // yellow-100
-    1: '#FFFBEB'  // yellow-50
-  };
-  return colors[rating];
-};
+const getLatestReviewDate = computed(() => {
+  const reviews = reviewStore.getProductReviews;
+  if (!reviews.length) return '-';
+  const latestDate = new Date(Math.max(...reviews.map(r => new Date(r.createdAt))));
+  const now = new Date();
+  const diffDays = Math.floor((now - latestDate) / (1000 * 60 * 60 * 24));
+  
+  if (diffDays === 0) return 'Bugün';
+  if (diffDays === 1) return 'Dün';
+  if (diffDays < 7) return `${diffDays} gün önce`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)} hafta önce`;
+  return `${Math.floor(diffDays / 30)} ay önce`;
+});
 
 const formatDate = (date) => {
   return new Intl.DateTimeFormat('tr-TR', {

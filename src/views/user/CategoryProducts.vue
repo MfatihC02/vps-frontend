@@ -52,13 +52,39 @@
             >
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <!-- Ürün Resmi -->
-                <div class="relative md:col-span-1 aspect-[4/3] md:aspect-auto overflow-hidden">
-                  <img 
-                    :src="product.images?.[0]?.url || '/api/placeholder/400/300'"
-                    :alt="product.name"
-                    class="w-full h-full object-cover transition-transform duration-500"
-                  />
-                  <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="relative md:col-span-1 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+                  <div class="relative aspect-square w-full">
+                    <img 
+                      v-if="product.images?.length"
+                      :src="product.images[0].url"
+                      :alt="product.name"
+                      class="w-full h-full object-cover transition-all duration-700 
+                             group-hover:scale-105 group-hover:brightness-[1.02]"
+                      loading="lazy"
+                      :srcset="
+                        product.images?.[0]?.url ? 
+                        `${product.images[0].url.replace('/upload/', '/upload/w_640,h_640,c_fill/')} 640w,
+                         ${product.images[0].url.replace('/upload/', '/upload/w_800,h_800,c_fill/')} 800w,
+                         ${product.images[0].url.replace('/upload/', '/upload/w_1024,h_1024,c_fill/')} 1024w`
+                        : ''
+                      "
+                      sizes="(max-width: 768px) 100vw,
+                             (max-width: 1024px) 33vw,
+                             320px"
+                    />
+                    <!-- Placeholder -->
+                    <div
+                      v-else
+                      class="w-full h-full flex items-center justify-center text-gray-400"
+                    >
+                      <i class="fas fa-image text-4xl opacity-30"></i>
+                    </div>
+                    
+                    <!-- Hover overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent 
+                              opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    </div>
+                  </div>
                 </div>
 
                 <!-- Ürün Bilgileri -->
@@ -87,9 +113,15 @@
                         v-if="product.productType"
                         class="px-3 py-1 bg-green-50 text-green-700 rounded-lg text-sm font-medium font-inter"
                       >
-                        {{ product.productType }}
+                        {{ formatProductType(product.productType) }}
                       </span>
                     </div>
+                    <p 
+                      v-if="product.description?.meta"
+                      class="text-xs md:text-sm text-gray-600 font-inter mb-4 line-clamp-2 leading-relaxed"
+                    >
+                      {{ product.description.meta }}
+                    </p>
                   </div>
 
                   <!-- Butonlar -->
@@ -202,6 +234,16 @@ const formatPrice = (price) => {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
+};
+
+const formatProductType = (type) => {
+  const typeMap = {
+    'seed': 'Tohum',
+    'seedling': 'Fide',
+    'agriculturalTool': 'Tarım Aleti',
+    'fertilizer': 'Gübre'
+  };
+  return typeMap[type] || type;
 };
 
 const loadMore = async () => {

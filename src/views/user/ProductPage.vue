@@ -4,7 +4,7 @@
     itemscope
     itemtype="http://schema.org/Product"
   >
-    <div class="container mx-auto px-4 py-8">
+    <div class="w-full px-[10px] sm:container sm:mx-auto sm:px-4 py-4 sm:py-8">
       <!-- SEO için yapısal veri -->
       <meta itemprop="name" :content="product?.name" />
       <meta itemprop="description" :content="product?.description" />
@@ -19,7 +19,8 @@
         itemscope
         itemtype="https://schema.org/BreadcrumbList"
       >
-        <ol class="flex items-center space-x-2 text-sm text-gray-600">
+        <ol class="flex flex-wrap items-center space-x-2 text-sm text-gray-600">
+          <!-- Anasayfa -->
           <li
             itemprop="itemListElement"
             itemscope
@@ -36,22 +37,49 @@
             <ChevronRight size="16" class="ml-2" />
             <meta itemprop="position" content="1" />
           </li>
+
+          <!-- Üst Kategoriler -->
+          <template v-if="product.category?.ancestors">
+            <li
+              v-for="(ancestor, index) in product.category.ancestors"
+              :key="ancestor._id"
+              itemprop="itemListElement"
+              itemscope
+              itemtype="https://schema.org/ListItem"
+              class="flex items-center"
+            >
+              <a
+                :href="`/kategori/${ancestor.slug}`"
+                itemprop="item"
+                class="hover:text-[#2F5E32] transition-colors"
+              >
+                <span itemprop="name">{{ ancestor.name }}</span>
+              </a>
+              <ChevronRight size="16" class="ml-2" />
+              <meta itemprop="position" :content="index + 2" />
+            </li>
+          </template>
+
+          <!-- Mevcut Kategori -->
           <li
+            v-if="product.category"
             itemprop="itemListElement"
             itemscope
             itemtype="https://schema.org/ListItem"
             class="flex items-center"
           >
             <a
-              :href="`/kategoriler/${getCategorySlug}`"
+              :href="`/kategori/${product.category.slug}`"
               itemprop="item"
               class="hover:text-[#2F5E32] transition-colors"
             >
-              <span itemprop="name">{{ getCategoryName }}</span>
+              <span itemprop="name">{{ product.category.name }}</span>
             </a>
             <ChevronRight size="16" class="ml-2" />
-            <meta itemprop="position" content="2" />
+            <meta itemprop="position" :content="product.category.ancestors ? product.category.ancestors.length + 2 : 2" />
           </li>
+
+          <!-- Ürün -->
           <li
             itemprop="itemListElement"
             itemscope
@@ -59,7 +87,7 @@
             class="text-[#2F5E32]"
           >
             <span itemprop="name">{{ product.name }}</span>
-            <meta itemprop="position" content="3" />
+            <meta itemprop="position" :content="product.category?.ancestors ? product.category.ancestors.length + 3 : 3" />
           </li>
         </ol>
       </nav>
@@ -95,9 +123,9 @@
       <!-- Ana İçerik -->
       <article
         v-else-if="product"
-        class="bg-white rounded-xl shadow-sm transition-all duration-300 hover:shadow-md"
+        class="bg-white rounded-none sm:rounded-xl shadow-sm transition-all duration-300 hover:shadow-md mx-[-10px] sm:mx-0"
       >
-        <div class="p-4 lg:p-8">
+        <div class="p-2 sm:p-4 lg:p-8">
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <!-- Ürün Galerisi -->
             <ProductGallery

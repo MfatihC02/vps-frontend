@@ -42,6 +42,14 @@
                  animate-fadeIn transform hover:scale-105
                  transition-all duration-300"
         >%{{ product.price.discount }}</span>
+        <span
+          v-if="product.productType"
+          class="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white 
+                 px-4 py-1.5 rounded-full text-xs font-medium tracking-wide
+                 shadow-lg shadow-emerald-500/20 backdrop-blur-sm
+                 animate-fadeIn transform hover:scale-105 
+                 transition-all duration-300"
+        >{{ formatProductType(product.productType) }}</span>
       </div>
 
       <!-- Hover overlay -->
@@ -105,6 +113,23 @@ export default {
       required: true
     }
   },
+  methods: {
+    formatPrice(price) {
+      return Number(price || 0).toLocaleString('tr-TR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    },
+    formatProductType(type) {
+      const typeMap = {
+        'seed': 'Tohum',
+        'seedling': 'Fide',
+        'agriculturalTool': 'Tarım Aleti',
+        'fertilizer': 'Gübre'
+      };
+      return typeMap[type] || type;
+    },
+  },
   setup() {
     const isNewProduct = (product) => {
       if (!product.createdAt) return false;
@@ -112,14 +137,6 @@ export default {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       return createdAt >= thirtyDaysAgo;
-    };
-
-    const formatPrice = (price) => {
-      if (!price || isNaN(price)) return "0.00";
-      return Number(price).toLocaleString("tr-TR", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
     };
 
     const getCategoryName = (product) => {
@@ -158,7 +175,6 @@ export default {
 
     return {
       isNewProduct,
-      formatPrice,
       getCategoryName,
       slugify,
       getCategoryRoute

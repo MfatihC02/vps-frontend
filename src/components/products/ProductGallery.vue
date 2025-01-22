@@ -27,9 +27,12 @@
           :src="currentImage.url"
           :alt="currentImage.alt || `${currentImageIndex + 1}. ürün görseli`"
           class="w-full h-full object-cover transition-all duration-300"
-          :class="{ 'opacity-0': loading, 'scale-[1.02] brightness-105': zoomed }"
-          @mouseenter="zoomed = true"
-          @mouseleave="zoomed = false"
+          :class="{
+            'opacity-0': loading,
+            'scale-[1.6] cursor-zoom-out': zoomed,
+            'cursor-zoom-in': !zoomed
+          }"
+          @click="toggleZoom"
           itemprop="image"
           loading="eager"
           @load="handleImageLoad"
@@ -70,6 +73,7 @@
 
         <!-- Zoom İndikatörü -->
         <div
+          v-if="!zoomed"
           class="absolute bottom-4 right-4 bg-white/90 px-3 py-1 rounded-full text-sm font-medium shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
         >
           <ZoomIn class="w-4 h-4 inline-block mr-1" />
@@ -80,7 +84,7 @@
       <!-- Thumbnail Navigator -->
       <div
         v-if="sortedImages.length > 1"
-        class="mt-4 flex gap-3 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 pb-2 snap-x"
+        class="mt-4 flex gap-2 sm:gap-3 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 pb-2 snap-x"
         role="tablist"
         aria-label="Ürün görselleri"
       >
@@ -88,7 +92,7 @@
           v-for="(img, idx) in sortedImages"
           :key="img.publicId || idx"
           @click="selectImage(idx)"
-          class="relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden focus:outline-none transition-all duration-200 transform hover:scale-105"
+          class="relative flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden focus:outline-none transition-all duration-200 transform hover:scale-105 snap-center"
           :class="{
             'ring-2 ring-[#2F5E32] shadow-md': selectedImageIndex === idx,
             'opacity-60 hover:opacity-100': selectedImageIndex !== idx,
@@ -261,6 +265,10 @@ export default {
       selectedImageIndex.value = index;
     };
 
+    const toggleZoom = () => {
+      zoomed.value = !zoomed.value;
+    };
+
     // Klavye navigasyonu
     const handleKeyPress = (event) => {
       if (showLightbox.value) {
@@ -305,6 +313,7 @@ export default {
       openLightbox,
       closeLightbox,
       showLightbox,
+      toggleZoom,
     };
   },
 };
