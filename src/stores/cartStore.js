@@ -392,7 +392,6 @@ export const useCartStore = defineStore('cart', {
                     this.items = response.data.data.items;
                     this.totalAmount = response.data.data.totalAmount;
                     
-                    toast.success('Ürün sepete eklendi');
                     return true;
                 }
                 return false;
@@ -419,7 +418,6 @@ export const useCartStore = defineStore('cart', {
                     // Rezervasyon durumunu temizle
                     delete this.reservationStatus[productId];
                     
-                    toast.success('Ürün sepetten çıkarıldı');
                 }
             } catch (error) {
                 console.error('Sepetten çıkarma hatası:', error);

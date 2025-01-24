@@ -1,8 +1,8 @@
 <template>
-  <footer class="bg-gray-900 text-gray-300">
+  <footer class="bg-gray-900 text-gray-300 min-h-[400px]">
     <!-- Üst Footer -->
     <div class="container mx-auto px-4 py-12">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 min-h-[300px]">
         <!-- Kurumsal -->
         <div class="space-y-4">
           <h3 class="text-lg font-semibold text-white mb-4">Kurumsal</h3>
@@ -134,7 +134,7 @@
 
     <!-- Alt Footer -->
     <div class="border-t border-gray-800">
-      <div class="container mx-auto px-4 py-6">
+      <div class="container mx-auto px-4 py-6 min-h-[100px]">
         <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <!-- Ödeme Yöntemleri -->
           <div class="flex space-x-6">

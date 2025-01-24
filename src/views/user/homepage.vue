@@ -1,17 +1,9 @@
 <!-- Homepage.vue -->
 <template>
   <div class="min-h-screen bg-white transition-colors duration-300">
-    <InfoBar /> <br>
     <PartnerLogos />
     <main class="container mx-auto max-w-[1920px] transition-all duration-300">
       <!-- Mobil Kategori Butonu -->
-      <button
-        @click="isSidebarOpen = true"
-        class="md:hidden mb-4 ml-4 flex items-center gap-2 text-gray-600 hover:text-[#0F6735] transition-colors group"
-      >
-        <Icon icon="heroicons:bars-3" class="w-6 h-6 group-hover:scale-110 transition-transform" />
-        <span class="font-medium">Kategoriler</span>
-      </button>
 
       <div class="relative flex flex-col md:flex-row gap-6 px-4 md:px-6">
         <!-- Overlay -->

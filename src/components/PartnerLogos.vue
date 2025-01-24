@@ -16,8 +16,28 @@
       <!-- Swiper Slider -->
       <swiper
         :modules="modules"
-        :slides-per-view="slidesPerView"
-        :space-between="40"
+        :breakpoints="{
+          300: {
+            slidesPerView: 1,
+            spaceBetween: 10
+          },
+          640: {
+            slidesPerView: 2,
+            spaceBetween: 20
+          },
+          768: {
+            slidesPerView: 3,
+            spaceBetween: 30
+          },
+          1024: {
+            slidesPerView: 4,
+            spaceBetween: 30
+          },
+          1280: {
+            slidesPerView: 5,
+            spaceBetween: 40
+          }
+        }"
         :loop="true"
         :autoplay="{
           delay: 3000,
@@ -57,21 +77,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/autoplay';
 
 const modules = [Autoplay];
-
-const slidesPerView = computed(() => {
-  const width = window.innerWidth;
-  if (width < 640) return 2;
-  if (width < 1024) return 3;
-  if (width < 1280) return 4;
-  return 5;
-});
 
 // Partner verileri - SEO için zenginleştirilmiş
 const partners = ref([
@@ -117,19 +129,19 @@ const partners = ref([
 <style scoped>
 .partner-logos-slider {
   width: 100%;
-  padding: 1.5rem 0;
+  padding: 1rem 0;
 }
 
 .partner-logos-slider :deep(.swiper-slide) {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 80px;
+  height: auto;
 }
 
 .logo-container {
-  width: 200px;
-  height: 70px;
+  width: 100%;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -139,9 +151,52 @@ const partners = ref([
   transition: all 0.3s ease;
 }
 
+/* Responsive logo container boyutları */
+@media (min-width: 300px) {
+  .logo-container {
+    max-width: 140px;
+    min-height: 50px;
+  }
+  .partner-logo {
+    max-width: 120px;
+    max-height: 40px;
+  }
+}
+
+@media (min-width: 640px) {
+  .logo-container {
+    max-width: 160px;
+    min-height: 60px;
+  }
+  .partner-logo {
+    max-width: 140px;
+    max-height: 50px;
+  }
+}
+
+@media (min-width: 768px) {
+  .logo-container {
+    max-width: 180px;
+    min-height: 70px;
+  }
+  .partner-logo {
+    max-width: 160px;
+    max-height: 55px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .logo-container {
+    max-width: 200px;
+    min-height: 80px;
+  }
+  .partner-logo {
+    max-width: 180px;
+    max-height: 60px;
+  }
+}
+
 .partner-logo {
-  max-width: 180px;
-  max-height: 60px;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -157,6 +212,7 @@ const partners = ref([
 :deep(.swiper-wrapper) {
   align-items: center;
 }
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -168,5 +224,4 @@ const partners = ref([
   white-space: nowrap;
   border: 0;
 }
-
 </style>

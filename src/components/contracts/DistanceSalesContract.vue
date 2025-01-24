@@ -45,74 +45,73 @@
       <h3 class="text-lg font-medium mb-4">3. SÖZLEŞME KONUSU ÜRÜN/ÜRÜNLER</h3>
       <div class="mb-4">
         <h4 class="font-medium mb-2">3.1. Ürünlerin Temel Özellikleri</h4>
-        <div v-if="orderDetails" class="border rounded-lg overflow-hidden">
+        <div v-if="orderDetails" class="border rounded-lg overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
-              <tr>
-                <th class="px-4 py-2 text-left">Ürün Adı</th>
-                <th class="px-4 py-2 text-left">Ürün Kodu</th>
-                <th class="px-4 py-2 text-right">Adet</th>
-                <th class="px-4 py-2 text-right">Birim Fiyat (KDV Hariç)</th>
-                <th class="px-4 py-2 text-right">Toplam Fiyat (KDV Hariç)</th>
+              <tr class="text-xs md:text-sm">
+                <th class="px-2 md:px-4 py-2 text-left">Ürün Adı</th>
+                <th class="px-2 md:px-4 py-2 text-left hidden sm:table-cell">Ürün Kodu</th>
+                <th class="px-2 md:px-4 py-2 text-right">Adet</th>
+                <th class="px-2 md:px-4 py-2 text-right hidden md:table-cell">Birim Fiyat</th>
+                <th class="px-2 md:px-4 py-2 text-right">Toplam</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="item in orderDetails.items" :key="item._id">
-                <td class="px-4 py-2">{{ item.product.name }}</td>
-                <td class="px-4 py-2">{{ item.product.sku }}</td>
-                <td class="px-4 py-2 text-right">{{ item.quantity }}</td>
-                <td class="px-4 py-2 text-right">₺{{ formatPrice(item.priceWithoutVAT) }}</td>
-                <td class="px-4 py-2 text-right">₺{{ formatPrice(item.totalPriceWithoutVAT) }}</td>
+              <tr v-for="item in orderDetails.items" :key="item._id" class="text-xs md:text-sm hover:bg-gray-50">
+                <td class="px-2 md:px-4 py-2">
+                  <div>{{ item.product.name }}</div>
+                  <div class="text-gray-500 text-xs sm:hidden">{{ item.product.sku }}</div>
+                  <div class="text-gray-500 text-xs md:hidden">₺{{ formatPrice(item.priceWithoutVAT) }} (Birim)</div>
+                </td>
+                <td class="px-2 md:px-4 py-2 hidden sm:table-cell">{{ item.product.sku }}</td>
+                <td class="px-2 md:px-4 py-2 text-right">{{ item.quantity }}</td>
+                <td class="px-2 md:px-4 py-2 text-right hidden md:table-cell">₺{{ formatPrice(item.priceWithoutVAT) }}</td>
+                <td class="px-2 md:px-4 py-2 text-right">₺{{ formatPrice(item.totalPriceWithoutVAT) }}</td>
               </tr>
             </tbody>
-            <tfoot class="bg-gray-50">
+            <tfoot class="bg-gray-50 text-xs md:text-sm">
               <tr>
-                <td colspan="4" class="px-4 py-2 text-right font-medium">Ara Toplam (KDV Hariç):</td>
-                <td class="px-4 py-2 text-right font-medium">₺{{ formatPrice(subtotal) }}</td>
+                <td colspan="2" class="hidden md:table-cell"></td>
+                <td colspan="2" class="px-2 md:px-4 py-2 text-right font-medium">Ara Toplam:</td>
+                <td class="px-2 md:px-4 py-2 text-right font-medium">₺{{ formatPrice(subtotal) }}</td>
               </tr>
-              <tr v-if="uniqueProductTypes.includes('seedling')">
-                <td colspan="4" class="px-4 py-2 text-right font-medium">
-                  KDV (%1) - Fide:
-                </td>
-                <td class="px-4 py-2 text-right font-medium">
-                  ₺{{ formatPrice(getVatAmountByType('seedling')) }}
-                </td>
-              </tr>
-              <tr v-if="uniqueProductTypes.includes('seed')">
-                <td colspan="4" class="px-4 py-2 text-right font-medium">
-                  KDV (%1) - Tohum:
-                </td>
-                <td class="px-4 py-2 text-right font-medium">
-                  ₺{{ formatPrice(getVatAmountByType('seed')) }}
-                </td>
-              </tr>
-              <tr v-if="uniqueProductTypes.includes('fertilizer')">
-                <td colspan="4" class="px-4 py-2 text-right font-medium">
-                  KDV (%1) - Gübre:
-                </td>
-                <td class="px-4 py-2 text-right font-medium">
-                  ₺{{ formatPrice(getVatAmountByType('fertilizer')) }}
-                </td>
-              </tr>
-              <tr v-if="uniqueProductTypes.includes('agriculturalTool')">
-                <td colspan="4" class="px-4 py-2 text-right font-medium">
-                  KDV (%20) - Zirai Alet:
-                </td>
-                <td class="px-4 py-2 text-right font-medium">
-                  ₺{{ formatPrice(getVatAmountByType('agriculturalTool')) }}
+              <!-- KDV Detayları için Açılır Panel -->
+              <tr class="border-t border-gray-200">
+                <td colspan="5" class="px-2 md:px-4 py-2">
+                  <div class="flex flex-col space-y-2">
+                    <div v-if="uniqueProductTypes.includes('seedling')" class="flex justify-between items-center">
+                      <span class="font-medium">KDV (%1) - Fide:</span>
+                      <span>₺{{ formatPrice(getVatAmountByType('seedling')) }}</span>
+                    </div>
+                    <div v-if="uniqueProductTypes.includes('seed')" class="flex justify-between items-center">
+                      <span class="font-medium">KDV (%1) - Tohum:</span>
+                      <span>₺{{ formatPrice(getVatAmountByType('seed')) }}</span>
+                    </div>
+                    <div v-if="uniqueProductTypes.includes('fertilizer')" class="flex justify-between items-center">
+                      <span class="font-medium">KDV (%1) - Gübre:</span>
+                      <span>₺{{ formatPrice(getVatAmountByType('fertilizer')) }}</span>
+                    </div>
+                    <div v-if="uniqueProductTypes.includes('agriculturalTool')" class="flex justify-between items-center">
+                      <span class="font-medium">KDV (%20) - Zirai Alet:</span>
+                      <span>₺{{ formatPrice(getVatAmountByType('agriculturalTool')) }}</span>
+                    </div>
+                  </div>
                 </td>
               </tr>
-              <tr>
-                <td colspan="4" class="px-4 py-2 text-right font-medium">Toplam KDV:</td>
-                <td class="px-4 py-2 text-right font-medium">₺{{ formatPrice(totalVAT) }}</td>
+              <tr class="border-t border-gray-200">
+                <td colspan="2" class="hidden md:table-cell"></td>
+                <td colspan="2" class="px-2 md:px-4 py-2 text-right font-medium">Toplam KDV:</td>
+                <td class="px-2 md:px-4 py-2 text-right font-medium">₺{{ formatPrice(totalVAT) }}</td>
               </tr>
-              <tr>
-                <td colspan="4" class="px-4 py-2 text-right font-medium">Kargo:</td>
-                <td class="px-4 py-2 text-right font-medium">Ücretsiz</td>
+              <tr class="border-t border-gray-200">
+                <td colspan="2" class="hidden md:table-cell"></td>
+                <td colspan="2" class="px-2 md:px-4 py-2 text-right font-medium">Kargo:</td>
+                <td class="px-2 md:px-4 py-2 text-right font-medium">Ücretsiz</td>
               </tr>
-              <tr class="font-bold">
-                <td colspan="4" class="px-4 py-2 text-right">Genel Toplam (KDV Dahil):</td>
-                <td class="px-4 py-2 text-right">₺{{ formatPrice(total) }}</td>
+              <tr class="font-bold border-t border-gray-200">
+                <td colspan="2" class="hidden md:table-cell"></td>
+                <td colspan="2" class="px-2 md:px-4 py-2 text-right">Genel Toplam:</td>
+                <td class="px-2 md:px-4 py-2 text-right">₺{{ formatPrice(total) }}</td>
               </tr>
             </tfoot>
           </table>
@@ -348,6 +347,27 @@ const formatDate = (date) => {
 @media print {
   .contract-container {
     @apply shadow-none p-0;
+  }
+}
+
+/* Responsive tablo stilleri */
+@media (max-width: 639px) {
+  .overflow-x-auto {
+    @apply -mx-6;
+  }
+  
+  table {
+    @apply w-full;
+  }
+  
+  td, th {
+    @apply whitespace-normal;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+  .overflow-x-auto {
+    @apply -mx-4;
   }
 }
 </style>
