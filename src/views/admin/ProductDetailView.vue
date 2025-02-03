@@ -6,12 +6,22 @@
         <h1 class="text-2xl font-semibold text-slate-900">
           {{ product?.name || 'Ürün Detayı' }}
         </h1>
-        <router-link 
-          to="/admin/product" 
-          class="btn-secondary"
-        >
-          Ürün Listesine Dön
-        </router-link>
+        <div class="flex items-center gap-3">
+          <button 
+            @click="showDeleteModal = true"
+            class="btn-danger"
+            :disabled="loading"
+          >
+            <i class="fas fa-trash-alt mr-2"></i>
+            Ürünü Sil
+          </button>
+          <router-link 
+            to="/admin/product" 
+            class="btn-secondary"
+          >
+            Ürün Listesine Dön
+          </router-link>
+        </div>
       </div>
       
       <div class="product-meta mt-2 flex gap-4 text-sm text-slate-600">
@@ -75,16 +85,44 @@
       </div>
     </template>
   </div>
+
+  <!-- Silme Onay Modalı -->
+  <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+      <h3 class="text-lg font-semibold text-slate-900 mb-4">Ürünü Silmeyi Onayla</h3>
+      <p class="text-slate-600 mb-6">
+        "{{ product?.name }}" ürününü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+      </p>
+      <div class="flex justify-end gap-3">
+        <button 
+          @click="showDeleteModal = false"
+          class="btn-secondary"
+          :disabled="deleteLoading"
+        >
+          İptal
+        </button>
+        <button 
+          @click="handleDelete"
+          class="btn-danger"
+          :disabled="deleteLoading"
+        >
+          <i class="fas fa-spinner fa-spin mr-2" v-if="deleteLoading"></i>
+          {{ deleteLoading ? 'Siliniyor...' : 'Evet, Sil' }}
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useProductStore } from '@/stores/productStore';
 import { useToast } from 'vue-toastification';
 import { formatDate } from '@/utils/dateUtils';
 
 const route = useRoute();
+const router = useRouter();
 const productStore = useProductStore();
 const toast = useToast();
 
@@ -93,6 +131,8 @@ const product = ref(null);
 const loading = ref(false);
 const error = ref(null);
 const productId = route.params.id;
+const showDeleteModal = ref(false);
+const deleteLoading = ref(false);
 
 // Ürün bilgilerini getir
 const fetchProduct = async () => {
@@ -165,6 +205,25 @@ const handleProductUpdate = async (updatedProduct) => {
   }
 };
 
+// Silme işlemi
+const handleDelete = async () => {
+  if (!product.value?._id) return;
+  
+  deleteLoading.value = true;
+  
+  try {
+    await productStore.deleteProduct(product.value._id);
+    toast.success('Ürün başarıyla silindi');
+    router.push('/admin/product');
+  } catch (err) {
+    console.error('Ürün silinirken hata:', err);
+    toast.error(err.response?.data?.message || 'Ürün silinirken bir hata oluştu');
+  } finally {
+    deleteLoading.value = false;
+    showDeleteModal.value = false;
+  }
+};
+
 // Lifecycle Hooks
 onMounted(() => {
   console.log('ProductDetailView mounted. ProductId:', productId);
@@ -181,7 +240,16 @@ onMounted(() => {
   @apply px-4 py-2 text-sm font-medium text-slate-700 bg-white 
          border border-slate-300 rounded-lg shadow-sm 
          hover:bg-slate-50 focus:outline-none focus:ring-2 
-         focus:ring-offset-2 focus:ring-emerald-500;
+         focus:ring-offset-2 focus:ring-emerald-500
+         disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-danger {
+  @apply px-4 py-2 text-sm font-medium text-white bg-red-600
+         rounded-lg shadow-sm hover:bg-red-700 focus:outline-none 
+         focus:ring-2 focus:ring-offset-2 focus:ring-red-500
+         disabled:opacity-50 disabled:cursor-not-allowed
+         transition-colors duration-200;
 }
 
 .tabs {

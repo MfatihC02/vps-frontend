@@ -5,7 +5,7 @@
     <div class="flex justify-between items-center mb-4">
       <div class="space-y-1">
         <h3 class="text-sm text-gray-500">Sipariş No</h3>
-        <p class="font-medium">{{ formatOrderNumber(order.orderNumber) }}</p>
+        <p class="font-medium">{{ order.orderNumber }}</p>
       </div>
       <div :class="getStatusClass(order.status)" class="px-3 py-1 rounded-full text-sm font-medium">
         {{ getStatusText(order.status) }}

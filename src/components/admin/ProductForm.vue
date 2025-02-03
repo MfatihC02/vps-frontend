@@ -738,12 +738,4 @@ watch(
   { immediate: true, deep: true }
 );
 
-// Watch form changes
-watch(
-  () => formData,
-  (newData) => {
-    console.log('Form verisi değişti:', newData);
-  },
-  { deep: true }
-);
 </script>

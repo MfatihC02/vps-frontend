@@ -125,17 +125,19 @@
         v-else-if="product"
         class="bg-white rounded-none sm:rounded-xl shadow-sm transition-all duration-300 hover:shadow-md mx-[-10px] sm:mx-0"
       >
-        <div class="p-2 sm:p-4 lg:p-8">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div class="p-2 sm:p-4 lg:p-6">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
             <!-- Ürün Galerisi -->
-            <ProductGallery
-              :images="product?.images"
-              :loading="loading"
-              class="lg:sticky lg:top-4"
-            />
+            <div class="w-full max-w-xl mx-auto lg:max-w-none">
+              <ProductGallery
+                :images="product?.images"
+                :loading="loading"
+                class="lg:sticky lg:top-4 w-full max-w-md mx-auto"
+              />
+            </div>
 
             <!-- Ürün Detayları -->
-            <div class="flex flex-col space-y-8">
+            <div class="flex flex-col space-y-6">
               <ProductDetails
                 :product="formattedProductDetails"
                 :productId="product?._id"

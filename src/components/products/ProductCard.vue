@@ -8,8 +8,7 @@
            flex flex-col h-full relative border border-gray-100/20"
   >
     <!-- Görsel alanı -->
-    <div class="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 w-full">
-      <img
+    <div class="relative aspect-[3/4] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 w-full">      <img
         v-if="product.images?.length"
         :src="product.images[0].url"
         :alt="product.name"
@@ -58,16 +57,16 @@
     </div>
     
     <!-- İçerik alanı -->
-    <div class="p-5 flex flex-col flex-grow bg-gradient-to-b from-white/50 to-white">
-      <div class="space-y-3 flex-grow">
+    <div class="pt-3 px-4 pb-3 flex flex-col flex-grow bg-gradient-to-b from-white/50 to-white min-h-0">
+      <div class="space-y-2 flex-grow">
         <!-- Ürün Adı -->
         <h3 class="font-medium text-gray-800 line-clamp-2 group-hover:text-emerald-600
-                   transition-colors duration-300 text-sm leading-snug tracking-wide">
+                   transition-colors duration-300 text-sm leading-tight tracking-wide">
           {{ product.name }}
         </h3>
 
         <!-- Fiyat alanı -->
-        <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1 pt-1">
+        <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">
           <div class="flex items-baseline gap-2 flex-wrap">
             <span class="font-semibold text-emerald-600 text-lg tracking-tight">
               {{ formatPrice(product.price?.current) }} TL
@@ -87,8 +86,8 @@
 
       <!-- Detay butonu -->
       <button
-        class="w-full mt-4 bg-gradient-to-r from-emerald-50 to-emerald-100/80
-               text-emerald-600 py-2.5 rounded-xl flex items-center 
+        class="w-full mt-2 bg-gradient-to-r from-emerald-50 to-emerald-100/80
+               text-emerald-600 py-2 rounded-xl flex items-center 
                justify-center gap-2 transition-all duration-300 
                hover:from-emerald-600 hover:to-emerald-500 hover:text-white 
                group/btn text-sm font-medium tracking-wide

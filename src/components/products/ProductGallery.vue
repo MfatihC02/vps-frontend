@@ -1,6 +1,6 @@
 <template>
   <section
-    class="product-gallery space-y-4"
+    class="product-gallery -mt-4"
     itemscope
     itemtype="http://schema.org/ImageGallery"
   >
@@ -8,7 +8,7 @@
     <div class="relative">
       <!-- Ana Görsel Container -->
       <div
-        class="relative w-full aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 group"
+        class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 group"
         :class="{ 'animate-pulse': loading }"
         @touchstart="handleTouchStart"
         @touchmove="handleTouchMove"
@@ -24,9 +24,9 @@
 
         <img
           v-if="currentImage"
-          :src="currentImage.url"
+          :src="currentImage.url.replace('/upload/', '/upload/c_scale,w_600/')"
           :alt="currentImage.alt || `${currentImageIndex + 1}. ürün görseli`"
-          class="w-full h-full object-cover transition-all duration-300"
+          class="w-full h-full object-contain transition-all duration-300"
           :class="{
             'opacity-0': loading,
             'scale-[1.6] cursor-zoom-out': zoomed,
@@ -104,7 +104,7 @@
           :aria-label="`Görsel ${idx + 1}`"
         >
           <img
-            :src="img.url"
+            :src="img.url.replace('/upload/', '/upload/w_200,h_200,c_fill,g_center/')"
             :alt="`Küçük görsel ${idx + 1}`"
             class="w-full h-full object-cover transition-opacity duration-200"
             :class="{ 'opacity-50': loading }"
@@ -127,9 +127,9 @@
     >
       <div class="relative max-w-4xl w-full p-4">
         <img
-          :src="currentImage?.url"
+          :src="currentImage?.url.replace('/upload/', '/upload/w_1024,h_1024,c_pad,g_center,b_white,q_auto/')"
           :alt="currentImage?.alt"
-          class="w-full h-auto max-h-[80vh] object-contain"
+          class="w-full h-auto max-h-[90vh] object-contain mx-auto"
         />
         <button
           @click="closeLightbox"
