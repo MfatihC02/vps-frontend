@@ -130,7 +130,8 @@ export const usePaymentStore = defineStore('payment', {
                 // Sipariş verilerini hazırla
                 const orderData = {
                     items: orderItems,
-                    shippingAddressId: addressStore.defaultAddress._id
+                    shippingAddressId: addressStore.defaultAddress._id,
+                    totalAmount: cartStore.grandTotal  // Kargo dahil toplam tutar
                 };
 
                 console.log('Creating order with data:', orderData);
@@ -336,9 +337,10 @@ export const usePaymentStore = defineStore('payment', {
                             reservationId: reservationId
                         };
                     }),
-                    shippingAddressId: addressStore.getDefaultAddress._id
+                    shippingAddressId: addressStore.getDefaultAddress._id,
+                    totalAmount: cartStore.grandTotal  // Kargo dahil toplam tutar
                 };
-                
+
                 const order = await orderStore.createOrder(orderData);
                 console.log('Sipariş oluşturuldu:', order);
 
@@ -361,7 +363,7 @@ export const usePaymentStore = defineStore('payment', {
                     // 3D Secure kontrolü
                     if (response.data.data?.is3DSecure) {
                         const formData = response.data.data.formData;
-                        
+
                         // 3D Secure Response Log
                         console.log('3D Secure Response:', {
                             formAction: formData.formData.action,
@@ -371,7 +373,7 @@ export const usePaymentStore = defineStore('payment', {
 
                         // State güncelleme öncesi log
                         console.log('3D Secure state güncelleniyor');
-                        
+
                         // State güncelleme
                         this.threeDSecureData = {
                             formAction: formData.formData.action,
@@ -388,7 +390,7 @@ export const usePaymentStore = defineStore('payment', {
 
                         console.log('3D Secure yönlendirmesi hazırlandı:', this.threeDSecureData);
                     }
-                    
+
                     this.transactionId = response.data.transactionId;
                     return response.data;
                 } else {
@@ -715,8 +717,8 @@ export const usePaymentStore = defineStore('payment', {
             }
 
             // Son kullanma tarihi kontrolü
-            if (!expiryMonth || !expiryYear || 
-                !/^(0[1-9]|1[0-2])$/.test(expiryMonth) || 
+            if (!expiryMonth || !expiryYear ||
+                !/^(0[1-9]|1[0-2])$/.test(expiryMonth) ||
                 !/^\d{2}$/.test(expiryYear)) {
                 throw new Error('Geçersiz son kullanma tarihi');
             }
@@ -731,7 +733,7 @@ export const usePaymentStore = defineStore('payment', {
         async preparePaymentRequestData(cardDetails, cardHolderData) {
             try {
                 const cartAmount = await this.getCartAmount();
-                
+
                 console.log('3. Ödeme verileri hazırlanıyor:', {
                     cartAmount: cartAmount,
                     cardHolderData: cardHolderData,
@@ -787,18 +789,26 @@ export const usePaymentStore = defineStore('payment', {
                     cartStoreExists: !!cartStore,
                     cartExists: !!cart,
                     cartData: cart,
-                    totalAmount: cart?.totalAmount
+                    totalAmount: cart?.totalAmount,
+                    grandTotal: cartStore.grandTotal // Kargo dahil toplam
                 });
 
-                if (!cart || !cart.totalAmount) {
+                if (!cart) {
                     throw new Error('Sepet tutarı bulunamadı');
                 }
 
-                console.log('Sepet tutarı alındı:', cart.totalAmount);
+                // cartStore.grandTotal kullan (kargo dahil toplam)
+                const totalWithShipping = cartStore.grandTotal;
+
+                console.log('Sepet tutarı alındı:', {
+                    subtotal: cart.totalAmount,
+                    shipping: cartStore.shipping,
+                    grandTotal: totalWithShipping
+                });
 
                 return {
-                    Amount: cart.totalAmount,
-                    DisplayAmount: this._formatAmount(cart.totalAmount),
+                    Amount: totalWithShipping, // Kargo dahil toplam tutar
+                    DisplayAmount: this._formatAmount(totalWithShipping), // Kuruş formatına çevir
                     CurrencyCode: "0949"
                 };
             } catch (error) {

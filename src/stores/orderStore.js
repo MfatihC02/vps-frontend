@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia';
 import api from '@/services/axiosInstance.js';
 import { socketManager } from '@/plugins/socket';
-import { useCartStore } from '@/stores/cartStore'; 
+import { useCartStore } from '@/stores/cartStore';
 
 export const useOrderStore = defineStore('order', {
     state: () => ({
@@ -50,7 +50,7 @@ export const useOrderStore = defineStore('order', {
             }
             if (state.filters.searchTerm) {
                 const searchLower = state.filters.searchTerm.toLowerCase();
-                filtered = filtered.filter(order => 
+                filtered = filtered.filter(order =>
                     order.orderNumber?.toLowerCase().includes(searchLower) ||
                     order.user?.email?.toLowerCase().includes(searchLower)
                 );
@@ -94,16 +94,16 @@ export const useOrderStore = defineStore('order', {
                 .reduce((sum, order) => sum + order.totalAmount, 0)
         }),
 
-        pendingOrders: (state) => 
+        pendingOrders: (state) =>
             state.orders.filter(o => o.status === 'PENDING_PAYMENT'),
 
-        processingOrders: (state) => 
+        processingOrders: (state) =>
             state.orders.filter(o => o.status === 'PROCESSING'),
 
-        completedOrders: (state) => 
+        completedOrders: (state) =>
             state.orders.filter(o => o.status === 'DELIVERED'),
 
-        cancelledOrders: (state) => 
+        cancelledOrders: (state) =>
             state.orders.filter(o => o.status === 'CANCELLED'),
 
         hasSelectedOrders: (state) => state.selectedOrders.length > 0,
@@ -195,7 +195,7 @@ export const useOrderStore = defineStore('order', {
 
                 const response = await api.get(`/orders/${orderId}`);
                 this.currentOrder = response.data.data;
-                
+
                 return this.currentOrder;
             } catch (error) {
                 this.error = error.response?.data?.message || 'Sipariş detayları yüklenemedi';
@@ -302,13 +302,13 @@ export const useOrderStore = defineStore('order', {
 
                 if (response.data.success) {
                     const updatedOrder = response.data.data;
-                    
+
                     // Orders array'inde güncelleme
                     const orderIndex = this.orders.findIndex(o => o._id === orderId);
                     if (orderIndex !== -1) {
                         this.orders[orderIndex] = updatedOrder;
                     }
-                    
+
                     // Mevcut sipariş detayını güncelleme
                     if (this.currentOrder?._id === orderId) {
                         this.currentOrder = updatedOrder;
@@ -464,7 +464,7 @@ export const useOrderStore = defineStore('order', {
         handleOrderStatusChange(data) {
             const { orderId, status, note } = data;
             const orderIndex = this.orders.findIndex(o => o._id === orderId);
-            
+
             if (orderIndex !== -1) {
                 this.orders[orderIndex] = {
                     ...this.orders[orderIndex],
@@ -495,7 +495,7 @@ export const useOrderStore = defineStore('order', {
         handleShippingUpdate(data) {
             const { orderId, trackingNumber, shippingStatus, estimatedDelivery } = data;
             const orderIndex = this.orders.findIndex(o => o._id === orderId);
-            
+
             if (orderIndex !== -1) {
                 this.orders[orderIndex] = {
                     ...this.orders[orderIndex],
@@ -510,7 +510,7 @@ export const useOrderStore = defineStore('order', {
         handleOrderError(data) {
             const { orderId, error } = data;
             this.error = error;
-            
+
             // Sipariş durumunu güncelle
             const orderIndex = this.orders.findIndex(o => o._id === orderId);
             if (orderIndex !== -1) {
@@ -571,7 +571,7 @@ export const useOrderStore = defineStore('order', {
                 total: 0,
                 pages: 0
             };
-            
+
             // Socket listeners'ları temizle
             socketManager.socket?.off('ORDER_STATUS_UPDATED');
             socketManager.socket?.off('NEW_ORDER_NOTIFICATION');

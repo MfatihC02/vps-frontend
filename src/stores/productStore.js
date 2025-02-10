@@ -4,9 +4,10 @@ import api from '@/services/axiosInstance';
 
 export const useProductStore = defineStore('product', {
     state: () => ({
-        products: [],           // Önerilen ürünler için
-        newProducts: [],        // Yeni ürünler için
-        discountedProducts: [], // İndirimli ürünler için
+        searchResults: [],        // Yeni eklenen state
+        products: [],
+        newProducts: [],
+        discountedProducts: [],
         product: null,
         loading: false,
         error: null,
@@ -30,7 +31,8 @@ export const useProductStore = defineStore('product', {
         getNewProducts: (state) => state.newProducts,
         getDiscountedProducts: (state) => state.discountedProducts,
         isLoading: (state) => state.loading,
-        getError: (state) => state.error
+        getError: (state) => state.error,
+        getSearchResults: (state) => state.searchResults,
     },
     actions: {
         // Socket Event Listeners
@@ -124,6 +126,13 @@ export const useProductStore = defineStore('product', {
 
                 const response = await api.get(`/products?${queryParams}`);
 
+                // Eğer arama parametresi varsa, searchResults'ı güncelle
+                if (validFilters.search) {
+                    this.searchResults = response.data.data.docs;
+                } else {
+                    this.products = response.data.data.docs;
+                }
+
                 return response.data;
             } catch (error) {
                 console.error('Fetch Products Error:', error);
@@ -139,23 +148,34 @@ export const useProductStore = defineStore('product', {
             this.loading = true;
             this.error = null;
             try {
+                // Önce tüm ürünleri getirelim (yeni ve indirimli ürünler için)
                 const response = await api.get('/products');
-                const allProducts = response.data.data.docs; // Düzeltilmiş veri yolu
+                const allProducts = response.data.data.docs;
 
-                // Şimdilik tüm ürünleri önerilen ürünler olarak kullanıyoruz
-                this.products = allProducts;
-                
-                // Yeni ürünler için son 7 günü kontrol ediyoruz
-                const sevenDaysAgo = new Date();
-                sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-                this.newProducts = allProducts.filter(product => {
-                  const createdAt = new Date(product.createdAt);
-                  return createdAt >= sevenDaysAgo;
+                // Öne çıkan ürünler için ayrı sorgu
+                const recommendedResponse = await api.get('/products', {
+                    params: {
+                        search: 'öneÇıkan',
+                        status: 'active',
+                        limit: 12,
+                        sort: '-createdAt'
+                    }
                 });
+                this.products = recommendedResponse.data.data.docs;
+
+                // Yeni ürünler için özel sorgu - son eklenen 12 ürün
+                const newProductsResponse = await api.get('/products', {
+                    params: {
+                        limit: 12,
+                        sort: '-createdAt',
+                        status: 'active'
+                    }
+                });
+                this.newProducts = newProductsResponse.data.data.docs;
 
                 // İndirimli ürünler
                 this.discountedProducts = allProducts.filter(product => {
-                  return product.price?.discount > 0;
+                    return product.price?.discount > 0;
                 });
 
             } catch (err) {

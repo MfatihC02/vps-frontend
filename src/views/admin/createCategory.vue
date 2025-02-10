@@ -505,6 +505,12 @@ export default {
 
     const handleImageChange = (event) => {
       const file = event.target.files[0];
+      console.log('Resim seçildi:', {
+        file,
+        fileType: file ? file.type : null,
+        fileSize: file ? file.size : null
+      });
+      
       if (file) {
         form.value.image = file;
         imagePreview.value = URL.createObjectURL(file);
@@ -529,11 +535,27 @@ export default {
     };
 
     const handleSubmit = async () => {
+      console.log('Form gönderilmeden önce image değeri:', {
+        imageValue: form.value.image,
+        imageType: form.value.image instanceof File ? 'File Object' : typeof form.value.image,
+        imagePreviewValue: imagePreview.value
+      });
+
       try {
         if (editMode.value) {
+          // Mevcut form verilerini kopyala
+          const updateData = { ...form.value };
+          
+          // Parent değeri değişmediyse parent alanını kaldır
+          const currentParent = selectedCategory.value?.parent || null;
+          const newParent = form.value.parent || null;
+          if (String(currentParent) === String(newParent)) {
+            delete updateData.parent;
+          }
+
           await categoryStore.updateCategory(
             selectedCategory.value._id,
-            form.value
+            updateData
           );
         } else {
           await categoryStore.createCategory(form.value);

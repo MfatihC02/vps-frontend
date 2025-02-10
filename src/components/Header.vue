@@ -17,13 +17,15 @@
             class="flex items-center space-x-2 text-emerald-700 hover:text-emerald-600 transition"
           >
             <Sprout class="h-7 w-7" />
-            <span class="text-xl font-bold hidden sm:block">{{ storeName }}</span>
+            <span class="text-xl font-bold hidden sm:block">{{
+              storeName
+            }}</span>
           </router-link>
         </div>
 
         <!-- Orta Alan (Arama) -->
         <div class="hidden md:block flex-1 max-w-2xl mx-8">
-          <SearchBar 
+          <SearchBar
             :placeholder="searchPlaceholder"
             @search="handleSearchResults"
           />
@@ -121,7 +123,7 @@
       <!-- Mobil Arama Alanı -->
       <div v-if="showMobileSearch" class="py-3 md:hidden">
         <div class="relative">
-          <SearchBar 
+          <SearchBar
             :placeholder="searchPlaceholder"
             @search="handleSearchResults"
           />
@@ -148,7 +150,6 @@
           <CategoryList />
         </div>
       </div>
-
     </div>
   </header>
 </template>
@@ -158,10 +159,22 @@ import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/authStore";
 import { useUserStore } from "@/stores/userStore";
-import { useCartStore } from '@/stores/cartStore';
-import { useProductStore } from '@/stores/productStore';
-import { Sprout, Search, ShoppingCart, User, ChevronDown, ListTree, UserCircle, Package, Settings, LogIn, LogOut } from "lucide-vue-next";
-import SearchBar from './SearchBar.vue';
+import { useCartStore } from "@/stores/cartStore";
+import { useProductStore } from "@/stores/productStore";
+import {
+  Sprout,
+  Search,
+  ShoppingCart,
+  User,
+  ChevronDown,
+  ListTree,
+  UserCircle,
+  Package,
+  Settings,
+  LogIn,
+  LogOut,
+} from "lucide-vue-next";
+import SearchBar from "./SearchBar.vue";
 import CategoryList from "@/components/CategoryList.vue";
 
 // Store'ları başlat
@@ -179,7 +192,7 @@ const isCategoryMenuOpen = ref(false);
 
 // Constants
 const storeName = "Mühendisler Ticaret";
-const searchPlaceholder = ref('Ürün veya marka ara...');
+const searchPlaceholder = ref("Ürün veya marka ara...");
 const loginButtonText = "Giriş Yap";
 const cartItemCount = computed(() => cartStore.cartItemCount);
 
@@ -190,7 +203,7 @@ const isAdmin = computed(() => userStore.role === "admin");
 
 // Methods
 const handleSearchResults = (results) => {
-  console.log('Arama sonuçları:', results);
+  console.log("Arama sonuçları:", results);
   // Burada arama sonuçlarıyla ilgili işlemler yapılabilir
 };
 

@@ -2,7 +2,9 @@
   <div class="min-h-screen bg-gray-50">
     <div class="max-w-7xl mx-auto px-3 py-4 sm:px-6 lg:px-8">
       <!-- Header -->
-      <div class="flex items-center justify-between mb-6 bg-white p-4 rounded-lg shadow-sm">
+      <div
+        class="flex items-center justify-between mb-6 bg-white p-4 rounded-lg shadow-sm"
+      >
         <div class="flex items-center">
           <ShoppingBag class="w-6 h-6 text-green-600 mr-2" />
           <h1 class="text-xl font-semibold text-gray-900">Sepetim</h1>
@@ -24,15 +26,23 @@
         <!-- Ürün Listesi -->
         <div class="lg:col-span-2">
           <div v-if="loading" class="flex justify-center items-center py-8">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+            <div
+              class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"
+            ></div>
           </div>
 
-          <div v-else-if="cartStore.isEmpty" class="bg-white rounded-lg shadow-sm p-12 text-center">
+          <div
+            v-else-if="cartStore.isEmpty"
+            class="bg-white rounded-lg shadow-sm p-12 text-center"
+          >
             <div class="max-w-md mx-auto">
               <ShoppingBag class="w-16 h-16 text-gray-400 mx-auto mb-6" />
-              <h3 class="text-2xl font-semibold text-gray-900 mb-4">Sepetiniz Boş</h3>
+              <h3 class="text-2xl font-semibold text-gray-900 mb-4">
+                Sepetiniz Boş
+              </h3>
               <p class="text-gray-600 mb-8">
-                Sepetinizde henüz ürün bulunmamaktadır. Ürünlerimizi inceleyerek alışverişe başlayabilirsiniz.
+                Sepetinizde henüz ürün bulunmamaktadır. Ürünlerimizi inceleyerek
+                alışverişe başlayabilirsiniz.
               </p>
               <button
                 @click="$router.push('/products')"
@@ -45,7 +55,9 @@
           </div>
 
           <div v-else class="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div class="hidden sm:grid sm:grid-cols-12 text-sm font-medium text-gray-500 bg-gray-50 px-6 py-3">
+            <div
+              class="hidden sm:grid sm:grid-cols-12 text-sm font-medium text-gray-500 bg-gray-50 px-6 py-3"
+            >
               <div class="col-span-6">Ürün Bilgisi</div>
               <div class="col-span-2 text-center">Birim Fiyat</div>
               <div class="col-span-2 text-center">Miktar</div>
@@ -77,20 +89,29 @@
                         Birim: {{ item.unit }}
                       </p>
                       <!-- Stok Durumu -->
-                      <div 
+                      <div
                         class="stock-status"
                         :class="{
-                          'available': getStockStatus(item.product._id) === 'available',
-                          'low': getStockStatus(item.product._id) === 'low',
-                          'out': getStockStatus(item.product._id) === 'out'
+                          available:
+                            getStockStatus(item.product._id) === 'available',
+                          low: getStockStatus(item.product._id) === 'low',
+                          out: getStockStatus(item.product._id) === 'out',
                         }"
                       >
                         <div class="flex items-center">
-                          <span v-if="getStockStatus(item.product._id) === 'out'" class="flex items-center text-red-600">
+                          <span
+                            v-if="getStockStatus(item.product._id) === 'out'"
+                            class="flex items-center text-red-600"
+                          >
                             <AlertCircle class="w-4 h-4 mr-1" />
                             <span>Stokta yok</span>
                           </span>
-                          <span v-else-if="getStockStatus(item.product._id) === 'low'" class="flex items-center text-orange-600">
+                          <span
+                            v-else-if="
+                              getStockStatus(item.product._id) === 'low'
+                            "
+                            class="flex items-center text-orange-600"
+                          >
                             <AlertTriangle class="w-4 h-4 mr-1" />
                             <span>Stok tükeniyor</span>
                           </span>
@@ -100,25 +121,18 @@
                           </span>
                         </div>
                       </div>
-                      <!-- Rezervasyon Durumu -->
-                      <div v-if="cartStore.hasItemReservation(item.product._id)">
-                        <div class="reservation-timer" v-if="cartStore.getItemReservationTime(item.product._id) > 0">
-                          <Clock class="w-4 h-4 mr-1" />
-                          <span>Rezerve: {{ Math.ceil(cartStore.getItemReservationTime(item.product._id) / 60) }} dakika</span>
-                        </div>
-                        <div class="reservation-warning" v-else>
-                          <AlertCircle class="w-4 h-4 mr-1" />
-                          <span>Rezervasyon süresi doldu!</span>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>
 
                 <!-- Birim Fiyat -->
                 <div class="sm:col-span-2 mt-4 sm:mt-0 text-center">
-                  <span class="sm:hidden text-sm text-gray-500 mr-2">Birim Fiyat:</span>
-                  <span class="text-sm font-medium">₺{{ formatPrice(item.price) }}</span>
+                  <span class="sm:hidden text-sm text-gray-500 mr-2"
+                    >Birim Fiyat:</span
+                  >
+                  <span class="text-sm font-medium"
+                    >₺{{ formatPrice(item.price) }}</span
+                  >
                 </div>
 
                 <!-- Miktar -->
@@ -129,23 +143,49 @@
                       class="p-1 rounded-md hover:bg-gray-100"
                       :disabled="item.quantity <= 1 || loading"
                     >
-                      <Minus class="w-4 h-4" :class="item.quantity <= 1 || loading ? 'text-gray-300' : 'text-gray-600'" />
+                      <Minus
+                        class="w-4 h-4"
+                        :class="
+                          item.quantity <= 1 || loading
+                            ? 'text-gray-300'
+                            : 'text-gray-600'
+                        "
+                      />
                     </button>
-                    <span class="mx-2 w-8 text-center">{{ item.quantity }}</span>
+                    <span class="mx-2 w-8 text-center">{{
+                      item.quantity
+                    }}</span>
                     <button
                       @click="updateQuantity(item.product, item.quantity + 1)"
                       class="p-1 rounded-md hover:bg-gray-100"
-                      :disabled="!canIncreaseQuantity(item.product._id, item.quantity) || loading"
+                      :disabled="
+                        !canIncreaseQuantity(item.product._id, item.quantity) ||
+                        loading
+                      "
                     >
-                      <Plus class="w-4 h-4" :class="!canIncreaseQuantity(item.product._id, item.quantity) || loading ? 'text-gray-300' : 'text-gray-600'" />
+                      <Plus
+                        class="w-4 h-4"
+                        :class="
+                          !canIncreaseQuantity(
+                            item.product._id,
+                            item.quantity
+                          ) || loading
+                            ? 'text-gray-300'
+                            : 'text-gray-600'
+                        "
+                      />
                     </button>
                   </div>
                 </div>
 
                 <!-- Toplam -->
                 <div class="sm:col-span-2 mt-4 sm:mt-0 text-right">
-                  <span class="sm:hidden text-sm text-gray-500 mr-2">Toplam:</span>
-                  <span class="text-sm font-medium">₺{{ formatPrice(item.quantity * item.price) }}</span>
+                  <span class="sm:hidden text-sm text-gray-500 mr-2"
+                    >Toplam:</span
+                  >
+                  <span class="text-sm font-medium"
+                    >₺{{ formatPrice(item.quantity * item.price) }}</span
+                  >
                   <button
                     @click="removeFromCart(item.product)"
                     class="ml-4 text-red-600 hover:text-red-800"
@@ -163,40 +203,28 @@
         <div class="mt-6 lg:mt-0" v-if="!cartStore.isEmpty">
           <div class="bg-white rounded-lg shadow-sm p-6 sticky top-4">
             <h2 class="text-lg font-medium text-gray-900">Sipariş Özeti</h2>
-            
-            <!-- Rezervasyon Durumu -->
-            <div v-if="cartStore.hasItems" class="mt-4">
-              <div v-if="hasValidReservations" class="text-sm text-green-600 flex items-center">
-                <Clock class="w-4 h-4 mr-1" />
-                <span>Ürünler {{ Math.ceil(reservationTimer / 60) }} dakika rezerve edildi</span>
-              </div>
-              <div v-else class="text-sm text-red-600 flex items-center">
-                <AlertCircle class="w-4 h-4 mr-1" />
-                <span>Rezervasyon süresi doldu!</span>
-              </div>
-              <button
-                @click="extendReservations"
-                class="mt-2 text-sm text-blue-600 hover:text-blue-800 flex items-center"
-                :disabled="loading || !cartStore.hasItems"
-              >
-                <Clock class="w-4 h-4 mr-1" />
-                <span>Rezervasyon Süresini Uzat</span>
-              </button>
-            </div>
 
             <div class="mt-6 space-y-4">
               <div class="flex items-center justify-between">
                 <p class="text-sm text-gray-600">Ara Toplam</p>
-                <p class="text-sm font-medium text-gray-900">₺{{ formatPrice(cartStore.totalAmount) }}</p>
+                <p class="text-sm font-medium text-gray-900">
+                  ₺{{ formatPrice(cartStore.subtotal) }}
+                </p>
               </div>
               <div class="flex items-center justify-between">
-                <p class="text-sm text-gray-600">Kargo</p>
-                <p class="text-sm font-medium text-gray-900">Ücretsiz</p>
+                <p class="text-sm text-gray-600">Kargo Ücreti</p>
+                <p class="text-sm font-medium text-gray-900">
+                  ₺{{ formatPrice(cartStore.shipping) }}
+                </p>
               </div>
               <div class="border-t border-gray-200 pt-4">
                 <div class="flex items-center justify-between">
-                  <p class="text-base font-medium text-gray-900">Toplam</p>
-                  <p class="text-base font-medium text-gray-900">₺{{ formatPrice(cartStore.totalAmount) }}</p>
+                  <p class="text-base font-medium text-gray-900">
+                    Toplam (KDV Dahil)
+                  </p>
+                  <p class="text-base font-medium text-gray-900">
+                    ₺{{ formatPrice(cartStore.grandTotal) }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -223,10 +251,9 @@
             <button
               @click="completeOrder"
               class="mt-6 w-full bg-green-600 border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              :disabled="loading || !cartStore.hasItems || !hasValidReservations || !contractAccepted"
+              :disabled="loading || !cartStore.hasItems || !contractAccepted"
             >
               <span v-if="loading">İşleniyor...</span>
-              <span v-else-if="!hasValidReservations">Rezervasyon Süresi Doldu</span>
               <span v-else-if="!contractAccepted">Sözleşmeyi Kabul Edin</span>
               <span v-else>Siparişi Onayla</span>
             </button>
@@ -236,35 +263,52 @@
     </div>
   </div>
 
-<!-- Sözleşme Modalı -->
-<div v-if="showContract" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
-  <div class="bg-white rounded-lg shadow-sm p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-lg font-medium text-gray-900">Mesafeli Satış Sözleşmesi</h2>
-      <button
-        @click="showContract = false"
-        class="text-gray-400 hover:text-gray-500"
-      >
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    </div>
-    
-    <div class="prose prose-sm max-w-none">
-      <DistanceSalesContract />
-    </div>
+  <!-- Sözleşme Modalı -->
+  <div
+    v-if="showContract"
+    class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50"
+  >
+    <div
+      class="bg-white rounded-lg shadow-sm p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+    >
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-medium text-gray-900">
+          Mesafeli Satış Sözleşmesi
+        </h2>
+        <button
+          @click="showContract = false"
+          class="text-gray-400 hover:text-gray-500"
+        >
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
 
-    <div class="mt-6 flex justify-end">
-      <button
-        @click="showContract = false"
-        class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-      >
-        Kapat
-      </button>
+      <div class="prose prose-sm max-w-none">
+        <DistanceSalesContract />
+      </div>
+
+      <div class="mt-6 flex justify-end">
+        <button
+          @click="showContract = false"
+          class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+        >
+          Kapat
+        </button>
+      </div>
     </div>
   </div>
-</div>
 </template>
 <script setup>
 import { onMounted, ref, onUnmounted, computed, watch } from "vue";
@@ -284,7 +328,7 @@ import {
   AlertCircle,
   FileText,
   Check,
-  AlertTriangle
+  AlertTriangle,
 } from "lucide-vue-next";
 
 const router = useRouter();
@@ -309,42 +353,42 @@ const reservationTimer = computed(() => {
 const formatPrice = (price) => {
   return new Intl.NumberFormat("tr-TR", {
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   }).format(price);
 };
 
 // Stok kontrolü ve yönetimi
 const getStockStatus = (productId) => {
   const stock = stockStore.getStockByProductId(productId);
-  if (!stock) return 'out';
-  
+  if (!stock) return "out";
+
   const availableQuantity = stock.quantity - stock.reservedQuantity;
-  
-  if (availableQuantity <= 0) return 'out';
-  if (availableQuantity <= stock.lowStockThreshold) return 'low';
-  return 'available';
+
+  if (availableQuantity <= 0) return "out";
+  if (availableQuantity <= stock.lowStockThreshold) return "low";
+  return "available";
 };
 
 const checkStockAvailability = (productId, requestedQuantity) => {
   const stock = stockStore.getStockByProductId(productId);
-  if (!stock) return { available: false, message: 'Stok bilgisi bulunamadı' };
-  
+  if (!stock) return { available: false, message: "Stok bilgisi bulunamadı" };
+
   const availableQuantity = stock.quantity - stock.reservedQuantity;
-  
+
   if (availableQuantity < requestedQuantity) {
-    return { 
-      available: false, 
-      message: 'Seçilen miktar için yeterli stok bulunmamaktadır'
+    return {
+      available: false,
+      message: "Seçilen miktar için yeterli stok bulunmamaktadır",
     };
   }
-  
+
   return { available: true };
 };
 
 const canIncreaseQuantity = (productId, currentQuantity) => {
   const stock = stockStore.stocks.get(productId);
   if (!stock) return false;
-  
+
   const availableQuantity = stock.quantity - (stock.reservedQuantity || 0);
   return availableQuantity > currentQuantity;
 };
@@ -395,22 +439,6 @@ const removeFromCart = async (product) => {
   }
 };
 
-// Rezervasyon süresini uzatma
-const extendReservations = async () => {
-  try {
-    loading.value = true;
-    error.value = null;
-
-    await cartStore.refreshReservations();
-    toast.success("Rezervasyon süresi uzatıldı");
-  } catch (err) {
-    error.value = err.message;
-    toast.error("Rezervasyon uzatılırken bir hata oluştu");
-  } finally {
-    loading.value = false;
-  }
-};
-
 // Siparişi tamamlama
 const completeOrder = async () => {
   try {
@@ -433,7 +461,6 @@ const completeOrder = async () => {
 
     // Adres sayfasına yönlendir
     router.push("/adres");
-    
   } catch (err) {
     error.value = err.message;
     toast.error("İşlem sırasında bir hata oluştu");
@@ -442,24 +469,14 @@ const completeOrder = async () => {
   }
 };
 
-// Rezervasyon zamanlayıcısı ve otomatik yenileme
-let reservationInterval;
-const startReservationTimer = () => {
-  reservationInterval = setInterval(async () => {
-    if (cartStore.hasItems && !cartStore.hasValidReservations) {
-      await cartStore.refreshReservations();
-    }
-  }, 60000); // Her dakika kontrol et
-};
-
 // Sayfa yüklendiğinde
 onMounted(async () => {
   try {
     await cartStore.fetchCart();
-    
+
     // Sepetteki tüm ürünlerin stok bilgilerini yükle
     await Promise.all(
-      cartStore.items.map(item => 
+      cartStore.items.map((item) =>
         stockStore.fetchStockByProduct(item.product._id)
       )
     );
@@ -470,47 +487,59 @@ onMounted(async () => {
     if (cartStore.hasItems) {
       await cartStore.validateCartItems();
       await cartStore.refreshReservations();
-      startReservationTimer();
     }
   } catch (error) {
-    console.error('Sepet yükleme hatası:', error);
+    console.error("Sepet yükleme hatası:", error);
   }
 });
 
 // Sayfa kapandığında
 onUnmounted(() => {
   stockStore.cleanup();
-  if (reservationInterval) {
-    clearInterval(reservationInterval);
-  }
 });
 
 // Sepet değişikliklerini izle
-watch(() => cartStore.items, async (newItems) => {
-  if (newItems.length > 0) {
-    await cartStore.validateCartItems();
-  }
-}, { deep: true });
+watch(
+  () => cartStore.items,
+  async (newItems) => {
+    if (newItems.length > 0) {
+      await cartStore.validateCartItems();
+    }
+  },
+  { deep: true }
+);
 
 // Fiyat değişimlerini izle
-watch(() => cartStore.totalAmount, (newValue, oldValue) => {
-  console.log('Toplam tutar değişti:', { 
-    oldValue, 
-    newValue, 
-    items: cartStore.items,
-    cart: cartStore.cart 
-  });
-});
+watch(
+  () => cartStore.totalAmount,
+  (newValue, oldValue) => {
+    console.log("Toplam tutar değişti:", {
+      oldValue,
+      newValue,
+      items: cartStore.items,
+      cart: cartStore.cart,
+    });
+  }
+);
 
 // Stok değişikliklerini izle
-watch(() => stockStore.stocks, (newStocks) => {
-  cartStore.items.forEach(item => {
-    const stockCheck = checkStockAvailability(item.product._id, item.quantity);
-    if (!stockCheck.available) {
-      toast.warning(`"${item.product.name}" ürününün stok durumu değişti. Sepetinizi kontrol ediniz.`);
-    }
-  });
-}, { deep: true });
+watch(
+  () => stockStore.stocks,
+  (newStocks) => {
+    cartStore.items.forEach((item) => {
+      const stockCheck = checkStockAvailability(
+        item.product._id,
+        item.quantity
+      );
+      if (!stockCheck.available) {
+        toast.warning(
+          `"${item.product.name}" ürününün stok durumu değişti. Sepetinizi kontrol ediniz.`
+        );
+      }
+    });
+  },
+  { deep: true }
+);
 </script>
 
 <style scoped>

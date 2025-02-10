@@ -20,12 +20,7 @@
         <!-- Kart Tipi İkonu -->
         <div class="absolute inset-y-0 right-0 flex items-center pr-3">
           <CreditCardIcon v-if="!cardType" class="h-5 w-5 text-gray-400" />
-          <img 
-            v-else
-            :src="getCardTypeIcon"
-            :alt="cardType"
-            class="h-6"
-          />
+          <img v-else :src="getCardTypeIcon" :alt="cardType" class="h-6" />
         </div>
       </div>
       <p v-if="v$.cardNumber.$error" class="text-sm text-red-600">
@@ -35,7 +30,10 @@
 
     <!-- Kart Sahibi -->
     <div class="space-y-1">
-      <label for="cardHolderName" class="block text-sm font-medium text-gray-700">
+      <label
+        for="cardHolderName"
+        class="block text-sm font-medium text-gray-700"
+      >
         Kart Sahibi
       </label>
       <input
@@ -66,9 +64,14 @@
           maxlength="5"
           @input="formatExpiryDate"
           class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] transition-colors"
-          :class="{ 'border-red-300': v$.expiryMonth.$error || v$.expiryYear.$error }"
+          :class="{
+            'border-red-300': v$.expiryMonth.$error || v$.expiryYear.$error,
+          }"
         />
-        <p v-if="v$.expiryMonth.$error || v$.expiryYear.$error" class="text-sm text-red-600">
+        <p
+          v-if="v$.expiryMonth.$error || v$.expiryYear.$error"
+          class="text-sm text-red-600"
+        >
           Geçerli bir son kullanma tarihi girin
         </p>
       </div>
@@ -77,8 +80,8 @@
       <div class="space-y-1">
         <label for="cvv" class="block text-sm font-medium text-gray-700">
           CVV
-          <span 
-            class="ml-1 inline-block" 
+          <span
+            class="ml-1 inline-block"
             @mouseenter="showCvvTooltip = true"
             @mouseleave="showCvvTooltip = false"
           >
@@ -109,38 +112,17 @@
       </div>
     </div>
 
-    <!-- Kart Tipi -->
-    <div class="space-y-1">
-      <label class="block text-sm font-medium text-gray-700">Kart Tipi</label>
-      <div class="grid grid-cols-3 gap-4">
-        <button
-          v-for="type in cardTypes"
-          :key="type.value"
-          type="button"
-          @click="selectCardType(type.value)"
-          class="flex items-center justify-center p-3 border rounded-lg transition-all"
-          :class="[
-            formData.cardType === type.value
-              ? 'border-[#10B981] bg-[#10B981]/10'
-              : 'border-gray-200 hover:border-[#10B981]'
-          ]"
-        >
-          <img :src="type.icon" :alt="type.value" class="h-6" />
-        </button>
-      </div>
-      <p v-if="v$.cardType.$error" class="text-sm text-red-600">
-        {{ v$.cardType.$errors[0].$message }}
-      </p>
-    </div>
-
     <!-- Submit Button -->
     <button
       type="submit"
       :disabled="loading"
       class="w-full flex items-center justify-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-[#10B981] hover:bg-[#059669] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#10B981] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      <LoaderIcon v-if="loading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
-      {{ loading ? 'İşleminiz Yapılıyor...' : 'Ödeme Yap' }}
+      <LoaderIcon
+        v-if="loading"
+        class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+      />
+      {{ loading ? "İşleminiz Yapılıyor..." : "Ödeme Yap" }}
     </button>
   </form>
   <!-- 3D Secure Form (gizli) -->
@@ -151,11 +133,15 @@
     method="POST"
     target="_self"
     class="hidden"
-    @mounted="() => console.log('3D Secure Form Mounted:', {
-      formElement: $refs.threeDSecureForm,
-      action: paymentStore.threeDSecureData.formAction,
-      hasInputs: Object.keys(paymentStore.threeDSecureData.formInputs || {}).length
-    })"
+    @mounted="
+      () =>
+        console.log('3D Secure Form Mounted:', {
+          formElement: $refs.threeDSecureForm,
+          action: paymentStore.threeDSecureData.formAction,
+          hasInputs: Object.keys(paymentStore.threeDSecureData.formInputs || {})
+            .length,
+        })
+    "
   >
     <input
       v-for="(value, name) in paymentStore.threeDSecureData.formInputs"
@@ -164,330 +150,317 @@
       :name="name"
       :value="value"
     />
-    <button type="submit" ref="submitButton" style="display: none;">
+    <button type="submit" ref="submitButton" style="display: none">
       Submit
     </button>
   </form>
-
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, nextTick, watch } from 'vue'
-import { useVuelidate } from '@vuelidate/core'
-import { required, minLength, maxLength } from '@vuelidate/validators'
-import { CreditCardIcon, HelpCircleIcon, LoaderIcon } from 'lucide-vue-next'
-import { usePaymentStore } from '@/stores/paymentStore'
-import { useUserStore } from '@/stores/userStore'
-import { useAddressStore } from '@/stores/addressStore'
+import { ref, reactive, computed, onMounted, nextTick, watch } from "vue";
+import { useVuelidate } from "@vuelidate/core";
+import { required, minLength, maxLength } from "@vuelidate/validators";
+import { CreditCardIcon, HelpCircleIcon, LoaderIcon } from "lucide-vue-next";
+import { usePaymentStore } from "@/stores/paymentStore";
+import { useUserStore } from "@/stores/userStore";
+import { useAddressStore } from "@/stores/addressStore";
 
 // Props
 const props = defineProps({
   loading: {
     type: Boolean,
-    default: false
-  }
-})
+    default: false,
+  },
+});
 
 // Emits
-const emit = defineEmits(['submit'])
+const emit = defineEmits(["submit"]);
 
 // Store instances
-const paymentStore = usePaymentStore()
-const userStore = useUserStore()
-const addressStore = useAddressStore()
-const threeDSecureForm = ref(null)
+const paymentStore = usePaymentStore();
+const userStore = useUserStore();
+const addressStore = useAddressStore();
+const threeDSecureForm = ref(null);
 // Reactive state
-const showCvvTooltip = ref(false)
+const showCvvTooltip = ref(false);
 const formData = reactive({
-  cardNumber: '',
-  cardHolderName: '',
-  expiryDate: '',
-  expiryMonth: '',
-  expiryYear: '',
-  cvv: '',
-  cardType: ''
-})
+  cardNumber: "",
+  cardHolderName: "",
+  expiryDate: "",
+  expiryMonth: "",
+  expiryYear: "",
+  cvv: "",
+  cardType: "",
+});
 
 // Kart tipleri
 const cardTypes = [
-  { value: 'VISA', icon: '/images/visa.png' },
-  { value: 'MASTERCARD', icon: '/images/mastercard.png' },
-  { value: 'TROY', icon: '/images/troy.png' }
-]
+  { value: "VISA", icon: "/images/visa.png" },
+  { value: "MASTERCARD", icon: "/images/mastercard.png" },
+  { value: "TROY", icon: "/images/troy.png" },
+];
 
 // Validation rules
 const rules = {
-  cardNumber: { 
+  cardNumber: {
     required,
     validCard: {
       $validator: (value) => {
-        // Boşlukları kaldır
-        const cardNumber = value.replace(/\s/g, '')
-        console.log('Validating card:', {
+        const cardNumber = value.replace(/\s/g, "");
+        console.log("Validating card:", {
           number: cardNumber,
-          type: formData.cardType,
+          type: cardType.value,
           length: cardNumber.length,
-          luhn: validateLuhn(cardNumber)
-        })
-        
-        // Kart numarası 16 haneli olmalı (boşluklar hariç)
+          luhn: validateLuhn(cardNumber),
+        });
+
         if (cardNumber.length !== 16) {
-          return false
+          return false;
         }
-        
+
         // Kart tipine göre başlangıç kontrolü
-        const firstDigit = cardNumber[0]
-        const firstTwoDigits = parseInt(cardNumber.substring(0, 2))
-        
-        let isValidPrefix = false
-        
-        switch(formData.cardType) {
-          case 'VISA':
-            isValidPrefix = firstDigit === '4'
-            break
-          case 'MASTERCARD':
-            isValidPrefix = firstTwoDigits >= 51 && firstTwoDigits <= 55
-            break
-          case 'TROY':
-            isValidPrefix = firstDigit === '9'
-            break
+        const firstDigit = cardNumber[0];
+        const firstTwoDigits = parseInt(cardNumber.substring(0, 2));
+
+        let isValidPrefix = false;
+        const detectedType = cardType.value;
+
+        switch (detectedType) {
+          case "VISA":
+            isValidPrefix = firstDigit === "4";
+            break;
+          case "MASTERCARD":
+            isValidPrefix = firstTwoDigits >= 51 && firstTwoDigits <= 55;
+            break;
+          case "TROY":
+            isValidPrefix = firstDigit === "9";
+            break;
         }
-        
+
         if (!isValidPrefix) {
-          return false
+          return false;
         }
-        
-        // Luhn algoritması kontrolü
-        const isValidLuhn = validateLuhn(cardNumber)
-        console.log('Luhn validation result:', isValidLuhn)
-        return isValidLuhn
+
+        return validateLuhn(cardNumber);
       },
       $message: () => {
-        const cardNumber = formData.cardNumber.replace(/\s/g, '')
+        const cardNumber = formData.cardNumber.replace(/\s/g, "");
         if (cardNumber.length !== 16) {
-          return 'Kart numarası 16 haneli olmalıdır'
+          return "Kart numarası 16 haneli olmalıdır";
         }
         if (!validateLuhn(cardNumber)) {
-          return 'Geçersiz kart numarası'
+          return "Geçersiz kart numarası";
         }
-        return 'Kart numarası seçilen kart tipi ile uyuşmuyor'
-      }
-    }
+        return "Geçersiz kart numarası";
+      },
+    },
   },
-  cardHolderName: { 
+  cardHolderName: {
     required,
-    minLength: minLength(5)
+    minLength: minLength(5),
   },
-  expiryMonth: { 
+  expiryMonth: {
     required,
     validMonth: (value) => {
-      const month = parseInt(value)
-      return month >= 1 && month <= 12
-    }
+      const month = parseInt(value);
+      return month >= 1 && month <= 12;
+    },
   },
-  expiryYear: { 
+  expiryYear: {
     required,
     validYear: (value) => {
-      const currentYear = new Date().getFullYear() % 100
-      const year = parseInt(value)
-      return year >= currentYear && year <= currentYear + 10
-    }
+      const currentYear = new Date().getFullYear() % 100;
+      const year = parseInt(value);
+      return year >= currentYear && year <= currentYear + 10;
+    },
   },
-  cvv: { 
+  cvv: {
     required,
-    validCvv: (value) => /^\d{3}$/.test(value)
+    validCvv: (value) => /^\d{3}$/.test(value),
   },
-  cardType: { required }
-}
+};
 
-const v$ = useVuelidate(rules, formData)
+const v$ = useVuelidate(rules, formData);
 
 // Computed
 const cardType = computed(() => {
-  const number = formData.cardNumber.replace(/\s/g, '')
-  if (number.startsWith('4')) return 'VISA'
-  if (/^5[1-5]/.test(number)) return 'MASTERCARD'
-  if (/^9/.test(number)) return 'TROY'
-  return null
-})
+  const number = formData.cardNumber.replace(/\s/g, "");
+  if (number.startsWith("4")) return "VISA";
+  if (/^5[1-5]/.test(number)) return "MASTERCARD";
+  if (/^9/.test(number)) return "TROY";
+  return null;
+});
 
 const getCardTypeIcon = computed(() => {
-  const type = cardTypes.find(t => t.value === cardType.value)
-  return type ? type.icon : null
-})
+  const type = cardTypes.find((t) => t.value === cardType.value);
+  return type ? type.icon : null;
+});
 
 // Billing bilgileri için computed property
 const billingInfo = computed(() => {
-  const defaultAddress = addressStore.getDefaultAddress
+  const defaultAddress = addressStore.getDefaultAddress;
   return {
     email: userStore.email,
     phone: defaultAddress?.phone,
     city: defaultAddress?.city,
     state: defaultAddress?.district,
     addressLine: defaultAddress?.addressLine,
-    postCode: defaultAddress?.postCode
-  }
-})
+    postCode: defaultAddress?.postCode,
+  };
+});
 
 // Loading state
-const loading = ref(false)
+const loading = ref(false);
 
 // 3D Secure form kontrolü için yeni ref
-const formSubmitAttempted = ref(false)
+const formSubmitAttempted = ref(false);
 
 // Form submit kontrolü için yeni fonksiyon
 const ensure3DSecureFormSubmit = async () => {
-  if (!threeDSecureForm.value || formSubmitAttempted.value) return
-  
-  formSubmitAttempted.value = true
-  console.log('3D Secure form submit başlatılıyor')
-  
-  await nextTick()
-  
+  if (!threeDSecureForm.value || formSubmitAttempted.value) return;
+
+  formSubmitAttempted.value = true;
+  console.log("3D Secure form submit başlatılıyor");
+
+  await nextTick();
+
   try {
     if (threeDSecureForm.value) {
-      console.log('Form özellikleri:', {
+      console.log("Form özellikleri:", {
         action: threeDSecureForm.value.action,
         method: threeDSecureForm.value.method,
-        inputCount: threeDSecureForm.value.querySelectorAll('input[type="hidden"]').length
-      })
-      threeDSecureForm.value.submit()
-      console.log('Form submit başarılı')
+        inputCount: threeDSecureForm.value.querySelectorAll(
+          'input[type="hidden"]'
+        ).length,
+      });
+      threeDSecureForm.value.submit();
+      console.log("Form submit başarılı");
     }
   } catch (error) {
-    console.error('Form submit hatası:', error)
-    formSubmitAttempted.value = false
+    console.error("Form submit hatası:", error);
+    formSubmitAttempted.value = false;
   }
-}
+};
 
 // 3D Secure durumunu izle
 watch(
   () => paymentStore.threeDSecureData.isProcessing,
   async (isProcessing) => {
     if (isProcessing) {
-      await nextTick()
-      ensure3DSecureFormSubmit()
+      await nextTick();
+      ensure3DSecureFormSubmit();
     } else {
-      formSubmitAttempted.value = false
+      formSubmitAttempted.value = false;
     }
   },
   { immediate: true }
-)
+);
 
 // Methods
 const formatCardNumber = (event) => {
   // Önce tüm boşlukları ve rakam olmayan karakterleri kaldır
-  let value = event.target.value.replace(/\D/g, '')
-  
+  let value = event.target.value.replace(/\D/g, "");
+
   // Sadece ilk 16 karakteri al
-  value = value.substring(0, 16)
-  
+  value = value.substring(0, 16);
+
   // Her 4 rakamdan sonra boşluk ekle (görsel amaçlı)
-  value = value.replace(/(\d{4})/g, '$1 ').trim()
-  
-  formData.cardNumber = value
-  
+  value = value.replace(/(\d{4})/g, "$1 ").trim();
+
+  formData.cardNumber = value;
+
   // Otomatik kart tipi seçimi
-  const detectedType = cardType.value
-  console.log('Detected card type:', detectedType)
-  
+  const detectedType = cardType.value;
+  console.log("Detected card type:", detectedType);
+
   if (detectedType) {
-    formData.cardType = detectedType
-    console.log('Updated card type:', formData.cardType)
+    formData.cardType = detectedType;
+    console.log("Updated card type:", formData.cardType);
   }
-}
+};
 
 const formatExpiryDate = (event) => {
-  let value = event.target.value.replace(/\D/g, '')
-  
-  if (value.length >= 2) {
-    const month = value.slice(0, 2)
-    const year = value.slice(2)
-    value = `${month}/${year}`
-    
-    // Ay ve yıl değerlerini güncelle
-    formData.expiryMonth = month
-    formData.expiryYear = year
-  }
-  
-  formData.expiryDate = value
-}
+  let value = event.target.value.replace(/\D/g, "");
 
-const selectCardType = (type) => {
-  formData.cardType = type
-}
+  if (value.length >= 2) {
+    const month = value.slice(0, 2);
+    const year = value.slice(2);
+    value = `${month}/${year}`;
+
+    // Ay ve yıl değerlerini güncelle
+    formData.expiryMonth = month;
+    formData.expiryYear = year;
+  }
+
+  formData.expiryDate = value;
+};
 
 const validateLuhn = (number) => {
-  let sum = 0
-  let isEven = false
+  let sum = 0;
+  let isEven = false;
 
   // Boş string kontrolü
-  if (!number) return false
+  if (!number) return false;
 
   for (let i = number.length - 1; i >= 0; i--) {
-    let digit = parseInt(number[i])
+    let digit = parseInt(number[i]);
 
     if (isEven) {
-      digit *= 2
+      digit *= 2;
       if (digit > 9) {
-        digit -= 9
+        digit -= 9;
       }
     }
 
-    sum += digit
-    isEven = !isEven
+    sum += digit;
+    isEven = !isEven;
   }
 
-  return sum % 10 === 0
-}
+  return sum % 10 === 0;
+};
 
 const handleSubmit = async () => {
   try {
-    loading.value = true
+    loading.value = true;
 
-    // Form validation
-    const isValid = await v$.value.$validate()
-    if (!isValid) return
+    const isValid = await v$.value.$validate();
+    if (!isValid) return;
 
-    // Clean card number
-    const cleanCardNumber = formData.cardNumber.replace(/\s/g, '')
-    
-    // Log data
-    console.log('Form data before validation:', {
+    const cleanCardNumber = formData.cardNumber.replace(/\s/g, "");
+
+    console.log("Form data before validation:", {
       cardNumber: cleanCardNumber,
-      cardType: formData.cardType,
-    })
-    
-    // Prepare payment data
+      cardType: cardType.value,
+    });
+
     const paymentData = {
       cardNumber: cleanCardNumber,
       cardHolderName: formData.cardHolderName.trim().toUpperCase(),
       expiryMonth: formData.expiryMonth,
       expiryYear: formData.expiryYear,
       cvv: formData.cvv,
-      cardType: formData.cardType,
-      billingInfo: billingInfo.value
-    }
+      cardType: cardType.value,
+      billingInfo: billingInfo.value,
+    };
 
-    // Sadece veriyi parent'a gönder
-    emit('submit', paymentData)
-
+    emit("submit", paymentData);
   } catch (error) {
-    console.error('Form gönderilirken hata:', error)
-    emit('error', error)
+    console.error("Form gönderilirken hata:", error);
+    emit("error", error);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
+
 // Component mounted hook
 onMounted(async () => {
   try {
     await Promise.all([
       userStore.fetchProfile(),
-      addressStore.fetchDefaultAddress()
-    ])
+      addressStore.fetchDefaultAddress(),
+    ]);
   } catch (error) {
-    console.error('Kullanıcı bilgileri yüklenirken hata:', error)
+    console.error("Kullanıcı bilgileri yüklenirken hata:", error);
   }
-})
+});
 </script>

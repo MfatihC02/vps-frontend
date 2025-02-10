@@ -30,12 +30,12 @@
           <Tag class="w-4 h-4 mr-2" />
           {{ formatPrice(product.price.current) }} ₺
         </div>
-        <div 
+        <div
           class="flex items-center text-gray-600 cursor-pointer hover:text-green-600"
           @click.stop="navigateToStock"
         >
           <Package class="w-4 h-4 mr-2" />
-          {{ product.stock.quantity }} {{ product.stock.unit }}
+          {{ stock?.quantity || 0 }} {{ stock?.unit || "adet" }}
         </div>
       </div>
 
@@ -55,11 +55,15 @@
 </template>
   
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { Tag, Package } from "lucide-vue-next";
+import { useStockStore } from "@/stores/stockStore";
 
 const router = useRouter();
+const stockStore = useStockStore();
+const stock = ref(null);
+
 const props = defineProps({
   product: {
     type: Object,
@@ -79,8 +83,12 @@ const formatPrice = (price) => {
 
 const navigateToStock = () => {
   router.push({
-    name: 'product-stock',
-    params: { id: props.product._id }
+    name: "product-stock",
+    params: { id: props.product._id },
   });
 };
+
+onMounted(async () => {
+  stock.value = await stockStore.fetchStockByProduct(props.product._id);
+});
 </script>

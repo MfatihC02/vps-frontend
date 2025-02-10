@@ -16,7 +16,8 @@ export const useCartStore = defineStore('cart', {
         // Yeni state alanları
         activeReservations: {},
         reservationStatus: {},
-        reservationTimer: null
+        reservationTimer: null,
+        shippingFee: 200, // Sabit kargo ücreti
     }),
 
     getters: {
@@ -41,7 +42,7 @@ export const useCartStore = defineStore('cart', {
         getItemReservationTime: (state) => (productId) => {
             const reservation = state.activeReservations[productId];
             if (!reservation) return 0;
-            
+
             const now = Date.now();
             const expiresAt = new Date(reservation.expiresAt).getTime();
             return Math.max(0, Math.floor((expiresAt - now) / 1000)); // Kalan süreyi saniye cinsinden döndür
@@ -54,11 +55,26 @@ export const useCartStore = defineStore('cart', {
                 reservationInfo,
                 hasId: reservationInfo?.reservationId ? true : false
             });
-            
+
             if (reservationInfo?.isValid && reservationInfo?.reservationId) {
                 return reservationInfo.reservationId;
             }
             return null;
+        },
+        // Ara toplam (kargo hariç)
+        subtotal: (state) => {
+            return state.items.reduce((total, item) => {
+                if (!item) return total;
+                return total + (item.price * (item.quantity || 1));
+            }, 0);
+        },
+
+        // Sabit kargo ücreti
+        shipping: (state) => state.shippingFee,
+
+        // Genel toplam (kargo dahil)
+        grandTotal: (state) => {
+            return state.subtotal + state.shippingFee;
         }
     },
 
@@ -79,7 +95,7 @@ export const useCartStore = defineStore('cart', {
                 if (response.data.success) {
                     // Cart verisini direkt olarak saklayalım
                     this.cart = response.data.data;
-                    
+
                     // Mevcut items yapısını da güncelleyelim
                     this.items = this.cart.items.map(item => ({
                         product: {
@@ -139,7 +155,7 @@ export const useCartStore = defineStore('cart', {
 
                 if (response.data.success && response.data.data.items) {
                     const results = response.data.data.items;
-                    
+
                     results.forEach(result => {
                         this.reservationStatus[result.productId] = {
                             isValid: result.success,
@@ -169,7 +185,7 @@ export const useCartStore = defineStore('cart', {
         // Sepet öğelerini doğrula
         async validateCartItems() {
             console.log('Sepet doğrulaması başlatılıyor...');
-            
+
             if (!this.hasItems) {
                 console.log('Sepet boş, doğrulama gerekmiyor');
                 return {
@@ -185,7 +201,7 @@ export const useCartStore = defineStore('cart', {
 
                 if (response.data.success) {
                     const validationResults = response.data.data;
-                    
+
                     // Her ürün için rezervasyon durumunu güncelle
                     validationResults.items.forEach(result => {
                         this.reservationStatus[result.productId] = {
@@ -196,13 +212,13 @@ export const useCartStore = defineStore('cart', {
 
                     // Tüm ürünlerin geçerli olup olmadığını kontrol et
                     const allItemsValid = validationResults.items.every(item => item.isValid);
-                    
+
                     if (!allItemsValid) {
                         const invalidItems = validationResults.items
                             .filter(item => !item.isValid)
                             .map(item => item.message)
                             .join(', ');
-                            
+
                         return {
                             success: false,
                             message: `Bazı ürünler için stok problemi var: ${invalidItems}`
@@ -251,7 +267,7 @@ export const useCartStore = defineStore('cart', {
 
                 if (response.data.success) {
                     const results = response.data.data;
-                    
+
                     // Rezervasyon durumlarını güncelle
                     results.items.forEach(result => {
                         this.reservationStatus[result.productId] = {
@@ -301,7 +317,7 @@ export const useCartStore = defineStore('cart', {
                     try {
                         const requestUrl = `/stocks/product/${item.product._id}/checkout-reservation`;
                         const requestData = { quantity: item.quantity };
-                        
+
                         console.log('Rezervasyon isteği gönderiliyor:', {
                             url: requestUrl,
                             data: requestData,
@@ -374,27 +390,27 @@ export const useCartStore = defineStore('cart', {
             try {
                 // Önce stok kontrolü yap
                 const stockCheck = await api.get(`/stocks/reservations/${product._id}/availability?quantity=${quantity}`);
-                
+
                 if (!stockCheck.data.success || !stockCheck.data.data.isAvailable) {
                     this.error = `Üzgünüz, stok durumu: ${stockCheck.data.data.availableQuantity} adet`;
                     toast.error(this.error);
                     return false;
                 }
-        
+
                 // Sepete ekle
                 const response = await api.post('/cart', {
                     productId: product._id,
                     quantity
                 });
-        
+
                 if (response.data.success) {
                     // Sepete ekleme başarılı, rezervasyon oluştur
                     await this.createItemReservation(product._id, quantity);
-                    
+
                     // Tüm sepet verilerini güncelle
                     this.items = response.data.data.items;
                     this.totalAmount = response.data.data.totalAmount;
-                    
+
                     return true;
                 }
                 return false;
@@ -405,7 +421,7 @@ export const useCartStore = defineStore('cart', {
                 return false;
             }
         },
-        
+
         // Sepetten ürün çıkar
         async removeFromCart(productId) {
             try {
@@ -417,10 +433,10 @@ export const useCartStore = defineStore('cart', {
                 if (response.data.success) {
                     this.items = this.items.filter(item => item.product._id !== productId);
                     this.calculateTotal();
-                    
+
                     // Rezervasyon durumunu temizle
                     delete this.reservationStatus[productId];
-                    
+
                 }
             } catch (error) {
                 console.error('Sepetten çıkarma hatası:', error);
@@ -479,7 +495,7 @@ export const useCartStore = defineStore('cart', {
                 if (response.data.success) {
                     // Sepet verilerini güncelle
                     this.items = response.data.data.items;
-                    
+
                     // Rezervasyon durumunu güncelle
                     if (response.data.data.items.find(item => item.product._id === productId)) {
                         this.reservationStatus[productId] = {
@@ -494,9 +510,9 @@ export const useCartStore = defineStore('cart', {
 
                     // Toplam tutarı güncelle
                     this.calculateTotal();
-                    
+
                     toast.success(response.data.message || 'Ürün miktarı güncellendi');
-                    
+
                     // Rezervasyon zamanlayıcısını yeniden başlat
                     this.startReservationTimer();
                 } else {
@@ -505,7 +521,7 @@ export const useCartStore = defineStore('cart', {
             } catch (error) {
                 console.error('Update quantity error:', error);
                 this.error = error.response?.data?.message || error.message || 'Miktar güncellenemedi';
-                
+
                 // Hata durumunda rezervasyon durumunu güncelle
                 this.reservationStatus[productId] = {
                     isValid: false,
@@ -571,26 +587,10 @@ export const useCartStore = defineStore('cart', {
 
         // Toplam tutarı hesapla
         calculateTotal() {
-            if (!Array.isArray(this.items)) {
-                this.totalAmount = 0;
-                return;
-            }
-
+            // Sadece ürünlerin toplamını hesapla ve totalAmount'a ata
             this.totalAmount = this.items.reduce((total, item) => {
                 if (!item) return total;
-                
-                // Önce item.price'ı kontrol et (backend'den direkt gelen fiyat)
-                if (typeof item.price === 'number') {
-                    return total + (item.price * (item.quantity || 1));
-                }
-                
-                // Sonra product.price.current'ı kontrol et
-                const productPrice = item.product?.price?.current;
-                if (typeof productPrice === 'number') {
-                    return total + (productPrice * (item.quantity || 1));
-                }
-                
-                return total;
+                return total + (item.price * (item.quantity || 1));
             }, 0);
 
             // Toplam tutarı yuvarla

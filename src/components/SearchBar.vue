@@ -13,18 +13,21 @@
 
     <!-- Arama Sonuçları Dropdown -->
     <div
-      v-if="showResults && searchResults.length > 0"
+      v-if="showResults && productStore.searchResults.length > 0"
       class="absolute z-50 w-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-y-auto"
       @mousedown.prevent
     >
-      <div v-for="product in searchResults" :key="product._id" 
-           class="p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
-           @mousedown="handleProductSelect(product)">
+      <div
+        v-for="product in productStore.searchResults"
+        :key="product._id"
+        class="p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+        @mousedown="handleProductSelect(product)"
+      >
         <div class="flex items-center space-x-3">
           <!-- Ürün Resmi -->
-          <img 
+          <img
             v-if="product.images && product.images.length > 0"
-            :src="product.images[0].url" 
+            :src="product.images[0].url"
             :alt="product.name"
             class="w-12 h-12 object-cover rounded-md"
           />
@@ -39,7 +42,10 @@
             <p class="font-medium text-emerald-600">
               {{ formatPrice(product.price.current) }} ₺
             </p>
-            <p v-if="product.price.discount" class="text-sm text-gray-500 line-through">
+            <p
+              v-if="product.price.discount"
+              class="text-sm text-gray-500 line-through"
+            >
               {{ formatPrice(product.price.original) }} ₺
             </p>
           </div>
@@ -50,26 +56,26 @@
 </template>
 
 <script setup>
-import { ref, watch, onBeforeUnmount } from 'vue';
-import { useProductStore } from '@/stores/productStore';
-import { Search } from 'lucide-vue-next';
-import { useRouter } from 'vue-router';
+import { ref, watch, onBeforeUnmount } from "vue";
+import { useProductStore } from "@/stores/productStore";
+import { Search } from "lucide-vue-next";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 const props = defineProps({
   placeholder: {
     type: String,
-    default: 'Ürün veya marka ara...'
+    default: "Ürün veya marka ara...",
   },
   debounceTime: {
     type: Number,
-    default: 300
-  }
+    default: 300,
+  },
 });
 
-const emit = defineEmits(['search']);
+const emit = defineEmits(["search"]);
 const productStore = useProductStore();
-const searchQuery = ref('');
+const searchQuery = ref("");
 const searchResults = ref([]);
 const showResults = ref(false);
 let debounceTimeout = null;
@@ -80,19 +86,18 @@ const handleSearch = () => {
   debounceTimeout = setTimeout(async () => {
     try {
       productStore.setFilters({
-        search: searchQuery.value
+        search: searchQuery.value,
       });
 
       if (searchQuery.value.trim()) {
         const result = await productStore.fetchProducts();
-        searchResults.value = result.data.docs || [];
-        emit('search', result);
+        emit("search", result);
       } else {
-        searchResults.value = [];
+        productStore.searchResults = [];
       }
     } catch (error) {
-      console.error('Arama hatası:', error);
-      searchResults.value = [];
+      console.error("Arama hatası:", error);
+      productStore.searchResults = [];
     }
   }, props.debounceTime);
 };
@@ -108,11 +113,11 @@ const handleProductSelect = (product) => {
   // Ürün detay sayfasına yönlendir
   router.push(`/urun/${product.slug}`);
   showResults.value = false;
-  searchQuery.value = '';
+  searchQuery.value = "";
 };
 
 const formatPrice = (price) => {
-  return new Intl.NumberFormat('tr-TR').format(price);
+  return new Intl.NumberFormat("tr-TR").format(price);
 };
 
 // Component destroy edildiğinde timeout'u temizle

@@ -12,13 +12,17 @@
         <div class="md:col-span-3">
           <!-- Başlık ve Bilgi -->
           <div class="flex items-center justify-between mb-6 animate-fade-in">
-            <h1 class="text-3xl font-bold text-green-800 flex items-center gap-3 font-montserrat">
+            <h1
+              class="text-3xl font-bold text-green-800 flex items-center gap-3 font-montserrat"
+            >
               <Sprout class="w-8 h-8 text-green-600" />
               {{ currentCategory?.name || "Ürünler" }}
             </h1>
             <div class="flex items-center gap-4">
               <div class="flex items-center gap-2">
-                <span class="flex items-center gap-2 bg-green-50 px-3 py-1 rounded-full">
+                <span
+                  class="flex items-center gap-2 bg-green-50 px-3 py-1 rounded-full"
+                >
                   <Package class="w-5 h-5 text-green-600" />
                   {{ totalProducts }} Ürün
                 </span>
@@ -35,8 +39,8 @@
           </div>
 
           <!-- Error State -->
-          <div 
-            v-else-if="productStore.error" 
+          <div
+            v-else-if="productStore.error"
             class="bg-red-50 p-6 rounded-xl text-red-600 flex items-center gap-4 border-l-4 border-red-500"
           >
             <AlertCircle class="w-8 h-8" />
@@ -45,28 +49,38 @@
 
           <!-- Ürün Listesi -->
           <div v-else-if="displayProducts.length > 0" class="space-y-6">
-            <div 
-              v-for="product in displayProducts" 
+            <div
+              v-for="product in displayProducts"
               :key="product._id"
               class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-green-100 hover:shadow-lg transition-all duration-300"
             >
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <!-- Ürün Resmi -->
-                <div class="relative md:col-span-1 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+                <div
+                  class="relative md:col-span-1 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100"
+                >
                   <div class="relative aspect-square w-full">
-                    <img 
+                    <img
                       v-if="product.images?.length"
                       :src="product.images[0].url"
                       :alt="product.name"
-                      class="w-full h-full object-cover transition-all duration-700 
-                             group-hover:scale-105 group-hover:brightness-[1.02]"
+                      class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-[1.02]"
                       loading="lazy"
                       :srcset="
-                        product.images?.[0]?.url ? 
-                        `${product.images[0].url.replace('/upload/', '/upload/w_640,h_640,c_fill/')} 640w,
-                         ${product.images[0].url.replace('/upload/', '/upload/w_800,h_800,c_fill/')} 800w,
-                         ${product.images[0].url.replace('/upload/', '/upload/w_1024,h_1024,c_fill/')} 1024w`
-                        : ''
+                        product.images?.[0]?.url
+                          ? `${product.images[0].url.replace(
+                              '/upload/',
+                              '/upload/w_640,h_640,c_fill/'
+                            )} 640w,
+                         ${product.images[0].url.replace(
+                           '/upload/',
+                           '/upload/w_800,h_800,c_fill/'
+                         )} 800w,
+                         ${product.images[0].url.replace(
+                           '/upload/',
+                           '/upload/w_1024,h_1024,c_fill/'
+                         )} 1024w`
+                          : ''
                       "
                       sizes="(max-width: 768px) 100vw,
                              (max-width: 1024px) 33vw,
@@ -79,11 +93,11 @@
                     >
                       <i class="fas fa-image text-4xl opacity-30"></i>
                     </div>
-                    
+
                     <!-- Hover overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent 
-                              opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    </div>
+                    <div
+                      class="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    ></div>
                   </div>
                 </div>
 
@@ -92,49 +106,75 @@
                   <div class="flex-1">
                     <div class="flex items-start justify-between mb-3">
                       <div>
-                        <span class="text-sm text-gray-500 block mb-1 font-inter">{{ product.brand }}</span>
-                        <h3 class="text-xl md:text-2xl font-semibold text-gray-800 line-clamp-2 font-montserrat">{{ product.name }}</h3>
+                        <span
+                          class="text-sm text-gray-500 block mb-1 font-inter"
+                          >{{ product.brand }}</span
+                        >
+                        <h3
+                          class="text-xl md:text-2xl font-semibold text-gray-800 line-clamp-2 font-montserrat"
+                        >
+                          {{ product.name }}
+                        </h3>
                       </div>
                       <div class="flex flex-col items-end">
-                        <span class="text-2xl md:text-3xl font-bold text-green-700 font-inter">
-                          {{ formatPrice(product.price?.current) }} ₺
-                        </span>
+                        <div class="flex items-center gap-1">
+                          <span
+                            class="text-xl md:text-2xl font-bold text-green-700 font-inter"
+                          >
+                            {{ formatPrice(product.price?.current) }}
+                          </span>
+                          <span
+                            class="text-xl md:text-2xl font-bold text-green-700 font-inter"
+                            >₺</span
+                          >
+                        </div>
                         <span class="text-xs text-gray-500 font-inter italic">
                           (KDV Dahil)
                         </span>
-                        <span class="text-sm text-gray-500 font-inter">
-                          / {{ product.stock?.unit }}
+                        <span class="text-md text-black font-inter">
+                          {{ product.specifications?.packaging?.weight }} /
+                          {{ product.specifications?.packaging?.unit }}
                         </span>
                       </div>
                     </div>
 
                     <div class="flex flex-wrap gap-2 mb-4">
-                      <span 
+                      <span
                         v-if="product.productType"
                         class="px-3 py-1 bg-green-50 text-green-700 rounded-lg text-sm font-medium font-inter"
                       >
                         {{ formatProductType(product.productType) }}
                       </span>
                     </div>
-                    <p 
+                    <div
+                      v-if="product.description?.content"
+                      class="prose prose-sm prose-green max-w-none mb-4"
+                      v-html="parseMarkdown(product.description.content)"
+                    ></div>
+
+                    <p
                       v-if="product.description?.meta"
                       class="text-xs md:text-sm text-gray-600 font-inter mb-4 line-clamp-2 leading-relaxed"
-                    >
-                      {{ product.description.meta }}
-                    </p>
+                      v-html="parseMarkdown(product.description.meta)"
+                    ></p>
                   </div>
 
                   <!-- Butonlar -->
                   <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4">
-                    <button 
+                    <button
                       class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 active:bg-green-800 transition-colors text-sm sm:text-base font-medium"
                     >
                       <ShoppingCart class="w-4 h-4 sm:w-5 sm:h-5" />
                       <span class="hidden sm:inline">Sepete Ekle</span>
                       <span class="sm:hidden">Sepet</span>
                     </button>
-                    <button 
-                      @click="$router.push({ name: 'product-detail', params: { slug: product.slug }})"
+                    <button
+                      @click="
+                        $router.push({
+                          name: 'product-detail',
+                          params: { slug: product.slug },
+                        })
+                      "
                       class="flex items-center justify-center gap-2 px-4 py-2.5 border border-green-200 text-green-700 rounded-lg hover:bg-green-50 transition-colors text-sm sm:text-base"
                     >
                       <Eye class="w-4 h-4 sm:w-5 sm:h-5" />
@@ -148,8 +188,8 @@
           </div>
 
           <!-- Empty State -->
-          <div 
-            v-else 
+          <div
+            v-else
             class="text-center py-12 bg-white rounded-xl shadow-md border border-green-100"
           >
             <PackageX class="w-24 h-24 mx-auto text-green-300 mb-6" />
@@ -165,9 +205,9 @@
               class="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all transform hover:scale-105 flex items-center gap-2"
               :disabled="productStore.loading"
             >
-              <RefreshCw 
-                class="w-5 h-5 animate-spin" 
-                v-if="productStore.loading" 
+              <RefreshCw
+                class="w-5 h-5 animate-spin"
+                v-if="productStore.loading"
               />
               {{ productStore.loading ? "Yükleniyor..." : "Daha Fazla Göster" }}
             </button>
@@ -189,8 +229,9 @@ import {
   ShoppingCart,
   RefreshCw,
   AlertCircle,
-  PackageX
+  PackageX,
 } from "lucide-vue-next";
+import { marked } from "marked";
 
 // Props tanımı
 const props = defineProps({
@@ -238,12 +279,20 @@ const formatPrice = (price) => {
 
 const formatProductType = (type) => {
   const typeMap = {
-    'seed': 'Tohum',
-    'seedling': 'Fide',
-    'agriculturalTool': 'Tarım Aleti',
-    'fertilizer': 'Gübre'
+    seed: "Tohum",
+    seedling: "Fide",
+    agriculturalTool: "Tarım Aleti",
+    fertilizer: "Gübre",
   };
   return typeMap[type] || type;
+};
+
+const parseMarkdown = (text) => {
+  if (!text) return "";
+  return text.replace(
+    /\*\*(.*?)\*\*/g,
+    '<strong class="font-semibold text-gray-800">$1</strong>'
+  );
 };
 
 const loadMore = async () => {
@@ -278,8 +327,14 @@ watch([() => props.categorySlug, sortBy], () => {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Özel Scrollbar */
@@ -320,18 +375,20 @@ watch([() => props.categorySlug, sortBy], () => {
   .product-card button {
     @apply text-sm py-2;
   }
-  
+
   .product-card .button-text {
     @apply hidden;
   }
-  
+
   .product-card .button-icon {
     @apply w-4 h-4;
   }
 }
 
 /* Tipografi ve Spacing */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   @apply tracking-tight leading-tight;
 }
 
@@ -357,8 +414,13 @@ h1, h2, h3 {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* Özel Scrollbar */

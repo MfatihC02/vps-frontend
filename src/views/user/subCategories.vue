@@ -44,9 +44,6 @@
         <div class="max-w-7xl mx-auto px-4 py-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
-              <span class="text-gray-700 font-medium font-inter">
-                Toplam {{ totalProducts }} alt kategori
-              </span>
             </div>
 
             <div class="flex items-center gap-3">
@@ -99,17 +96,15 @@
                        class="text-sm text-gray-600 mb-2 line-clamp-2">
                       {{ category.description }}
                     </p>
-
-                    <!-- Meta Keywords -->
+                    <!-- Hidden Keywords for SEO -->
                     <div v-if="category.metadata?.keywords?.length" 
-                         class="flex flex-wrap gap-1 mb-2">
+                        class="sr-only" 
+                        aria-hidden="true">
                       <span v-for="keyword in category.metadata.keywords" 
-                            :key="keyword"
-                            class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+                            :key="keyword">
                         {{ keyword }}
                       </span>
                     </div>
-
                     <!-- Category Stats -->
                     <div class="flex items-center gap-3 text-sm text-gray-500">
                       <span v-if="category.subCategoryCount > 0" 
