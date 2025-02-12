@@ -1,224 +1,186 @@
 <template>
-  <div class="privacy-policy-contract">
-    <div class="contract-header">
-      <h1 class="text-2xl font-bold mb-4">KİŞİSEL VERİLERİN KORUNMASI VE GİZLİLİK POLİTİKASI</h1>
-    </div>
+  <div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
+      <h1 class="text-3xl font-bold text-center text-gray-900 mb-8">KİŞİSEL VERİLERİN KORUNMASI VE GİZLİLİK SÖZLEŞMESİ</h1>
+      
+      <!-- Giriş -->
+      <div class="prose prose-gray max-w-none mb-8">
+        <p>
+          Bu sözleşme ("Sözleşme"), Mühendisler Ticaret Kollektif Şirketi ("Şirket") tarafından, internet sitesi, mobil uygulama ve diğer elektronik ortamlarda toplanan kişisel verilerin işlenmesi, saklanması, aktarılması ve korunması hususlarında veri sahiplerine sunulan bilgi ve taahhütleri düzenlemek amacıyla hazırlanmıştır. İşbu Sözleşme; 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") başta olmak üzere ilgili tüm mevzuata uygun olarak düzenlenmiştir.
+        </p>
+      </div>
 
-    <div class="contract-content">
-      <section class="mb-6">
-        <h2 class="text-xl font-semibold mb-3">1. AMAÇ VE KAPSAM</h2>
-        <p>İşbu Kişisel Verilerin Korunması ve Gizlilik Politikası ("Politika"), {{ companyName }} ("Şirket") tarafından işletilen {{ websiteUrl }} ("Platform") üzerinden toplanan kişisel verilerin işlenmesi, saklanması ve korunması konusundaki prensipleri açıklamaktadır.</p>
-        <p class="mt-2">Bu politika, 6698 Sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") ve ilgili mevzuat kapsamında hazırlanmıştır.</p>
-      </section>
-
-      <section class="mb-6">
-        <h2 class="text-xl font-semibold mb-3">2. VERİ SORUMLUSU</h2>
-        <p>Kişisel verileriniz, KVKK ve ilgili mevzuat kapsamında, {{ companyName }} tarafından "Veri Sorumlusu" sıfatıyla işlenmektedir.</p>
-        <div class="contact-info mt-3">
-          <h3 class="font-semibold mb-2">Veri Sorumlusu İletişim Bilgileri:</h3>
-          <ul class="list-none">
-            <li><strong>Adres:</strong> {{ companyAddress }}</li>
-            <li><strong>E-posta:</strong> {{ companyEmail }}</li>
-            <li><strong>Telefon:</strong> {{ companyPhone }}</li>
-          </ul>
+      <!-- Maddeler -->
+      <div class="space-y-8">
+        <div v-for="(section, index) in sections" :key="index" class="border-t pt-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">{{ section.title }}</h2>
+          <div class="prose prose-gray max-w-none" v-html="section.content"></div>
         </div>
-      </section>
-
-      <section class="mb-6">
-        <h2 class="text-xl font-semibold mb-3">3. TOPLANAN KİŞİSEL VERİLER VE HUKUKİ SEBEPLERİ</h2>
-        
-        <div class="subsection mb-4">
-          <h3 class="text-lg font-semibold mb-2">3.1. Kimlik ve İletişim Bilgileri</h3>
-          <ul class="list-disc pl-6 mb-2">
-            <li>Ad ve soyad</li>
-            <li>E-posta adresi</li>
-            <li>Teslimat adresi</li>
-            <li>Telefon numarası</li>
-          </ul>
-          <p><strong>Hukuki Sebep:</strong> KVKK Md. 5/2(c) kapsamında sözleşmenin kurulması ve ifası için zorunlu olması</p>
-          <p><strong>Saklama Süresi:</strong> Aktif üyelik süresince ve üyelik sona erdikten sonra 10 yıl</p>
-        </div>
-
-        <div class="subsection mb-4">
-          <h3 class="text-lg font-semibold mb-2">3.2. Finansal Bilgiler</h3>
-          <ul class="list-disc pl-6 mb-2">
-            <li>Kredi kartı bilgileri</li>
-            <li>Sipariş geçmişi</li>
-            <li>Ödeme bilgileri</li>
-          </ul>
-          <p><strong>Hukuki Sebep:</strong></p>
-          <ul class="list-disc pl-6">
-            <li>KVKK Md. 5/2(ç) kapsamında hukuki yükümlülüğün yerine getirilmesi</li>
-            <li>KVKK Md. 5/2(e) kapsamında bir hakkın tesisi, kullanılması veya korunması</li>
-          </ul>
-          <p><strong>Saklama Süresi:</strong> Vergi Usul Kanunu gereğince 5 yıl</p>
-        </div>
-
-        <div class="subsection mb-4">
-          <h3 class="text-lg font-semibold mb-2">3.3. İşlem Güvenliği Bilgileri</h3>
-          <ul class="list-disc pl-6 mb-2">
-            <li>IP adresi</li>
-            <li>Kullanıcı adı ve şifre</li>
-            <li>Sistem giriş/çıkış bilgileri</li>
-          </ul>
-          <p><strong>Hukuki Sebep:</strong> KVKK Md. 5/2(f) kapsamında veri sorumlusunun meşru menfaati</p>
-          <p><strong>Saklama Süresi:</strong> 2 yıl</p>
-        </div>
-
-        <div class="subsection">
-          <h3 class="text-lg font-semibold mb-2">3.4. Pazarlama İletişim Bilgileri</h3>
-          <ul class="list-disc pl-6 mb-2">
-            <li>E-posta tercihleri</li>
-            <li>İletişim izinleri</li>
-          </ul>
-          <p><strong>Hukuki Sebep:</strong> KVKK Md. 5/1 kapsamında açık rıza</p>
-          <p><strong>Saklama Süresi:</strong> Açık rızanın geri alınmasına kadar</p>
-        </div>
-      </section>
-
-      <section class="mb-6">
-        <h2 class="text-xl font-semibold mb-3">4. KİŞİSEL VERİLERİN İŞLENME AMAÇLARI</h2>
-        
-        <div class="subsection mb-4">
-          <h3 class="text-lg font-semibold mb-2">4.1. Temel Amaçlar</h3>
-          <ul class="list-disc pl-6">
-            <li>Üyelik hesabının oluşturulması ve yönetilmesi</li>
-            <li>Siparişlerin alınması ve teslimatın gerçekleştirilmesi</li>
-            <li>Ödeme işlemlerinin gerçekleştirilmesi ve takibi</li>
-            <li>Yasal yükümlülüklerin yerine getirilmesi</li>
-          </ul>
-        </div>
-
-        <div class="subsection mb-4">
-          <h3 class="text-lg font-semibold mb-2">4.2. İşlem Güvenliği</h3>
-          <ul class="list-disc pl-6">
-            <li>Platform güvenliğinin sağlanması</li>
-            <li>Hukuka aykırı işlemlerin önlenmesi ve denetimi</li>
-            <li>Şüpheli işlemlerin tespit ve önlenmesi</li>
-          </ul>
-        </div>
-
-      </section>
-
-      <section class="mb-6">
-        <h2 class="text-xl font-semibold mb-3">5. KİŞİSEL VERİLERİN SAKLANMASI VE GÜVENLİĞİ</h2>
-        
-        <div class="subsection mb-4">
-          <h3 class="text-lg font-semibold mb-2">5.1. Teknik Tedbirler</h3>
-          <ul class="list-disc pl-6">
-            <li>Kişisel veriler AES-256 şifreleme standardı ile korunmaktadır</li>
-            <li>Kullanıcı şifreleri geri döndürülemez şekilde SHA-256 ile hash'lenmektedir</li>
-            <li>SSL/TLS protokolü ile veriler şifreli olarak iletilmektedir</li>
-            <li>Güvenlik duvarı ve saldırı tespit sistemleri kullanılmaktadır</li>
-            <li>Düzenli güvenlik testleri ve sızma testleri yapılmaktadır</li>
-          </ul>
-        </div>
-
-        <div class="subsection">
-          <h3 class="text-lg font-semibold mb-2">5.2. İdari Tedbirler</h3>
-          <ul class="list-disc pl-6">
-            <li>Düzenli veri güvenliği eğitimleri verilmektedir</li>
-            <li>Veri erişim yetkileri periyodik olarak gözden geçirilmektedir</li>
-            <li>Veri işleme süreçleri düzenli olarak denetlenmektedir</li>
-          </ul>
-        </div>
-      </section>
-
-      <section class="mb-6">
-        <h2 class="text-xl font-semibold mb-3">6. KİŞİSEL VERİLERİN AKTARILMASI</h2>
-        
-        <div class="subsection mb-4">
-          <h3 class="text-lg font-semibold mb-2">6.1. Yurtiçi Veri Aktarımı</h3>
-          <ul class="list-disc pl-6">
-            <li><strong>Ödeme Hizmeti Sağlayıcıları:</strong> Finansal işlemlerin gerçekleştirilmesi amacıyla</li>
-            <li><strong>Kargo Şirketleri:</strong> Teslimatların gerçekleştirilmesi amacıyla</li>
-            <li><strong>Hukuk Büroları:</strong> Hukuki süreçlerin yürütülmesi amacıyla</li>
-            <li><strong>Yetkili Kamu Kurumları:</strong> Yasal yükümlülükler kapsamında</li>
-          </ul>
-        </div>
-
-        <div class="subsection">
-          <h3 class="text-lg font-semibold mb-2">6.2. Yurtdışı Veri Aktarımı</h3>
-          <p>Yurtdışına herhangi bir veri aktarımı yapılmamaktadır.</p>
-        </div>
-      </section>
-
-      <section class="mb-6">
-        <h2 class="text-xl font-semibold mb-3">7. KİŞİSEL VERİ SAHİBİNİN HAKLARI</h2>
-        <p class="mb-3">KVKK'nın 11. maddesi uyarınca kişisel veri sahipleri:</p>
-        <ul class="list-disc pl-6">
-          <li>Kişisel verilerinin işlenip işlenmediğini öğrenme</li>
-          <li>Kişisel verileri işlenmişse bunlara ilişkin bilgi talep etme</li>
-          <li>Kişisel verilerinin işlenme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme</li>
-          <li>Kişisel verilerinin yurt içinde veya yurt dışında aktarıldığı üçüncü kişileri bilme</li>
-          <li>Kişisel verilerinin eksik veya yanlış işlenmiş olması hâlinde bunların düzeltilmesini isteme</li>
-          <li>KVKK'da öngörülen şartlar çerçevesinde kişisel verilerinin silinmesini veya yok edilmesini isteme</li>
-          <li>Düzeltme, silme ve yok etme talepleri neticesinde yapılan işlemlerin, kişisel verilerin aktarıldığı üçüncü kişilere bildirilmesini isteme</li>
-          <li>İşlenen verilerin münhasıran otomatik sistemler vasıtasıyla analiz edilmesi suretiyle kişinin kendisi aleyhine bir sonucun ortaya çıkmasına itiraz etme</li>
-          <li>Kişisel verilerin kanuna aykırı olarak işlenmesi sebebiyle zarara uğraması hâlinde zararın giderilmesini talep etme</li>
-        </ul>
-        <p class="mt-3">haklarına sahiptir.</p>
-      </section>
-
-      <section class="mb-6">
-        <h2 class="text-xl font-semibold mb-3">8. BAŞVURU VE İLETİŞİM</h2>
-        <p class="mb-3">Kişisel verilerinizle ilgili taleplerinizi:</p>
-        <ul class="list-disc pl-6">
-          <li>Yazılı olarak {{ companyAddress }}</li>
-          <li>Sistemimizde kayıtlı e-posta adresiniz üzerinden {{ companyEmail }}</li>
-        </ul>
-        <p class="mt-3">adreslerine iletebilirsiniz.</p>
-        <p class="mt-2">Başvurulara en geç 30 gün içinde yanıt verilecektir.</p>
-      </section>
-
-      <section class="mb-6">
-        <h2 class="text-xl font-semibold mb-3">9. POLİTİKA GÜNCELLEMELERİ</h2>
-        <p>İşbu Politika, yasal değişiklikler, Şirket'in ticari kararları veya veri işleme süreçlerindeki değişiklikler doğrultusunda güncellenebilir. Güncellemeler Platformun Sözleşmeler Bölümü üzerinden duyurulacak ve yeni metin yayınlandığı tarihte yürürlüğe girecektir.</p>
-        <p class="mt-4"><strong>Son Güncelleme Tarihi:</strong> {{ lastUpdateDate }}</p>
-      </section>
+      </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
+<script>
+export default {
+  name: 'PrivacyPolicyContract',
+  data() {
+    return {
+      sections: [
+        {
+          title: '1. AMAÇ VE KAPSAM',
+          content: `
+            <h3 class="text-lg font-medium mb-2">1.1. Amaç:</h3>
+            <p class="mb-4">Bu Sözleşme; Şirket'in işletmesi kapsamında toplanan kişisel verilerin nasıl işleneceğini, hangi amaçlarla kullanılacağını, hangi hukuki dayanaklara ve saklama sürelerine tabi olacağını, veri sahiplerinin haklarını ve Şirket'in bu veriler karşısındaki sorumluluklarını açıklamak amacıyla hazırlanmıştır.</p>
+            
+            <h3 class="text-lg font-medium mb-2">1.2. Kapsam:</h3>
+            <p>Sözleşme; Şirket'in internet sitesi, mobil uygulama ve benzeri platformlarında veri toplama, işleme, saklama, aktarma ve koruma faaliyetlerini kapsar. Sözleşme kapsamında, gerçek kişilere ait kişisel veriler (ör. ad, soyad, iletişim bilgileri, kimlik ve finansal bilgiler, IP adresi vb.) düzenlenir.</p>
+          `
+        },
+        {
+          title: '2. VERİ SORUMLUSU',
+          content: `
+            <p class="mb-4">Şirket, toplanan kişisel verilerin işlenmesinde "Veri Sorumlusu" sıfatıyla hareket eder.</p>
+            <p class="font-medium mb-2">İletişim Bilgileri:</p>
+            <ul class="list-none space-y-2">
+              <li>Şirket Ünvanı: Mühendisler Ticaret Kollektif Şirketi</li>
+              <li>Adres: Şükran Mah. Sahibi Ata Cad. 38 Meram, Konya</li>
+              <li>E-posta: muhendislerticaretyeni@gmail.com</li>
+              <li>Telefon: 0332 351 31 28</li>
+            </ul>
+          `
+        },
+        {
+          title: '3. TOPLANAN KİŞİSEL VERİLER VE HUKUKİ DAYANAKLARI',
+          content: `
+            <h3 class="text-lg font-medium mb-2">3.1. Toplanan Kişisel Veri Kategorileri:</h3>
+            <ul class="list-disc pl-5 mb-4 space-y-2">
+              <li>Kimlik ve İletişim Bilgileri: Ad, soyad, e-posta adresi, telefon numarası, teslimat adresi</li>
+              <li>Finansal Bilgiler: Kredi kartı bilgileri, sipariş geçmişi, ödeme bilgileri</li>
+              <li>İşlem Güvenliği Bilgileri: IP adresi, kullanıcı adı/şifre, sistem giriş/çıkış kayıtları</li>
+              <li>Pazarlama ve İletişim Bilgileri: E-posta tercihleri, iletişim izinleri</li>
+            </ul>
 
-// Şirket bilgileri
-const companyName = ref('Mühendisler Ticaret Kollektif Şirketi')
-const websiteUrl = ref('www.muhedislerticaret.com.tr')
-const companyAddress = ref('Şükran Mah. Sahibi Ata Cad. 38 Meram, Konya')
-const companyEmail = ref('muhendislerticaretyeni@gmail.com')
-const companyPhone = ref('0332 351 31 28')
-const lastUpdateDate = ref('09.01.2025')
+            <h3 class="text-lg font-medium mb-2">3.2. Hukuki Dayanaklar:</h3>
+            <ul class="list-disc pl-5 space-y-2">
+              <li>Sözleşmenin kurulması ve ifası için zorunluluk (KVKK Md. 5/2(c))</li>
+              <li>Yasal yükümlülüklerin yerine getirilmesi (KVKK Md. 5/2(ç), 5/2(e))</li>
+              <li>Şirket'in meşru menfaatleri kapsamında veri işlenmesi (KVKK Md. 5/2(f))</li>
+              <li>Açık rıza esasına dayalı işleme (KVKK Md. 5/1) – yalnızca pazarlama ve benzeri ilave işlemler için</li>
+            </ul>
+          `
+        },
+        {
+          title: '4. KİŞİSEL VERİLERİN İŞLENME AMAÇLARI',
+          content: `
+            <ul class="list-disc pl-5 space-y-2">
+              <li>Üyelik ve Hesap Yönetimi: Üyelik oluşturulması, hesap yönetimi, sipariş işlemleri ve teslimat süreçlerinin gerçekleştirilmesi.</li>
+              <li>Ödeme İşlemleri: Ödeme süreçlerinin güvenli şekilde yürütülmesi ve mali kayıtların tutulması.</li>
+              <li>Güvenlik: Platform güvenliğinin sağlanması, şüpheli işlemlerin tespiti ve önlenmesi.</li>
+              <li>Yasal Yükümlülükler: Vergi, muhasebe, mesafeli satış ve diğer yasal düzenlemelere uygunluk sağlanması.</li>
+              <li>Pazarlama (Açık Rıza İle): Sadece ilgili veri sahibinin açık rızası varsa pazarlama ve reklam iletişimleri.</li>
+            </ul>
+          `
+        },
+        {
+          title: '5. GÜVENLİK ÖNLEMLERİ',
+          content: `
+            <p class="mb-4">Şirket, kişisel verilerin korunması amacıyla;</p>
+            <ul class="list-disc pl-5 space-y-2">
+              <li>AES-256 şifreleme, SHA-256 hash algoritması, SSL/TLS protokolleri gibi gelişmiş teknik önlemleri uygular,</li>
+              <li>Güvenlik duvarı, saldırı tespit sistemleri, düzenli sızma testleri ve güvenlik eğitimleri ile idari tedbirler alır,</li>
+              <li>Erişim yetkilerini periyodik olarak gözden geçirir ve eski hesapları kapatır.</li>
+            </ul>
+          `
+        },
+        {
+          title: '6. KİŞİSEL VERİLERİN AKTARILMASI',
+          content: `
+            <h3 class="text-lg font-medium mb-2">6.1. Yurtiçi Aktarım:</h3>
+            <p class="mb-4">Kişisel veriler, ödeme hizmeti sağlayıcıları, kargo şirketleri, hukuk büroları ve yetkili kamu kurumları gibi, yalnızca ilgili hizmetin ifası için gerekli olan üçüncü taraflara aktarılabilir.</p>
+
+            <h3 class="text-lg font-medium mb-2">6.2. Yurtdışı Aktarım:</h3>
+            <p>Şirket, kişisel verileri yurtdışına aktarmamaktadır.</p>
+          `
+        },
+        {
+          title: '7. KİŞİSEL VERİ SAHİBİNİN HAKLARI',
+          content: `
+            <p class="mb-4">KVKK Madde 11 uyarınca veri sahipleri;</p>
+            <ul class="list-disc pl-5 space-y-2">
+              <li>Kişisel verilerinin işlenip işlenmediğini öğrenme,</li>
+              <li>İşlenmişse buna ilişkin bilgi talep etme,</li>
+              <li>İşlenme amacını ve kullanımın amaca uygunluğunu sorgulama,</li>
+              <li>Eksik veya yanlış işlenen verilerinin düzeltilmesini isteme,</li>
+              <li>Verilerinin silinmesini veya yok edilmesini talep etme,</li>
+              <li>İşlemlerin üçüncü kişilere bildirilmesini isteme,</li>
+              <li>Münhasıran otomatik sistemlerle analiz edilip kişinin aleyhine sonuç doğurulmasına itiraz etme,</li>
+              <li>Kanuna aykırı işlenme nedeniyle zararın giderilmesini talep etme haklarına sahiptir.</li>
+            </ul>
+          `
+        },
+        {
+          title: '8. BAŞVURU VE İLETİŞİM',
+          content: `
+            <p class="mb-4">Veri sahipleri, kişisel verileriyle ilgili taleplerini;</p>
+            <ul class="list-disc pl-5 mb-4 space-y-2">
+              <li>Yazılı olarak Şirketin iletişim adresine,</li>
+              <li>Sistemimizde kayıtlı e-posta adresiniz üzerinden veya</li>
+              <li>Aşağıda belirtilen diğer iletişim kanalları aracılığıyla iletebilirler.</li>
+            </ul>
+
+            <p class="font-medium mb-2">İletişim Bilgileri:</p>
+            <ul class="list-none space-y-2 mb-4">
+              <li>Adres: Şükran Mah. Sahibi Ata Cad. 38 Meram, Konya</li>
+              <li>E-posta: muhendislerticaretyeni@gmail.com</li>
+              <li>Telefon: 0332 351 31 28</li>
+            </ul>
+
+            <p>Başvurulara en geç 30 gün içinde yanıt verilecektir.</p>
+          `
+        },
+        {
+          title: '9. SORUMLULUĞUN SINIRLANMASI',
+          content: `
+            <h3 class="text-lg font-medium mb-2">9.1. Genel Sorumluluk:</h3>
+            <p class="mb-4">Şirket, kişisel verilerin korunması için gerekli tüm teknik ve idari tedbirleri uygulamış olsa dahi, tüm özeni göstermesine rağmen meydana gelebilecek veri ihlallerinde, ancak Şirket'in kasıtlı veya ağır ihmal durumları tespit edildiğinde sorumluluğu artar.</p>
+
+            <h3 class="text-lg font-medium mb-2">9.2. Sınırlayıcı Hüküm:</h3>
+            <ul class="list-disc pl-5 mb-4 space-y-2">
+              <li>Şirket, veri ihlali sonucu ortaya çıkabilecek zararlardan, kasıt veya ağır ihmalin varlığı ispatlanmadıkça, hukuki sorumluluğunu sınırlı tutar.</li>
+              <li>Şirketin, KVKK kapsamında öngörülen teknik ve idari tedbirleri eksiksiz olarak uyguladığı durumlarda, ihlale bağlı dolaylı zarar ve zararın tazmini hususunda sorumluluğu, yasal sınırlar dahilinde sınırlı tutulur.</li>
+            </ul>
+
+            <h3 class="text-lg font-medium mb-2">9.3. İstisnalar:</h3>
+            <ul class="list-disc pl-5 space-y-2">
+              <li>Ancak, veri işleme sürecinde kasıtlı hareket veya ağır ihmal tespit edilirse, Şirketin sorumluluğu tam olarak gündeme gelebilir.</li>
+              <li>Bu madde, satıcı lehine risk azaltıcı bir uygulama olarak öne çıkmakla birlikte, veri sahiplerinin KVKK'da öngörülen haklarını ihmal etmemek amacıyla, Şirket'in yükümlülüklerini tamamen ortadan kaldırmaz.</li>
+            </ul>
+          `
+        },
+        {
+          title: '10. POLİTİKANIN GÜNCELLENMESİ',
+          content: `
+            <p>Şirket, yasal değişiklikler, ticari kararlar veya veri işleme süreçlerindeki güncellemeler doğrultusunda işbu Sözleşme'yi güncelleyebilir. Güncellemeler, Şirket'in internet sitesi üzerinden duyurulacak ve yeni metin yayınlandığı tarihte yürürlüğe girecektir.</p>
+          `
+        },
+        {
+          title: '11. YÜRÜRLÜK',
+          content: `
+            <p>İşbu Sözleşme, taraflarca elektronik ortamda onaylandığı tarihte yürürlüğe girer.</p>
+          `
+        },
+        {
+          title: '12. DİĞER HÜKÜMLER',
+          content: `
+            <ul class="list-disc pl-5 space-y-2">
+              <li>İşbu Sözleşme, KVKK ve ilgili mevzuat hükümleriyle çeliştiği durumlarda, mevzuat hükümleri esas alınır.</li>
+              <li>Taraflar, kişisel verilerin işlenmesi ve aktarılması hususundaki uyuşmazlıkların çözümünde, ilgili mevzuata uygun olarak hareket edecektir.</li>
+            </ul>
+          `
+        }
+      ]
+    }
+  }
+}
 </script>
-
-<style scoped>
-.privacy-policy-contract {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.contract-header {
-  border-bottom: 2px solid #eee;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-}
-
-/* Mobil responsive tasarım */
-@media (max-width: 768px) {
-  .privacy-policy-contract {
-    padding: 1rem;
-  }
-
-  h1 {
-    font-size: 1.5rem;
-  }
-
-  h2 {
-    font-size: 1.25rem;
-  }
-}
-</style>

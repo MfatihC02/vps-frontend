@@ -9,6 +9,8 @@ import LoginPage from '@/views/user/loginPage.vue'
 import RegisterPage from '@/views/user/registerPage.vue'
 import HomePage from '@/views/user/homepage.vue'
 import AboutView from '@/views/AboutView.vue'
+import ReturnPolicyContract from '@/components/contracts/ReturnPolicyContract.vue'
+import PrivacyPolicyContract from '@/components/contracts/PrivacyPolicyContract.vue'
 
 // Lazy loading for admin pages and cart
 const AdminDashboard = () => import('@/views/admin/AdminDashboard.vue')
@@ -36,6 +38,26 @@ const routes = [
     meta: {
       title: 'Ana Sayfa',
       description: 'Profesyonel sera ve tarım üretimi için kaliteli tohumlar. En iyi tohum çeşitleri, uygun fiyatlar ve ücretsiz kargo avantajıyla sizlerle.'
+    }
+  },
+  {
+    path: '/gizlilik-politikasi',
+    name: 'privacy-policy',
+    component: PrivacyPolicyContract,
+    meta: {
+      title: 'Gizlilik Politikası ve KVKK',
+      description: 'Kişisel verilerin korunması, gizlilik politikası ve KVKK kapsamında haklarınız. Verilerinizin nasıl işlendiği, korunduğu ve haklarınız hakkında detaylı bilgi.',
+      keywords: 'gizlilik politikası, KVKK, kişisel veriler, veri güvenliği, veri işleme, veri koruma'
+    }
+  },
+  {
+    path: '/iade-ve-iptal-kosullari',
+    name: 'return-policy',
+    component: ReturnPolicyContract,
+    meta: {
+      title: 'İade ve İptal Koşulları',
+      description: 'Ürün iade ve iptal koşulları, cayma hakkı ve müşteri hakları hakkında detaylı bilgi. 14 gün içinde koşulsuz iade garantisi.',
+      keywords: 'iade koşulları, iptal şartları, cayma hakkı, müşteri hakları, ürün iade'
     }
   },
   {

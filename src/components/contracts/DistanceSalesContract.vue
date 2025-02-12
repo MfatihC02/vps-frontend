@@ -127,7 +127,6 @@
         <li>Teslimat, iptal, iade ve değişim koşulları için "Teslimat ve İade Koşulları Sözleşmesi"</li>
         <li>Kişisel verilerin işlenmesi ve korunması için "Kişisel Verilerin Korunması ve Gizlilik Politikası"</li>
         <li>Ödeme koşulları ve güvenliği için "Ödeme ve Güvenlik Politikası"</li>
-        <li>Cayma hakkı ve kullanımı için "Cayma Hakkı Sözleşmesi"</li>
       </ul>
       <p class="mb-4">
         4.2. İşbu sözleşmenin ayrılmaz parçası olan yukarıdaki sözleşme ve politikalar {{ props.sellerInfo.website }} 
