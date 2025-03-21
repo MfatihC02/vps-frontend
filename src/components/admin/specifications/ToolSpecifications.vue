@@ -197,14 +197,17 @@
               <input
                 v-model.number="specifications.technical.engine.power.value"
                 type="number"
+                step="1"
+                min="0"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
               />
-              <input
+              <select
                 v-model="specifications.technical.engine.power.unit"
-                type="text"
-                placeholder="Birim"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              />
+              >
+                <option value="HP">HP</option>
+                <option value="kW">kW</option>
+              </select>
             </div>
           </div>
 

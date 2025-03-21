@@ -197,11 +197,13 @@ export default {
 
         const observer = new IntersectionObserver(
           (entries) => {
-            entries.forEach(entry => {
-              // Eğer element görünür alandaysa ve yeterince görünürse
-              if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-                activeTab.value = tab.id;
-              }
+            requestAnimationFrame(() => {
+              entries.forEach(entry => {
+                // Eğer element görünür alandaysa ve yeterince görünürse
+                if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                  activeTab.value = tab.id;
+                }
+              });
             });
           },
           {

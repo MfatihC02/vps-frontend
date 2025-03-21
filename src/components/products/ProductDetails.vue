@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-2xl mx-auto space-y-8">
+  <div class="max-w-2xl mx-auto space-y-8 flex-grow">
     <!-- Ürün Başlığı ve Değerlendirme -->
     <div class="space-y-4 sm:space-y-6">
       <h1
@@ -59,13 +59,13 @@
           <span
             class="text-2xl sm:text-3xl font-bold text-gray-900 font-montserrat tracking-tight"
           >
-            ₺{{ formatPrice(product.price.current) }}
+            ₺{{ formatPrice(Number(product.price.current)) }}
           </span>
           <template v-if="product.price.discount > 0">
             <span
               class="text-base sm:text-lg text-gray-400 line-through font-inter"
             >
-              ₺{{ formatPrice(calculateOriginalPrice) }}
+              ₺{{ formatPrice(Number(calculateOriginalPrice)) }}
             </span>
             <span
               class="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-red-50 text-red-600 border border-red-100"
@@ -101,21 +101,41 @@
       class="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 space-y-4"
     >
       <!-- Giriş yapmamış kullanıcılar için bilgilendirme -->
-      <div
-        v-if="!isAuthenticated"
-        class="bg-blue-50 border border-blue-100 rounded-lg p-4"
-      >
-        <div class="flex items-center space-x-3">
-          <Info class="w-5 h-5 text-blue-500" />
-          <p class="text-sm text-blue-700">
-            Ürünü sepete eklemek için
-            <router-link
-              :to="{ name: 'login', query: { redirect: $route.fullPath } }"
-              class="font-medium underline hover:text-blue-800"
-            >
-              giriş yapmalısınız
-            </router-link>
-          </p>
+      <div class="flex flex-col space-y-3">
+        <div
+          v-if="!isAuthenticated"
+          class="bg-blue-50 border border-blue-100 rounded-lg p-4"
+        >
+          <div class="flex items-center space-x-3">
+            <Info class="w-5 h-5 text-blue-500" />
+            <p class="text-sm text-blue-700">
+              Ürünü sepete eklemek için
+              <router-link
+                :to="{ name: 'login', query: { redirect: $route.fullPath } }"
+                class="font-medium underline hover:text-blue-800"
+              >
+                giriş yapmalısınız
+              </router-link>
+            </p>
+          </div>
+        </div>
+        
+        <div
+          v-if="!isAuthenticated"
+          class="bg-green-50 border border-green-100 rounded-lg p-4"
+        >
+          <div class="flex items-center space-x-3">
+            <Info class="w-5 h-5 text-green-500" />
+            <p class="text-sm text-green-700">
+              Hesabınız yok mu?
+              <router-link
+                :to="{ name: 'register' }"
+                class="font-medium underline hover:text-green-800"
+              >
+                Hemen kayıt olun
+              </router-link>
+            </p>
+          </div>
         </div>
       </div>
 
@@ -458,6 +478,12 @@ export default {
       }
     );
 
+    const getOneYearFromNow = () => {
+      const date = new Date();
+      date.setFullYear(date.getFullYear() + 1);
+      return date.toISOString().split("T")[0];
+    };
+
     return {
       product,
       loading,
@@ -479,6 +505,7 @@ export default {
       router,
       currentUrl,
       description,
+      getOneYearFromNow,
     };
   },
 };

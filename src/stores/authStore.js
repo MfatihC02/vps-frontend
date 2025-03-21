@@ -9,9 +9,10 @@ export const useAuthStore = defineStore('auth', {
         isAuthenticated: false,
         loading: false,
         error: null,
+        refreshError: null,
         tokenExpiry: null,
         refreshTokenExpiry: null,
-        initialCheckDone: false
+        initialCheckDone: false // Initial check state'i
     }),
 
     getters: {
@@ -21,7 +22,6 @@ export const useAuthStore = defineStore('auth', {
 
     actions: {
         stopTokenRefreshTimer() {
-            // Aktif bir token yenileme zamanlayıcısı varsa iptal eder
             if (tokenRefreshTimeout) {
                 clearTimeout(tokenRefreshTimeout);
                 tokenRefreshTimeout = null;
@@ -32,20 +32,18 @@ export const useAuthStore = defineStore('auth', {
             this.isAuthenticated = false;
             this.loading = false;
             this.error = null;
+            this.refreshError = null;
             this.tokenExpiry = null;
             this.refreshTokenExpiry = null;
         },
 
         scheduleTokenRefresh() {
-            // Önce var olan zamanlayıcıyı durdur
             this.stopTokenRefreshTimer();
 
             if (!this.tokenExpiry) return;
 
             const now = Date.now();
             const timeUntilExpiry = this.tokenExpiry - now;
-
-            // Token süresinin dolmasına 1 dakika kala yenileme planı yap
             const refreshTime = timeUntilExpiry - (60 * 1000);
 
             if (refreshTime > 0) {
@@ -58,10 +56,11 @@ export const useAuthStore = defineStore('auth', {
                         if (response.data.success) {
                             this.tokenExpiry = response.data.accessTokenExpiry;
                             this.refreshTokenExpiry = response.data.refreshTokenExpiry;
-                            this.scheduleTokenRefresh();  // Yeniden yenileme planı yap
+                            this.scheduleTokenRefresh();
                         }
                     } catch (error) {
-                        console.error("Token yenileme hatası:", error);
+                        console.error("Token yenileme hatası:", error.response?.data?.message || error.message);
+                        this.refreshError = error.response?.data?.message || 'Token yenileme başarısız oldu';
                         await this.handleAuthError();
                     }
                 }, refreshTime);
@@ -74,15 +73,16 @@ export const useAuthStore = defineStore('auth', {
             const userStore = useUserStore();
             userStore.clearState();
 
-            // Oturumun bittiği için kullanıcıyı login sayfasına yönlendir
             const router = useRouter();
             if (router.currentRoute.value.name !== 'login') {
+                console.log("Oturum sonlandı, login sayfasına yönlendiriliyor...");
                 router.push({
                     name: 'login',
-                    query: {
-                        message: 'Oturumunuz sonlanmıştır. Lütfen tekrar giriş yapın.'
-                    }
+                    query: { message: 'Oturumunuz sonlanmıştır. Lütfen tekrar giriş yapın.' }
                 });
+            } else {
+                // Login sayfasındaysak, yönlendirme yapma, sadece state'i sıfırla
+                console.log("Zaten login sayfasındayız, yönlendirme yapılmadı.");
             }
         },
 
@@ -93,12 +93,7 @@ export const useAuthStore = defineStore('auth', {
             this.error = null;
 
             try {
-                const response = await api.post('/auth/register', {
-                    username,
-                    email,
-                    password
-                });
-
+                const response = await api.post('/auth/register', { username, email, password });
                 if (response.data.success) {
                     this.isAuthenticated = true;
                     this.tokenExpiry = response.data.accessTokenExpiry;
@@ -109,10 +104,10 @@ export const useAuthStore = defineStore('auth', {
 
                     this.scheduleTokenRefresh();
                 }
-
                 return response.data;
             } catch (error) {
                 this.error = error.response?.data?.message || 'Kayıt işlemi başarısız oldu';
+                console.log("Register error:", this.error);
                 throw error;
             } finally {
                 this.loading = false;
@@ -127,7 +122,6 @@ export const useAuthStore = defineStore('auth', {
 
             try {
                 const response = await api.post('/auth/login', { email, password });
-
                 if (response.data.success) {
                     this.isAuthenticated = true;
                     this.tokenExpiry = response.data.accessTokenExpiry;
@@ -138,20 +132,22 @@ export const useAuthStore = defineStore('auth', {
 
                     this.scheduleTokenRefresh();
                 }
-
                 return response.data;
             } catch (error) {
                 this.error = error.response?.data?.message || 'Giriş işlemi başarısız oldu';
+                console.log("Login error:", this.error);
                 throw error;
             } finally {
                 this.loading = false;
             }
         },
+
         async logout() {
             if (this.loading) return;
 
             this.loading = true;
             this.error = null;
+            this.refreshError = null;
 
             try {
                 if (this.isAuthenticated) {
@@ -160,7 +156,6 @@ export const useAuthStore = defineStore('auth', {
             } catch (error) {
                 console.error("Logout error:", error);
             } finally {
-                // Merkezi hata yönetimi için clearState çağrısı
                 const userStore = useUserStore();
                 userStore.clearState();
                 this.resetState();
@@ -174,7 +169,6 @@ export const useAuthStore = defineStore('auth', {
             this.loading = true;
             try {
                 const response = await api.get('/auth/check');
-
                 if (response.data.success) {
                     this.isAuthenticated = true;
                     this.tokenExpiry = response.data.accessTokenExpiry;
@@ -183,17 +177,16 @@ export const useAuthStore = defineStore('auth', {
                     const userStore = useUserStore();
                     await userStore.fetchProfile();
 
-                    // Token yenilemeyi başlat
                     this.scheduleTokenRefresh();
                 }
             } catch (error) {
                 console.log("Auth kontrolü başarısız:", error);
                 this.resetState();
             } finally {
-                // Burada initialCheckDone bayrağını güncelliyoruz
-                this.initialCheckDone = true;
+                this.initialCheckDone = true; // Check tamamlandı
                 this.loading = false;
             }
         },
+    
     }
 });

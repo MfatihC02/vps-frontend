@@ -7,9 +7,127 @@
     <div class="w-full px-[10px] sm:container sm:mx-auto sm:px-4 py-4 sm:py-8">
       <!-- SEO için yapısal veri -->
       <meta itemprop="name" :content="product?.name" />
-      <meta itemprop="description" :content="product?.description" />
-      <meta itemprop="brand" :content="product?.brand" />
+      <meta itemprop="description" :content="product?.description?.meta" />
       <meta itemprop="sku" :content="product?.sku" />
+      <div class="hidden">
+        <div
+          itemprop="description"
+          v-if="product?.description?.detailed"
+          v-html="parsedDetailedDescription"
+        ></div>
+      </div>
+      <!-- Ürün Resimleri -->
+      <link
+        v-if="product?.images?.length > 0"
+        itemprop="image"
+        :content="product.images[0].url"
+      />
+      <meta
+        v-for="(image, index) in product?.images"
+        :key="index"
+        v-if="index > 0"
+        itemprop="image"
+        :content="image.url"
+      />
+
+      <!-- Marka Bilgisi -->
+      <div itemprop="brand" itemscope itemtype="http://schema.org/Brand">
+        <meta itemprop="name" :content="product?.brand" />
+      </div>
+
+      <!-- Fiyat Bilgisi -->
+      <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+        <meta
+          itemprop="price"
+          :content="Number(product?.price?.current).toFixed(2)"
+        />
+        <meta itemprop="priceCurrency" content="TRY" />
+        <link
+          itemprop="availability"
+          :href="
+            stockInfo?.quantity > 0
+              ? 'http://schema.org/InStock'
+              : 'http://schema.org/OutOfStock'
+          "
+        />
+        <meta itemprop="priceValidUntil" :content="priceValidUntil" />
+        <link itemprop="url" :content="currentUrl" />
+
+        <!-- Kargo Detayları -->
+        <div
+          itemprop="shippingDetails"
+          itemscope
+          itemtype="http://schema.org/OfferShippingDetails"
+        >
+          <div
+            itemprop="shippingRate"
+            itemscope
+            itemtype="http://schema.org/MonetaryAmount"
+          >
+            <meta itemprop="value" content="0" />
+            <meta itemprop="currency" content="TRY" />
+          </div>
+          <div
+            itemprop="deliveryTime"
+            itemscope
+            itemtype="http://schema.org/ShippingDeliveryTime"
+          >
+            <meta itemprop="handlingTime" content="P1D" />
+            <meta itemprop="transitTime" content="P3D" />
+          </div>
+          <div
+            itemprop="shippingDestination"
+            itemscope
+            itemtype="http://schema.org/DefinedRegion"
+          >
+            <meta itemprop="addressCountry" content="TR" />
+          </div>
+        </div>
+
+        <!-- İade Politikası -->
+        <div
+          itemprop="hasMerchantReturnPolicy"
+          itemscope
+          itemtype="http://schema.org/MerchantReturnPolicy"
+        >
+          <meta
+            itemprop="returnPolicyCategory"
+            content="http://schema.org/MerchantReturnFiniteReturnWindow"
+          />
+          <div
+            itemprop="returnPolicyCountry"
+            itemscope
+            itemtype="http://schema.org/Country"
+          >
+            <meta itemprop="name" content="TR" />
+          </div>
+          <meta
+            itemprop="returnMethod"
+            content="http://schema.org/ReturnByMail"
+          />
+          <meta itemprop="merchantReturnDays" content="14" />
+          <meta itemprop="returnFees" content="http://schema.org/FreeReturn" />
+          <meta itemprop="applicableCountry" content="TR" />
+          <div
+            itemprop="returnPolicySeasonalOverride"
+            itemscope
+            itemtype="http://schema.org/MerchantReturnPolicySeasonalOverride"
+          >
+            <meta itemprop="name" content="false" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Değerlendirme Bilgisi -->
+      <div
+        v-if="product?.rating?.average"
+        itemprop="aggregateRating"
+        itemscope
+        itemtype="http://schema.org/AggregateRating"
+      >
+        <meta itemprop="ratingValue" :content="product.rating.average" />
+        <meta itemprop="reviewCount" :content="product.rating.count" />
+      </div>
 
       <!-- Breadcrumb - Zenginleştirilmiş SEO -->
       <nav
@@ -76,7 +194,14 @@
               <span itemprop="name">{{ product.category.name }}</span>
             </a>
             <ChevronRight size="16" class="ml-2" />
-            <meta itemprop="position" :content="product.category.ancestors ? product.category.ancestors.length + 2 : 2" />
+            <meta
+              itemprop="position"
+              :content="
+                product.category.ancestors
+                  ? product.category.ancestors.length + 2
+                  : 2
+              "
+            />
           </li>
 
           <!-- Ürün -->
@@ -87,7 +212,14 @@
             class="text-[#2F5E32]"
           >
             <span itemprop="name">{{ product.name }}</span>
-            <meta itemprop="position" :content="product.category?.ancestors ? product.category.ancestors.length + 3 : 3" />
+            <meta
+              itemprop="position"
+              :content="
+                product.category?.ancestors
+                  ? product.category.ancestors.length + 3
+                  : 3
+              "
+            />
           </li>
         </ol>
       </nav>
@@ -132,7 +264,7 @@
               <ProductGallery
                 :images="product?.images"
                 :loading="loading"
-                class="lg:sticky lg:top-4 w-full max-w-md mx-auto"
+                class="w-full max-w-md mx-auto"
               />
             </div>
 
@@ -156,7 +288,7 @@
                       'px-4 py-2.5 text-sm font-medium leading-5 focus:outline-none transition-all duration-200',
                       selected
                         ? 'text-green-700 border-b-2 border-green-600'
-                        : 'text-gray-600 hover:text-green-600'
+                        : 'text-gray-600 hover:text-green-600',
                     ]"
                   >
                     Ürün Özellikleri
@@ -168,7 +300,7 @@
                       'px-4 py-2.5 text-sm font-medium leading-5 focus:outline-none transition-all duration-200',
                       selected
                         ? 'text-green-700 border-b-2 border-green-600'
-                        : 'text-gray-600 hover:text-green-600'
+                        : 'text-gray-600 hover:text-green-600',
                     ]"
                   >
                     Değerlendirmeler
@@ -184,13 +316,18 @@
                   />
                 </TabPanel>
                 <TabPanel>
-                  <div v-if="!product?._id" class="flex justify-center items-center p-8">
-                    <span class="loading loading-spinner loading-md text-green-600"></span>
+                  <div
+                    v-if="!product?._id"
+                    class="flex justify-center items-center p-8"
+                  >
+                    <span
+                      class="loading loading-spinner loading-md text-green-600"
+                    ></span>
                   </div>
-                  <ProductReviews 
+                  <ProductReviews
                     v-else
                     :key="product._id"
-                    :productId="product._id" 
+                    :productId="product._id"
                   />
                 </TabPanel>
               </TabPanels>
@@ -205,9 +342,11 @@
 <script>
 import { ChevronRight } from "lucide-vue-next";
 import { useProductStore } from "@/stores/productStore";
-import { computed, onMounted, ref } from "vue";
+import { useStockStore } from "@/stores/stockStore";
+import { marked } from "marked";
+import { computed, onMounted, ref, watchEffect } from "vue";
 import { useRoute } from "vue-router";
-import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue';
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue";
 import ProductGallery from "@/components/products/ProductGallery.vue";
 import ProductDetails from "@/components/products/ProductDetails.vue";
 import ProductSpecifications from "@/components/products/ProductSpecifications.vue";
@@ -230,6 +369,7 @@ export default {
 
   setup() {
     const productStore = useProductStore();
+    const stockStore = useStockStore();
     const route = useRoute();
     const retryCount = ref(0);
 
@@ -237,6 +377,12 @@ export default {
     const loading = computed(() => productStore.isLoading);
     const error = computed(() => productStore.getError);
     const product = computed(() => productStore.product);
+
+    // Stok bilgisi
+    const stockInfo = computed(() => {
+      if (!product.value?._id) return null;
+      return stockStore.getStockByProductId(product.value._id);
+    });
 
     // SEO için meta veriler
     const updateMetaTags = () => {
@@ -255,11 +401,14 @@ export default {
       }
     };
 
-    // Ürün bilgisi çekme
+    // Ürün ve stok bilgisi çekme
     const fetchProduct = async () => {
       try {
         const slug = route.params.slug;
         await productStore.fetchProductBySlug(slug);
+        if (product.value?._id) {
+          await stockStore.fetchStockByProduct(product.value._id);
+        }
         updateMetaTags();
       } catch (err) {
         console.error("Ürün yüklenirken hata:", err);
@@ -288,11 +437,11 @@ export default {
             (1 - product.value.price.discount / 100)
           : null,
         discount: product.value.price.discount,
-        stock: product.value.stock.quantity,
+        stock: stockInfo.value?.quantity ?? 0,
         sku: product.value.sku,
         brand: product.value.brand,
         contact: {
-          phone: "+90 555 123 4567",
+          phone: "+90 545 599 36 88",
           email: "info@agroseed.com",
           workHours: "09:00 - 18:00",
         },
@@ -309,14 +458,33 @@ export default {
       return product.value.category.slug || "";
     });
 
+    const priceValidUntil = computed(() => {
+      const date = new Date();
+      date.setDate(date.getDate() + 30);
+      return date.toISOString();
+    });
+
+    const currentUrl = computed(() => {
+      return window.location.href;
+    });
+
+    const parsedDetailedDescription = computed(() => {
+      if (!product.value?.description?.detailed) return "";
+      return marked.parse(product.value.description.detailed);
+    });
+
     return {
       loading,
       error,
       product,
+      stockInfo,
       formattedProductDetails,
       getCategoryName,
       getCategorySlug,
       retryLoading,
+      priceValidUntil,
+      currentUrl,
+      parsedDetailedDescription,
     };
   },
 };

@@ -106,7 +106,9 @@
               <tr class="border-t border-gray-200">
                 <td colspan="2" class="hidden md:table-cell"></td>
                 <td colspan="2" class="px-2 md:px-4 py-2 text-right font-medium">Kargo:</td>
-                <td class="px-2 md:px-4 py-2 text-right font-medium">Ücretsiz</td>
+                <td class="px-2 md:px-4 py-2 text-right font-medium">
+                  {{ cartStore.shipping === 0 ? 'Ücretsiz' : `₺${formatPrice(cartStore.shipping)}` }}
+                </td>
               </tr>
               <tr class="font-bold border-t border-gray-200">
                 <td colspan="2" class="hidden md:table-cell"></td>
@@ -305,7 +307,7 @@ const totalVAT = computed(() => {
 
 const total = computed(() => {
   if (!orderDetails.value?.items) return 0;
-  const total = orderDetails.value.items.reduce((sum, item) => sum + item.totalPrice, 0);
+  const total = orderDetails.value.items.reduce((sum, item) => sum + item.totalPrice, 0) + cartStore.shipping;
   console.log('Genel Toplam (KDV Dahil):', total);
   return total;
 });

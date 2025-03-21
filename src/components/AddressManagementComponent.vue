@@ -41,6 +41,7 @@
               <p class="text-gray-600">{{ address.fullAddress }}</p>
               <p class="text-gray-600">{{ address.neighborhood }}, {{ address.district }}/{{ address.city }}</p>
               <p class="text-gray-600">{{ address.phone }}</p>
+              <p class="text-gray-600">TC: {{ address.maskedIdentityNumber }}</p>
             </div>
           </div>
           <div class="flex space-x-2">
@@ -110,6 +111,25 @@
           />
           <p v-if="formErrors.phone" class="mt-1 text-sm text-red-600">
             {{ formErrors.phone }}
+          </p>
+        </div>
+
+        <!-- TC Kimlik Numarası -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            TC Kimlik Numarası
+          </label>
+          <input
+            v-model="addressForm.identityNumber"
+            type="text"
+            class="form-input"
+            :class="{ 'border-red-500': formErrors.identityNumber }"
+            placeholder="11 haneli TC Kimlik No"
+            maxlength="11"
+            @input="formatIdentityNumber"
+          />
+          <p v-if="formErrors.identityNumber" class="mt-1 text-sm text-red-600">
+            {{ formErrors.identityNumber }}
           </p>
         </div>
 
@@ -289,7 +309,8 @@ const addressForm = ref({
   fullAddress: '',
   zipCode: '',
   type: 'both',
-  isDefault: false
+  isDefault: false,
+  identityNumber: ''
 });
 
 onMounted(async () => {
@@ -381,7 +402,8 @@ const cancelForm = () => {
     fullAddress: '',
     zipCode: '',
     type: 'both',
-    isDefault: false
+    isDefault: false,
+    identityNumber: ''
   };
 };
 
@@ -394,6 +416,17 @@ const formatPhoneNumber = (event) => {
   
   // Telefon numarasını güncelle
   addressForm.value.phone = value;
+};
+
+const formatIdentityNumber = (event) => {
+  // Sadece rakamları al
+  let value = event.target.value.replace(/\D/g, '');
+  
+  // Maksimum 11 karakter olacak şekilde kes
+  value = value.slice(0, 11);
+  
+  // TC Kimlik numarasını güncelle
+  addressForm.value.identityNumber = value;
 };
 
 // Watch city changes

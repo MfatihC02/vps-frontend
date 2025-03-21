@@ -74,8 +74,8 @@
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
             >
               <option value="">Kategori Seçin</option>
-              <option 
-                v-for="category in flattenedCategories" 
+              <option
+                v-for="category in flattenedCategories"
                 :key="category._id"
                 :value="category._id"
               >
@@ -202,10 +202,10 @@
           </div>
         </div>
         <ProductDescription
-  v-model="formData.description"
-  ref="descriptionForm"
-  class="mt-6"
-/>
+          v-model="formData.description"
+          ref="descriptionForm"
+          class="mt-6"
+        />
 
         <!-- Dinamik Özellikler Komponenti -->
         <component
@@ -263,7 +263,7 @@ import {
 import { ArrowLeft } from "lucide-vue-next";
 import { useProductStore } from "@/stores/productStore";
 import { useCategoryStore } from "@/stores/categoryStore";
-import ProductDescription from './product/ProductDescription.vue';
+import ProductDescription from "./product/ProductDescription.vue";
 
 const productStore = useProductStore();
 const categoryStore = useCategoryStore();
@@ -273,12 +273,12 @@ const descriptionForm = ref(null); // script başına eklenecek
 const props = defineProps({
   product: {
     type: Object,
-    required: true
+    required: true,
   },
   isEditing: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
 const emit = defineEmits(["back", "save", "product-updated"]);
@@ -302,8 +302,8 @@ const formData = reactive({
   description: {
     meta: "",
     detailed: "",
-    keywords: []
-},
+    keywords: [],
+  },
 
   stock: {
     quantity: 0,
@@ -324,14 +324,15 @@ const loadProductData = () => {
     formData.status = props.product.status || "draft";
 
     // Kategori - Eğer category bir obje ise _id'sini al, değilse direkt kategori id'sini al
-    formData.category = props.product.category?._id || props.product.category || "";
+    formData.category =
+      props.product.category?._id || props.product.category || "";
 
     // Fiyat bilgileri
     if (props.product.price) {
       formData.price = {
         current: Number(props.product.price.current) || 0,
         discount: Number(props.product.price.discount) || 0,
-        discountEndDate: props.product.price.discountEndDate || null
+        discountEndDate: props.product.price.discountEndDate || null,
       };
     }
 
@@ -340,19 +341,19 @@ const loadProductData = () => {
       formData.stock = {
         quantity: Number(props.product.stock.quantity) || 0,
         unit: props.product.stock.unit || "adet",
-        lowStockAlert: Number(props.product.stock.lowStockAlert) || 0
+        lowStockAlert: Number(props.product.stock.lowStockAlert) || 0,
       };
     }
-// Description bilgileri
-if (props.product.description) {
-    formData.description = {
-        meta: props.product.description.meta || '',
-        detailed: props.product.description.detailed || '',
-        keywords: Array.isArray(props.product.description.keywords) 
-            ? [...props.product.description.keywords] 
-            : []
-    };
-}
+    // Description bilgileri
+    if (props.product.description) {
+      formData.description = {
+        meta: props.product.description.meta || "",
+        detailed: props.product.description.detailed || "",
+        keywords: Array.isArray(props.product.description.keywords)
+          ? [...props.product.description.keywords]
+          : [],
+      };
+    }
 
     // Özellikler
     if (props.product.specifications) {
@@ -365,7 +366,7 @@ if (props.product.description) {
     }
 
     // Debug için konsola yazdır
-    console.log('Yüklenen form verileri:', formData);
+    console.log("Yüklenen form verileri:", formData);
   }
 };
 
@@ -374,7 +375,7 @@ watch(
   () => props.product,
   (newProduct) => {
     if (newProduct) {
-      console.log('Gelen ürün verisi:', newProduct);
+      console.log("Gelen ürün verisi:", newProduct);
       loadProductData();
     }
   },
@@ -388,11 +389,10 @@ onMounted(async () => {
     await categoryStore.fetchCategoryTree();
     // İlk yükleme
     if (props.product) {
-      console.log('Component mount edildiğinde gelen ürün:', props.product);
-      loadProductData();
+      console.log("Component mount edildiğinde gelen ürün:", props.product);
     }
   } catch (error) {
-    console.error('Veri yükleme hatası:', error);
+    console.error("Veri yükleme hatası:", error);
   }
 });
 
@@ -645,10 +645,10 @@ const handleSubmit = async () => {
       throw new Error("Lütfen geçerli bir fiyat giriniz");
     }
     if (!descriptionForm.value?.validate()) {
-    throw new Error("Lütfen açıklama alanlarını kontrol edin");
-}
+      throw new Error("Lütfen açıklama alanlarını kontrol edin");
+    }
 
-    console.log('Form gönderilmeden önce formData:', formData);
+    console.log("Form gönderilmeden önce formData:", formData);
 
     // Güncelleme ve yeni ürün için farklı veri yapıları
     if (props.isEditing && props.product?._id) {
@@ -662,28 +662,31 @@ const handleSubmit = async () => {
         price: {
           current: Number(formData.price.current),
           discount: Number(formData.price.discount),
-          discountEndDate: formData.price.discountEndDate
+          discountEndDate: formData.price.discountEndDate,
         },
         stock: {
           quantity: Number(formData.stock.quantity),
           unit: formData.stock.unit,
-          lowStockAlert: Number(formData.stock.lowStockAlert)
+          lowStockAlert: Number(formData.stock.lowStockAlert),
         },
         description: {
-    meta: formData.description.meta,
-    detailed: formData.description.detailed,
-    keywords: formData.description.keywords
-},
+          meta: formData.description.meta,
+          detailed: formData.description.detailed,
+          keywords: formData.description.keywords,
+        },
 
-        specifications: formData.specifications
+        specifications: formData.specifications,
       };
 
-      console.log('Güncellenecek veriler:', updateData);
-      
-      const response = await productStore.updateProduct(props.product._id, updateData);
-      console.log('Güncelleme yanıtı:', response);
+      console.log("Güncellenecek veriler:", updateData);
+
+      const response = await productStore.updateProduct(
+        props.product._id,
+        updateData
+      );
+      console.log("Güncelleme yanıtı:", response);
       if (response.success) {
-        emit('product-updated', response.data);
+        emit("product-updated", response.data);
       }
     } else {
       // Yeni ürün için FormData kullan
@@ -698,44 +701,44 @@ const handleSubmit = async () => {
         productData.append("image", formData.image);
       }
 
-      productData.append("price", JSON.stringify({
-        current: Number(formData.price.current),
-        discount: Number(formData.price.discount),
-        discountEndDate: formData.price.discountEndDate
-      }));
+      productData.append(
+        "price",
+        JSON.stringify({
+          current: Number(formData.price.current),
+          discount: Number(formData.price.discount),
+          discountEndDate: formData.price.discountEndDate,
+        })
+      );
 
-      productData.append("stock", JSON.stringify({
-        quantity: Number(formData.stock.quantity),
-        unit: formData.stock.unit,
-        lowStockAlert: Number(formData.stock.lowStockAlert)
-      }));
-      productData.append("description", JSON.stringify({
-    meta: formData.description.meta,
-    detailed: formData.description.detailed,
-    keywords: formData.description.keywords
-}));
+      productData.append(
+        "stock",
+        JSON.stringify({
+          quantity: Number(formData.stock.quantity),
+          unit: formData.stock.unit,
+          lowStockAlert: Number(formData.stock.lowStockAlert),
+        })
+      );
+      productData.append(
+        "description",
+        JSON.stringify({
+          meta: formData.description.meta,
+          detailed: formData.description.detailed,
+          keywords: formData.description.keywords,
+        })
+      );
 
-      productData.append("specifications", JSON.stringify(formData.specifications));
+      productData.append(
+        "specifications",
+        JSON.stringify(formData.specifications)
+      );
 
       const response = await productStore.createProduct(productData);
-      emit('save', response.data);
+      emit("save", response.data);
     }
   } catch (error) {
     console.error("Form gönderme hatası:", error);
     throw error;
   }
 };
-
-// Watch product prop changes
-watch(
-  () => props.product,
-  (newProduct) => {
-    if (newProduct) {
-      console.log('Product değişti, yeni değer:', newProduct);
-      loadProductData();
-    }
-  },
-  { immediate: true, deep: true }
-);
 
 </script>

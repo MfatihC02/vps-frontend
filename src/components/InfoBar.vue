@@ -1,210 +1,129 @@
-<!-- components/layout/InfoBar.vue -->
 <template>
-  <div class="border-b bg-gradient-to-r from-emerald-50/50 to-white">
-    <div class="container mx-auto py-4 lg:py-6 px-3 lg:px-4">
-      <!-- Mobile Auto Sliding View -->
-      <div class="block lg:hidden">
-        <div class="relative h-[90px]">
-          <TransitionGroup name="slide" tag="div" class="relative w-full h-full">
-            <div
-              v-for="item in visibleItems"
-              :key="item.id"
-              v-show="item.isActive"
-              class="absolute inset-0 w-full h-full"
-            >
-              <div
-                class="flex items-center h-full gap-3 group cursor-pointer bg-white/50 backdrop-blur-sm rounded-xl p-3 shadow-sm"
-                @click="navigateToInfo(item.link)"
-              >
-                <div class="relative flex-none">
-                  <div
-                    class="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-br from-emerald-50 to-green-50 group-hover:from-emerald-100 group-hover:to-green-100 transition-colors duration-300"
-                  >
-                    <component
-                      :is="item.icon"
-                      class="w-5 h-5 text-emerald-600 group-hover:text-emerald-700"
-                    />
-                  </div>
-                </div>
-
-                <div class="flex-1 min-w-0">
-                  <p
-                    class="font-medium text-gray-900 group-hover:text-emerald-700 text-sm truncate"
-                  >
-                    {{ item.title }}
-                  </p>
-                  <p class="text-xs text-gray-500 group-hover:text-gray-600 truncate">
-                    {{ item.description }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </TransitionGroup>
+  <div
+    class="w-full bg-gray-100 text-gray-700 py-2 px-2 sm:px-4 supports-[backdrop-filter]:bg-gray-100/95 supports-[backdrop-filter]:backdrop-blur-sm transition-all duration-300"
+  >
+    <div class="container mx-auto">
+      <div class="flex items-center justify-between max-w-7xl mx-auto">
+        <!-- Sol taraf - WhatsApp İletişim -->
+        <div class="flex items-center">
+          <a
+            href="https://wa.me/905516419012"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center gap-1 hover:text-green-600 transition-colors duration-200 group"
+          >
+            <Icon
+              icon="mdi:whatsapp"
+              class="text-lg text-green-600 shrink-0 transform transition-transform duration-300 group-hover:scale-110"
+              aria-hidden="true"
+            />
+            <span class="text-xs sm:text-sm whitespace-nowrap hidden xs:inline">
+              WhatsApp
+            </span>
+          </a>
         </div>
 
-        <!-- Slide Indicators -->
-        <div class="flex justify-center gap-1.5 mt-2">
-          <button
-            v-for="(item, index) in infoItems"
-            :key="item.id"
-            class="w-1.5 h-1.5 rounded-full transition-all duration-300"
-            :class="[
-              currentIndex === index
-                ? 'bg-emerald-500 w-3'
-                : 'bg-emerald-200 hover:bg-emerald-300',
-            ]"
-            @click="setCurrentSlide(index)"
-          />
+        <!-- Orta taraf - Navigasyon Linkleri -->
+        <div class="flex items-center space-x-3 sm:space-x-4">
+          <router-link
+            to="/hakkimizda"
+            class="text-xs sm:text-sm hover:text-green-600 transition-colors duration-200"
+          >
+            Hakkımızda
+          </router-link>
+          <router-link
+            to="/iletisim"
+            class="text-xs sm:text-sm hover:text-green-600 transition-colors duration-200"
+          >
+            İletişim
+          </router-link>
         </div>
-      </div>
 
-      <!-- Desktop Grid View -->
-      <div class="hidden lg:grid grid-cols-4 gap-6">
-        <div
-          v-for="item in infoItems"
-          :key="item.id"
-          class="flex items-center gap-4 group cursor-pointer transform transition-all duration-300 hover:-translate-y-0.5"
-          @click="navigateToInfo(item.link)"
-        >
-          <div class="relative flex-none">
-            <div
-              class="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-br from-emerald-50 to-green-50 group-hover:from-emerald-100 group-hover:to-green-100 transition-colors duration-300"
-            >
-              <component
-                :is="item.icon"
-                class="w-6 h-6 text-emerald-600 group-hover:text-emerald-700"
-              />
-            </div>
-            <div
-              class="absolute inset-0 bg-emerald-500 rounded-full opacity-0 group-hover:opacity-5 transition-opacity duration-300 animate-ping"
-            ></div>
-          </div>
-
-          <div class="flex-1">
-            <p
-              class="font-semibold text-gray-900 group-hover:text-emerald-700 transition-colors duration-300"
-            >
-              {{ item.title }}
-            </p>
-            <p
-              class="text-sm text-gray-500 group-hover:text-gray-600 transition-colors duration-300"
-            >
-              {{ item.description }}
-            </p>
-          </div>
-
-          <ChevronRight
-            class="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          />
+        <!-- Sağ taraf - Sosyal medya ikonları -->
+        <div class="flex items-center space-x-3">
+          <a
+            v-for="(social, index) in socialLinks"
+            :key="index"
+            :href="social.url"
+            class="group relative flex items-center justify-center hover:text-green-600 transition-colors duration-200"
+            target="_blank"
+            rel="noopener noreferrer"
+            :aria-label="social.label"
+          >
+            <Icon
+              :icon="social.icon"
+              class="text-sm sm:text-base transform transition-transform duration-300 group-hover:scale-110"
+            />
+          </a>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
-import {
-  Clock,
-  ShieldCheck,
-  ChevronRight,
-  History,
-  Shield,
-} from "lucide-vue-next";
+<script>
+import { Icon } from "@iconify/vue";
 
-const infoItems = [
-  {
-    id: 1,
-    icon: History,
-    title: "70+ Yıllık Tecrübe",
-    description: "Tarım sektöründe güvenilir hizmet",
-    link: "/about-us",
+export default {
+  name: "InfoBar",
+  components: {
+    Icon,
   },
-  {
-    id: 2,
-    icon: Clock,
-    title: "Hızlı Teslimat",
-    link: "/delivery-info",
+  data() {
+    return {
+      socialLinks: [
+        {
+          icon: "mdi:facebook",
+          url: "#",
+          name: "Facebook",
+          label: "Bizi Facebook'ta takip et",
+        },
+        {
+          icon: "mdi:instagram",
+          url: "#",
+          name: "Instagram",
+          label: "Bizi Instagram'da takip et",
+        },
+        {
+          icon: "mdi:linkedin",
+          url: "#",
+          name: "LinkedIn",
+          label: "Bizi LinkedIn'de takip et",
+        },
+      ],
+    };
   },
-  {
-    id: 3,
-    icon: Shield,
-    title: "Güvenli Alışveriş",
-    description: "100% Güvenli Ödeme",
-    link: "/security",
-  },
-  {
-    id: 4,
-    icon: ShieldCheck,
-    title: "Kalite Garantisi",
-    description: "Sertifikalı Ürünler",
-    link: "/quality",
-  },
-];
-
-const currentIndex = ref(0);
-let autoSlideInterval = null;
-
-const visibleItems = computed(() => {
-  return infoItems.map((item, index) => ({
-    ...item,
-    isActive: index === currentIndex.value,
-  }));
-});
-
-const setCurrentSlide = (index) => {
-  currentIndex.value = index;
-  resetAutoSlideTimer();
 };
-
-const nextSlide = () => {
-  currentIndex.value = (currentIndex.value + 1) % infoItems.length;
-};
-
-const resetAutoSlideTimer = () => {
-  if (autoSlideInterval) {
-    clearInterval(autoSlideInterval);
-  }
-  autoSlideInterval = setInterval(nextSlide, 4000);
-};
-
-const navigateToInfo = (link) => {
-  console.log(`Navigating to ${link}`);
-};
-
-onMounted(() => {
-  resetAutoSlideTimer();
-});
-
-onBeforeUnmount(() => {
-  if (autoSlideInterval) {
-    clearInterval(autoSlideInterval);
-  }
-});
 </script>
 
 <style scoped>
-.slide-move {
-  transition: all 0.5s ease;
+/* Responsive düzenlemeler */
+@media (max-width: 640px) {
+  .container {
+    width: 100%;
+  }
 }
 
-.slide-enter-active,
-.slide-leave-active {
-  transition: all 0.5s ease;
+/* Extra small devices için özel stil */
+@media (max-width: 475px) {
+  .xs\:inline {
+    display: inline;
+  }
 }
 
-.slide-enter-from {
-  opacity: 0;
-  transform: translateX(100%);
+/* Yüksek DPI ekranlar için */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  :deep(.iconify) {
+    width: 1.25em;
+    height: 1.25em;
+  }
 }
 
-.slide-leave-to {
-  opacity: 0;
-  transform: translateX(-100%);
-}
-
-.slide-enter-from,
-.slide-leave-to {
-  position: absolute;
+/* Icon optimizasyonu */
+:deep(.iconify) {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+  display: inline-block;
 }
 </style>

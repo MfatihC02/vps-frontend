@@ -3,7 +3,7 @@ import api from '../services/axiosInstance';
 import { useToast } from 'vue-toastification';
 
 const toast = useToast();
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://backend.tarimsepetim.com.tr/api';
 
 export const useNotificationStore = defineStore('notification', {
     state: () => ({

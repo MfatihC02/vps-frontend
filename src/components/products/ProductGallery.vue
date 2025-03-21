@@ -1,14 +1,14 @@
 <template>
   <section
-    class="product-gallery -mt-4"
+    class="product-gallery -mt-4 sticky top-0"
     itemscope
     itemtype="http://schema.org/ImageGallery"
   >
     <!-- Ana görsel görüntüleme alanı -->
-    <div class="relative">
+    <div class="relative h-screen overflow-y-auto pb-8">
       <!-- Ana Görsel Container -->
       <div
-        class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 group"
+        class="relative w-full h-[70vh] rounded-xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 group sticky top-0 z-10"
         :class="{ 'animate-pulse': loading }"
         @touchstart="handleTouchStart"
         @touchmove="handleTouchMove"
@@ -19,21 +19,44 @@
           v-if="loading"
           class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100"
         >
-          <div class="w-12 h-12 rounded-full border-4 border-gray-200 border-t-[#2F5E32] animate-spin"></div>
+          <div
+            class="w-12 h-12 rounded-full border-4 border-gray-200 border-t-[#2F5E32] animate-spin"
+          ></div>
         </div>
 
         <img
           v-if="currentImage"
-          :src="currentImage.url.replace('/upload/', '/upload/c_scale,w_600/')"
+          :src="
+            currentImage.url.replace(
+              '/upload/',
+              '/upload/f_auto,q_auto,w_600,dpr_auto/'
+            )
+          "
+          :srcset="`
+            ${currentImage.url.replace(
+              '/upload/',
+              '/upload/f_auto,q_auto,w_400,dpr_auto/'
+            )} 400w,
+            ${currentImage.url.replace(
+              '/upload/',
+              '/upload/f_auto,q_auto,w_600,dpr_auto/'
+            )} 600w,
+            ${currentImage.url.replace(
+              '/upload/',
+              '/upload/f_auto,q_auto,w_800,dpr_auto/'
+            )} 800w
+          `"
+          :sizes="'(max-width: 768px) 100vw, 600px'"
           :alt="currentImage.alt || `${currentImageIndex + 1}. ürün görseli`"
           class="w-full h-full object-contain transition-all duration-300"
           :class="{
             'opacity-0': loading,
             'scale-[1.6] cursor-zoom-out': zoomed,
-            'cursor-zoom-in': !zoomed
+            'cursor-zoom-in': !zoomed,
           }"
           @click="toggleZoom"
           itemprop="image"
+          fetchpriority="high"
           loading="eager"
           @load="handleImageLoad"
         />
@@ -96,7 +119,7 @@
           :class="{
             'ring-2 ring-[#2F5E32] shadow-md': selectedImageIndex === idx,
             'opacity-60 hover:opacity-100': selectedImageIndex !== idx,
-            'cursor-not-allowed': loading
+            'cursor-not-allowed': loading,
           }"
           :disabled="loading"
           role="tab"
@@ -104,16 +127,26 @@
           :aria-label="`Görsel ${idx + 1}`"
         >
           <img
-            :src="img.url.replace('/upload/', '/upload/w_200,h_200,c_fill,g_center/')"
+            :src="
+              img.url.replace(
+                '/upload/',
+                '/upload/f_auto,q_auto,w_200,h_200,c_fill,g_center/'
+              )
+            "
             :alt="`Küçük görsel ${idx + 1}`"
             class="w-full h-full object-cover transition-opacity duration-200"
             :class="{ 'opacity-50': loading }"
+            loading="lazy"
+            width="200"
+            height="200"
           />
           <div
             v-if="loading"
             class="absolute inset-0 flex items-center justify-center bg-white/50"
           >
-            <div class="w-4 h-4 border-2 border-[#2F5E32] border-t-transparent rounded-full animate-spin"></div>
+            <div
+              class="w-4 h-4 border-2 border-[#2F5E32] border-t-transparent rounded-full animate-spin"
+            ></div>
           </div>
         </button>
       </div>
@@ -127,9 +160,15 @@
     >
       <div class="relative max-w-4xl w-full p-4">
         <img
-          :src="currentImage?.url.replace('/upload/', '/upload/w_1024,h_1024,c_pad,g_center,b_white,q_auto/')"
+          :src="
+            currentImage?.url.replace(
+              '/upload/',
+              '/upload/f_auto,q_auto,w_1024,h_1024,c_pad,g_center,b_white/'
+            )
+          "
           :alt="currentImage?.alt"
           class="w-full h-auto max-h-[90vh] object-contain mx-auto"
+          loading="lazy"
         />
         <button
           @click="closeLightbox"
@@ -152,6 +191,7 @@ import {
   X,
 } from "lucide-vue-next";
 import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "ProductGallery",
@@ -295,6 +335,25 @@ export default {
       window.removeEventListener("keydown", handleKeyPress);
     });
 
+    // Preload next image
+    watch(selectedImageIndex, (newIndex) => {
+      const nextIndex = (newIndex + 1) % sortedImages.value.length;
+      const nextImage = sortedImages.value[nextIndex];
+      if (nextImage) {
+        const img = new Image();
+        img.src = nextImage.url.replace(
+          "/upload/",
+          "/upload/f_auto,q_auto,w_600,dpr_auto/"
+        );
+      }
+    });
+
+    // Error handling için
+    const handleImageError = (event) => {
+      event.target.src = "/fallback-image.jpg"; // Fallback görsel
+      loading.value = false;
+    };
+
     return {
       zoomed,
       loading,
@@ -314,6 +373,7 @@ export default {
       closeLightbox,
       showLightbox,
       toggleZoom,
+      handleImageError,
     };
   },
 };
@@ -324,7 +384,6 @@ export default {
   width: 6px;
   height: 6px;
 }
-
 .scrollbar-thin::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 3px;
@@ -336,6 +395,53 @@ export default {
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Performans optimizasyonları için CSS */
+.product-gallery img {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Smooth transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Thumbnail scrollbar optimizasyonu */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.product-gallery {
+  z-index: 10;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.product-gallery::-webkit-scrollbar {
+  width: 6px;
+}
+
+.product-gallery::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.product-gallery::-webkit-scrollbar-thumb {
+  background: #cdcdcd;
+  border-radius: 3px;
+}
+
+.product-gallery::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
 </style>

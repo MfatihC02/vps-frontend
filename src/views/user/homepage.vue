@@ -1,8 +1,9 @@
 <!-- Homepage.vue -->
 <template>
   <div class="min-h-screen bg-white transition-colors duration-300">
-    <PartnerLogos />
-    <main class="container mx-auto max-w-[1920px] transition-all duration-300">
+    <main
+      class="container mx-auto max-w-[1920px] transition-all duration-300 pt-16 md:pt-20"
+    >
       <!-- Mobil Kategori Butonu -->
 
       <div class="relative flex flex-col md:flex-row gap-6 px-4 md:px-6">
@@ -33,10 +34,12 @@
         >
           <div
             v-show="isSidebarOpen"
-            class="fixed inset-y-0 left-0 w-72 bg-white z-50 md:hidden overflow-y-auto shadow-2xl"
+            class="fixed top-16 bottom-0 left-0 w-72 bg-white z-50 md:hidden overflow-y-auto shadow-2xl"
           >
             <!-- Mobil Kategori Başlığı -->
-            <div class="p-4 border-b flex items-center justify-between bg-gradient-to-r from-[#0F6735] to-[#90A955]">
+            <div
+              class="p-4 border-b flex items-center justify-between bg-gradient-to-r from-[#0F6735] to-[#90A955]"
+            >
               <h2 class="text-lg font-semibold text-white">Kategoriler</h2>
               <button
                 @click="isSidebarOpen = false"
@@ -52,9 +55,15 @@
         </Transition>
 
         <!-- Desktop Kategori Listesi -->
-        <div class="hidden md:block w-64 flex-shrink-0 transition-all duration-300">
-          <div class="bg-gray-50/80 backdrop-blur-sm rounded-lg shadow-sm border border-gray-100">
-            <h2 class="text-lg font-semibold text-gray-800 p-4 border-b border-gray-100">
+        <div
+          class="hidden md:block w-64 flex-shrink-0 transition-all duration-300"
+        >
+          <div
+            class="bg-gray-50/80 backdrop-blur-sm rounded-lg shadow-sm border border-gray-100"
+          >
+            <h2
+              class="text-lg font-semibold text-gray-800 p-4 border-b border-gray-100"
+            >
               Kategoriler
             </h2>
             <div class="w-full">
@@ -73,12 +82,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from "vue";
 import InfoBar from "@/components/InfoBar.vue";
 import CategoryList from "@/components/CategoryList.vue";
-import { Icon } from '@iconify/vue'
-import TabNavigation from '@/components/products/TabNavigation.vue';
-import PartnerLogos from '@/components/PartnerLogos.vue';
+import { Icon } from "@iconify/vue";
+import TabNavigation from "@/components/products/TabNavigation.vue";
+import PartnerLogos from "@/components/PartnerLogos.vue";
 
 const isSidebarOpen = ref(false);
 </script>
@@ -92,7 +101,7 @@ html {
 /* Sidebar scroll stilini özelleştirme */
 .overflow-y-auto {
   scrollbar-width: thin;
-  scrollbar-color: #0F6735 #f3f4f6;
+  scrollbar-color: #0f6735 #f3f4f6;
 }
 
 .overflow-y-auto::-webkit-scrollbar {
@@ -105,7 +114,7 @@ html {
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb {
-  background-color: #0F6735;
+  background-color: #0f6735;
   border-radius: 3px;
   transition: background-color 0.3s;
 }

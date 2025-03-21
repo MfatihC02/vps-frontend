@@ -16,7 +16,11 @@
             to="/"
             class="flex items-center space-x-2 text-emerald-700 hover:text-emerald-600 transition"
           >
-            <Sprout class="h-7 w-7" />
+            <img
+              src="/favlogo.jpg"
+              alt="TARIM SEPETİM Logo"
+              class="h-8 w-8 object-contain rounded-full"
+            />
             <span class="text-xl font-bold hidden sm:block">{{
               storeName
             }}</span>
@@ -162,7 +166,6 @@ import { useUserStore } from "@/stores/userStore";
 import { useCartStore } from "@/stores/cartStore";
 import { useProductStore } from "@/stores/productStore";
 import {
-  Sprout,
   Search,
   ShoppingCart,
   User,
@@ -191,7 +194,7 @@ const isUserMenuOpen = ref(false);
 const isCategoryMenuOpen = ref(false);
 
 // Constants
-const storeName = "Mühendisler Ticaret";
+const storeName = "TARIM SEPETİM";
 const searchPlaceholder = ref("Ürün veya marka ara...");
 const loginButtonText = "Giriş Yap";
 const cartItemCount = computed(() => cartStore.cartItemCount);

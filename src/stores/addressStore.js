@@ -44,7 +44,8 @@ export const useAddressStore = defineStore('address', {
                 this.loading = true;
                 const response = await api.get('/address');
                 if (response.data.success) {
-                    this.addresses = response.data.addresses || [];
+                    // Adresleri formatla ve state'e kaydet
+                    this.addresses = response.data.addresses.map(addr => this.formatAddressForDisplay(addr)) || [];
                     // Varsayılan adresi bul ve state'e kaydet
                     this.defaultAddress = this.addresses.find(addr => addr.isDefault) || null;
                     // Eğer seçili adres yoksa varsayılan adresi seç
@@ -206,7 +207,7 @@ export const useAddressStore = defineStore('address', {
 
         // Form validasyonu
         validateAddressData(addressData) {
-            const requiredFields = ['title', 'fullName', 'phone', 'city', 'district', 'neighborhood', 'fullAddress', 'zipCode'];
+            const requiredFields = ['title', 'fullName', 'phone', 'city', 'district', 'neighborhood', 'fullAddress', 'zipCode', 'identityNumber'];
             const missingFields = requiredFields.filter(field => !addressData[field]);
 
             if (missingFields.length > 0) {
@@ -218,11 +219,19 @@ export const useAddressStore = defineStore('address', {
                     district: 'İlçe',
                     neighborhood: 'Mahalle',
                     fullAddress: 'Açık Adres',
-                    zipCode: 'Posta Kodu'
+                    zipCode: 'Posta Kodu',
+                    identityNumber: 'TC Kimlik Numarası'
                 };
 
                 const missingFieldNames = missingFields.map(field => fieldNames[field] || field);
                 toast.error(`Lütfen tüm alanları doldurun: ${missingFieldNames.join(', ')}`);
+                return false;
+            }
+
+            // TC Kimlik numarası kontrolü
+            const identityNumberRegex = /^[0-9]{11}$/;
+            if (!identityNumberRegex.test(addressData.identityNumber)) {
+                toast.error('TC Kimlik numarası 11 haneli olmalıdır');
                 return false;
             }
 
@@ -241,6 +250,17 @@ export const useAddressStore = defineStore('address', {
             }
 
             return true;
+        },
+
+        // Adres verilerini görüntüleme için hazırla
+        formatAddressForDisplay(address) {
+            if (!address) return null;
+            
+            return {
+                ...address,
+                // TC Kimlik numarası zaten backend'den maskelenmiş olarak geliyor (maskedIdentityNumber)
+                displayIdentityNumber: address.maskedIdentityNumber || '*******####'
+            };
         },
 
         // State'i temizle

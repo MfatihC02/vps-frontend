@@ -69,6 +69,7 @@
               </p>
               <p class="text-sm text-gray-600">{{ address.fullAddress }}</p>
               <p class="text-sm text-gray-600">{{ address.zipCode }}</p>
+              <p class="text-sm text-gray-600">TC: {{ address.maskedIdentityNumber }}</p>
 
               <div class="mt-3 pt-3 border-t flex justify-between items-center">
                 <button
@@ -191,6 +192,20 @@
                   >
                 </div>
 
+                <!-- TC Kimlik Numarası -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">TC Kimlik Numarası</label>
+                  <input
+                    v-model="formData.identityNumber"
+                    type="text"
+                    class="w-full px-3 py-2 border rounded-md focus:ring-[#10B981] focus:border-[#10B981]"
+                    :class="{ 'border-red-500': addressStore.error }"
+                    placeholder="11 haneli TC Kimlik No"
+                    maxlength="11"
+                    @input="formatIdentityNumber"
+                  >
+                </div>
+
                 <!-- Şehir ve İlçe -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -235,7 +250,6 @@
                     placeholder="Mahalle"
                   >
                 </div>
-
 
                 <!-- Açık Adres -->
                 <div>
@@ -355,7 +369,8 @@ const formData = ref({
   fullAddress: '',
   zipCode: '',
   type: 'both',
-  isDefault: false
+  isDefault: false,
+  identityNumber: ''
 })
 
 // Methods
@@ -370,7 +385,8 @@ const resetForm = () => {
     fullAddress: '',
     zipCode: '',
     type: 'both',
-    isDefault: false
+    isDefault: false,
+    identityNumber: ''
   }
   editMode.value = false
   addressStore.error = null
@@ -400,6 +416,13 @@ const formatPhoneNumber = () => {
   let phone = formData.value.phone.replace(/\D/g, '')
   if (phone.length > 10) phone = phone.slice(0, 10)
   formData.value.phone = phone
+}
+
+// TC Kimlik numarası formatla
+const formatIdentityNumber = () => {
+  let value = formData.value.identityNumber.replace(/\D/g, '')
+  if (value.length > 11) value = value.slice(0, 11)
+  formData.value.identityNumber = value
 }
 
 const saveAddress = async () => {

@@ -1,4 +1,3 @@
-// main.js
 import { createApp } from 'vue'
 import { createHead } from '@vueuse/head'
 import App from './App.vue'
@@ -33,11 +32,24 @@ const toastOptions = {
     rtl: false
 }
 
+// Google Analytics Manuel Yapılandırması
+window.dataLayer = window.dataLayer || [];
+function gtag() { dataLayer.push(arguments); }
+gtag('js', new Date());
+gtag('config', 'G-YB2K8VFDHZ');
+
+// Route değişikliklerini izleme
+router.afterEach((to) => {
+    gtag('config', 'G-YB2K8VFDHZ', {
+        'page_path': to.path // Yeni sayfa yolunu Analytics'e bildir
+    });
+});
+
 app.use(pinia)
 app.use(router)
 app.use(socketPlugin)
 app.use(Toast, toastOptions)
-app.use(head)  
+app.use(head)
 app.use(Vuelidate)
 app.component('Icon', Icon)
 

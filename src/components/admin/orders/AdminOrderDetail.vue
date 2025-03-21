@@ -136,6 +136,10 @@
                   <p class="text-sm text-gray-500">Açık Adres</p>
                   <p class="font-medium text-gray-900">{{ order?.shippingAddress?.fullAddress }}</p>
                 </div>
+                <div class="space-y-1.5">
+                  <p class="text-sm text-gray-500">TC Kimlik Numarası</p>
+                  <p class="font-medium text-gray-900">{{ order?.shippingAddress?.identityNumber }}</p>
+                </div>
               </div>
               <div class="bg-gray-50 rounded-lg p-4 space-y-4">
                 <div class="space-y-1.5">
