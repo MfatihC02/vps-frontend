@@ -732,6 +732,11 @@ export const usePaymentStore = defineStore('payment', {
         // Ödeme verilerini hazırlama
         async preparePaymentRequestData(cardDetails, cardHolderData) {
             try {
+                console.log('preparePaymentRequestData başlıyor', {
+                    hasCardDetails: !!cardDetails,
+                    hasCardHolderData: !!cardHolderData
+                });
+
                 const cartAmount = await this.getCartAmount();
 
                 console.log('3. Ödeme verileri hazırlanıyor:', {
@@ -761,7 +766,11 @@ export const usePaymentStore = defineStore('payment', {
                     CardHolderData: cardHolderData
                 };
 
-                console.log('Hazırlanan ödeme verileri:', paymentData);
+                console.log('Hazırlanan ödeme verileri:', {
+                    ...paymentData,
+                    CardNumber: paymentData.CardNumber ? '****' + paymentData.CardNumber.slice(-4) : null,
+                    CardCVV2: paymentData.CardCVV2 ? '***' : null
+                });
 
                 return paymentData;
             } catch (error) {
@@ -773,36 +782,81 @@ export const usePaymentStore = defineStore('payment', {
         // Tutar bilgilerini formatlama
         _formatAmount(amount) {
             if (!amount || amount <= 0) {
+                console.warn('Geçersiz tutar formatlanmaya çalışılıyor:', amount);
                 throw new Error('Geçersiz tutar');
             }
+
             // KT için tutar formatı: 1.00 TL -> 100
-            return Math.round(amount * 100);
+            const formattedAmount = Math.round(amount * 100);
+            console.log(`Tutar formatlandı: ${amount} -> ${formattedAmount}`);
+            return formattedAmount;
         },
 
         // Cart tutarını alma ve formatlama
         async getCartAmount() {
             try {
+                console.log('getCartAmount metoduna girildi');
+
                 const cartStore = useCartStore();
-                const cart = await cartStore.fetchCart();
+
+                if (!cartStore) {
+                    console.error('CartStore bulunamadı');
+                    throw new Error('Sepet bilgisi bulunamadı');
+                }
+
+                // Cart verisi yoksa yüklemeyi dene
+                let cart = cartStore.cart;
+                if (!cart) {
+                    console.log('Cart verisi yok, fetchCart() çağırılıyor');
+                    cart = await cartStore.fetchCart();
+                    console.log('fetchCart() sonrası cart durumu:', {
+                        cartExist: !!cart,
+                        cartId: cart?._id,
+                        totalAmount: cart?.totalAmount,
+                        discountAmount: cart?.discountAmount,
+                        discountedAmount: cart?.discountedTotalAmount
+                    });
+                }
 
                 console.log('2. Cart tutarı alınıyor:', {
                     cartStoreExists: !!cartStore,
                     cartExists: !!cart,
-                    cartData: cart,
+                    cartId: cart?._id,
                     totalAmount: cart?.totalAmount,
-                    grandTotal: cartStore.grandTotal // Kargo dahil toplam
+                    discountedTotalAmount: cart?.discountedTotalAmount,
+                    discountAmount: cart?.discountAmount,
+                    coupon: cart?.coupon,
+                    items: cart?.items?.length || 0,
+                    grandTotal: cartStore.grandTotal
                 });
 
-                if (!cart) {
+                // Sepet verisi hala yoksa veya ürün yoksa hata ver
+                if (!cart || !cart.items || cart.items.length === 0) {
+                    console.error('Sepet boş veya bulunamadı', {
+                        cartExists: !!cart,
+                        items: cart?.items?.length || 0
+                    });
                     throw new Error('Sepet tutarı bulunamadı');
                 }
 
-                // cartStore.grandTotal kullan (kargo dahil toplam)
-                const totalWithShipping = cartStore.grandTotal;
+                // İndirimli tutar varsa onu kullan, yoksa normal tutarı kullan
+                let baseAmount = cart.totalAmount || 0;
+                if (cart.discountAmount > 0 && cart.discountedTotalAmount) {
+                    baseAmount = cart.discountedTotalAmount;
+                    console.log('İndirimli tutar kullanılıyor:', baseAmount);
+                } else {
+                    console.log('Normal tutar kullanılıyor:', baseAmount);
+                }
 
-                console.log('Sepet tutarı alındı:', {
+                // Kargo ücreti ekle
+                const shippingFee = cartStore.shippingFee || 200;
+                const totalWithShipping = baseAmount + shippingFee;
+
+                console.log('Sepet tutarı hesaplandı:', {
                     subtotal: cart.totalAmount,
-                    shipping: cartStore.shipping,
+                    discountedSubtotal: cart.discountedTotalAmount,
+                    discountAmount: cart.discountAmount,
+                    shipping: shippingFee,
                     grandTotal: totalWithShipping
                 });
 

@@ -22,6 +22,7 @@ const StockManagementView = () => import('@/views/admin/StockManagementView.vue'
 const AdminOrdersDashboard = () => import('@/views/admin/AdminOrdersDashboard.vue')
 const AdminOrderDetail = () => import('@/components/admin/orders/AdminOrderDetail.vue')
 const UserManagement = () => import('@/views/admin/UserManagement.vue')
+const NotificationAdminView = () => import('@/views/admin/NotificationAdminView.vue')
 const ProductDetail = () => import('@/views/user/ProductPage.vue')
 const CartPage = () => import('@/views/user/cart.vue')
 const AddressPage = () => import('@/views/user/address.vue')
@@ -30,13 +31,18 @@ const PaymentSuccess = () => import('@/views/payment/PaymentSuccess.vue')
 const OrdersView = () => import('@/views/user/OrdersView.vue')
 const ContactView = () => import('@/views/user/ContactView.vue')
 
+// Kupon sayfaları için lazy loading
+const CouponList = () => import('@/views/admin/coupons/CouponList.vue')
+const CouponCreate = () => import('@/views/admin/coupons/CouponCreate.vue')
+const CouponEdit = () => import('@/views/admin/coupons/CouponEdit.vue')
+
 const routes = [
   {
     path: '/',
     name: 'home',
     component: HomePage,
     meta: {
-      title: 'Ana Sayfa',
+      title: 'TARIM SEPETİM | Zirai Ürünler, Gübre ve Tohum',
       description: 'Profesyonel sera ve tarım üretimi için kaliteli tohumlar. En iyi tohum çeşitleri, uygun fiyatlar ve ücretsiz kargo avantajıyla sizlerle.'
     }
   },
@@ -171,6 +177,17 @@ const routes = [
     }
   },
   {
+    path: '/admin/notifications',
+    name: 'admin-notifications',
+    component: NotificationAdminView,
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Bildirim Yönetimi',
+      description: 'Bildirim yönetim paneli. Yeni bildirim oluşturma, düzenleme ve müşteri bildirimlerinin yönetimi.'
+    }
+  },
+  {
     path: '/admin/product/new',
     name: 'product-new',
     component: ProductForm,
@@ -240,6 +257,38 @@ const routes = [
       requiresAdmin: true,
       title: 'Kullanıcı Yönetimi',
       description: 'Kullanıcı yönetim paneli. Müşteri hesapları, yetkiler ve kullanıcı bilgilerinin yönetimi.'
+    }
+  },
+  {
+    path: '/admin/coupons',
+    name: 'admin-coupons',
+    component: CouponList,
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Kupon Yönetimi',
+      description: 'Kupon yönetim paneli. İndirim kuponları oluşturma, düzenleme ve yönetme.'
+    }
+  },
+  {
+    path: '/admin/coupons/create',
+    name: 'coupon-create',
+    component: CouponCreate,
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Yeni Kupon Oluştur'
+    }
+  },
+  {
+    path: '/admin/coupons/edit/:id',
+    name: 'coupon-edit',
+    component: CouponEdit,
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: route => `Kupon Düzenle #${route.params.id}`
     }
   },
   {

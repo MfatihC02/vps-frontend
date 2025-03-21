@@ -176,7 +176,7 @@ const handlePayment = async (paymentData) => {
 
         // Formu sayfaya ekle ve submit et
         document.body.appendChild(form);
-        form.submit();
+        form.requestSubmit(); // submit() yerine requestSubmit() kullanıyoruz
       } else if (result.requires3D) {
         // Eski yapı için URL yönlendirmesi
         window.location.href = result.url;

@@ -3,39 +3,53 @@ import { defineStore } from 'pinia';
 import api from '@/services/axiosInstance.js';
 import { useToast } from 'vue-toastification';
 import { useStockStore } from '@/stores/stockStore';
+import { useCouponStore } from '@/stores/couponStore';
+
 const toast = useToast();
 
 export const useCartStore = defineStore('cart', {
     state: () => ({
+        // Temel state değişkenleri - DOĞRUDAN PRİMİTİF DEĞERLER (ref() OLMADAN) TANIMLA
         items: [],
         totalAmount: 0,
         loading: false,
         error: null,
         checkoutStarted: false,
         cart: null,
-        // Yeni state alanları
+
+        // Rezervasyon state'leri
         activeReservations: {},
         reservationStatus: {},
         reservationTimer: null,
+
+        // Fiyatlandırma state'leri
         shippingFee: 200, // Sabit kargo ücreti
+        coupon: null,
+        discountAmount: 0,
+        discountedTotalAmount: 0
     }),
 
     getters: {
         itemCount: (state) => state.items.length,
         hasItems: (state) => state.items.length > 0,
+        totalItems: (state) => {
+            return state.items.reduce((total, item) => total + item.quantity, 0);
+        },
         cartItemCount: (state) => {
             return state.items.reduce((total, item) => total + item.quantity, 0);
         },
+        isEmpty: (state) => state.items.length === 0,
+
         // Cart objesi getter'ı
         cartData: (state) => state.cart,
-        // Yeni getter'lar
+
+        // Rezervasyon getter'ları
         hasValidReservations: (state) => {
             return Object.values(state.reservationStatus).every(status => status.isValid);
         },
         getReservationStatus: (state) => (productId) => {
             return state.reservationStatus[productId] || { isValid: false, message: '' };
         },
-        // Yeni getter'lar
         hasItemReservation: (state) => (productId) => {
             return !!state.activeReservations[productId];
         },
@@ -47,6 +61,7 @@ export const useCartStore = defineStore('cart', {
             const expiresAt = new Date(reservation.expiresAt).getTime();
             return Math.max(0, Math.floor((expiresAt - now) / 1000)); // Kalan süreyi saniye cinsinden döndür
         },
+
         // Ürün rezervasyon ID'sini güvenli bir şekilde getir
         getReservationId: (state) => (productId) => {
             const reservationInfo = state.reservationStatus[productId];
@@ -61,20 +76,55 @@ export const useCartStore = defineStore('cart', {
             }
             return null;
         },
-        // Ara toplam (kargo hariç)
+
+        // Fiyatlandırma getter'ları
         subtotal: (state) => {
             return state.items.reduce((total, item) => {
                 if (!item) return total;
                 return total + (item.price * (item.quantity || 1));
             }, 0);
         },
-
-        // Sabit kargo ücreti
         shipping: (state) => state.shippingFee,
 
-        // Genel toplam (kargo dahil)
+        // Genel toplam (kargo dahil) - Bu kısmı düzeltiyorum
         grandTotal: (state) => {
-            return state.subtotal + state.shippingFee;
+            console.log("grandTotal hesaplanıyor:", {
+                discountedTotalAmount: state.cart?.discountedTotalAmount,
+                totalAmount: state.totalAmount,
+                subtotal: state.subtotal,
+                shippingFee: state.shippingFee
+            });
+
+            // Eğer indirimli toplam varsa onu kullan, yoksa normal toplamı kullan
+            const baseAmount = state.cart?.discountedTotalAmount || state.totalAmount || state.subtotal;
+            return baseAmount + state.shippingFee;
+        },
+
+        // Kupon uygulanmış mı kontrolü
+        hasCoupon: (state) => !!state.coupon || !!state.cart?.coupon,
+
+        // İndirim tutarı
+        discountAmount: (state) => state.cart?.discountAmount || state.discountAmount || 0,
+
+        // İndirimli toplam
+        finalTotal: (state) => {
+            const amount = state.cart?.discountedTotalAmount || state.discountedTotalAmount || state.totalAmount || 0;
+            console.log("finalTotal hesaplanıyor:", {
+                cartDiscountedTotal: state.cart?.discountedTotalAmount,
+                stateDiscountedTotal: state.discountedTotalAmount,
+                totalAmount: state.totalAmount,
+                sonuç: amount
+            });
+            return amount;
+        },
+
+        // İndirim yüzdesi (görüntüleme için)
+        discountPercentage: (state) => {
+            const totalAmount = state.cart?.totalAmount || state.totalAmount || 0;
+            const discountAmount = state.cart?.discountAmount || state.discountAmount || 0;
+
+            if (!totalAmount || !discountAmount) return 0;
+            return Math.round((discountAmount / totalAmount) * 100);
         }
     },
 
@@ -87,46 +137,86 @@ export const useCartStore = defineStore('cart', {
 
                 const response = await api.get('/cart');
 
-                console.log('4. Cart fetch yapılıyor:', {
+                console.log('Cart fetch yapılıyor:', {
                     responseSuccess: response?.data?.success,
-                    cartData: response?.data?.data
+                    cartData: response?.data?.data,
+                    coupon: response?.data?.data?.coupon,
+                    discountAmount: response?.data?.data?.discountAmount,
+                    discountedTotal: response?.data?.data?.discountedTotalAmount
                 });
 
                 if (response.data.success) {
-                    // Cart verisini direkt olarak saklayalım
+                    // Cart verisini saklayalım
                     this.cart = response.data.data;
 
-                    // Mevcut items yapısını da güncelleyelim
-                    this.items = this.cart.items.map(item => ({
-                        product: {
-                            _id: item.product._id,
-                            name: item.product.name,
-                            price: item.product.price,
-                            images: item.product.images,
-                            sku: item.product.sku,
-                            stock: item.product.stock,
-                            slug: item.product.slug,
-                            productType: item.product.productType // Ürün tipini ekledik
-                        },
-                        quantity: item.quantity,
-                        price: item.price,
-                        unit: item.unit,
-                        _id: item._id
-                    }));
+                    // Mevcut items yapısını güncelleyelim
+                    if (Array.isArray(this.cart.items)) {
+                        this.items = this.cart.items.map(item => ({
+                            product: {
+                                _id: item.product._id,
+                                name: item.product.name,
+                                price: item.product.price,
+                                images: item.product.images,
+                                sku: item.product.sku,
+                                stock: item.product.stock,
+                                slug: item.product.slug,
+                                productType: item.product.productType
+                            },
+                            quantity: item.quantity,
+                            price: item.price,
+                            unit: item.unit,
+                            _id: item._id
+                        }));
+                    } else {
+                        console.warn('Cart itemları dizi değil:', this.cart.items);
+                        this.items = [];
+                    }
 
                     // Toplam tutarı cart'tan al
-                    this.totalAmount = this.cart.totalAmount;
+                    this.totalAmount = this.cart.totalAmount || 0;
+
+                    // Kupon bilgilerini güncelle - null ve 0 değerlerini açıkça belirt
+                    this.coupon = this.cart.coupon || null;
+                    this.discountAmount = this.cart.discountAmount || 0;
+                    this.discountedTotalAmount = this.cart.discountedTotalAmount || this.totalAmount;
+
+                    console.log('Cart verileri güncellendi:', {
+                        totalAmount: this.totalAmount,
+                        coupon: this.coupon,
+                        discountAmount: this.discountAmount,
+                        discountedTotalAmount: this.discountedTotalAmount
+                    });
+
+                    // Kupon store'u güncelle
+                    this._updateCouponStore();
 
                     return this.cart;
+                } else {
+                    console.warn('Cart fetch başarısız:', response.data.message);
+                    return null;
                 }
-
-                return null;
             } catch (error) {
                 console.error('Cart fetch error:', error);
                 this.error = error.message;
                 return null;
             } finally {
                 this.loading = false;
+            }
+        },
+
+        // CouponStore güncelleme işlemini ayrı bir metoda çıkaralım
+        _updateCouponStore() {
+            try {
+                const couponStore = useCouponStore();
+                if (couponStore && this.cart) {
+                    couponStore.updateWithCartData(this.cart);
+                    console.log("CouponStore güncellendi", {
+                        appliedCoupon: couponStore.appliedCoupon,
+                        discountAmount: couponStore.discountAmount
+                    });
+                }
+            } catch (err) {
+                console.error("CouponStore güncellenirken hata:", err);
             }
         },
 
@@ -437,6 +527,8 @@ export const useCartStore = defineStore('cart', {
                     // Rezervasyon durumunu temizle
                     delete this.reservationStatus[productId];
 
+                    // Sepeti yeniden yükleyerek kupon bilgilerini güncelle
+                    await this.fetchCart();
                 }
             } catch (error) {
                 console.error('Sepetten çıkarma hatası:', error);
@@ -460,6 +552,9 @@ export const useCartStore = defineStore('cart', {
                     this.totalAmount = 0;
                     this.reservationStatus = {};
                     this.activeReservations = {};
+                    this.coupon = null;
+                    this.discountAmount = 0;
+                    this.discountedTotalAmount = 0;
                     toast.success('Sepet temizlendi');
                 }
             } catch (error) {
@@ -512,6 +607,11 @@ export const useCartStore = defineStore('cart', {
                     this.calculateTotal();
 
                     toast.success(response.data.message || 'Ürün miktarı güncellendi');
+
+                    // Kupon uygulanmışsa, sepeti yeniden yükleyerek indirim bilgilerini güncelle
+                    if (this.cart?.coupon) {
+                        await this.fetchCart();
+                    }
 
                     // Rezervasyon zamanlayıcısını yeniden başlat
                     this.startReservationTimer();
@@ -603,6 +703,106 @@ export const useCartStore = defineStore('cart', {
                 clearInterval(this.reservationTimer);
                 this.reservationTimer = null;
             }
+        },
+
+        // Sepeti kupon bilgisiyle güncelle
+        updateCartWithCoupon(cartData, discountData) {
+            if (!cartData) return;
+
+            this.cart = cartData; // Tam cart nesnesini güncelle
+
+            // Güvenli atama
+            if (Array.isArray(cartData.items)) {
+                this.items = cartData.items.map(item => ({
+                    product: {
+                        _id: item.product._id,
+                        name: item.product.name,
+                        price: item.product.price,
+                        images: item.product.images || [],
+                        sku: item.product.sku,
+                        stock: item.product.stock || 0,
+                        slug: item.product.slug || '',
+                        productType: item.product.productType || 'default'
+                    },
+                    quantity: item.quantity,
+                    price: item.price,
+                    unit: item.unit || 'adet',
+                    _id: item._id
+                }));
+            }
+
+            this.totalAmount = cartData.totalAmount || 0;
+            this.coupon = cartData.coupon || null;
+            this.discountAmount = cartData.discountAmount || 0;
+            this.discountedTotalAmount = cartData.discountedTotalAmount || this.totalAmount;
+
+            console.log('CartStore kupon ile güncellendi:', {
+                items: this.items.length,
+                totalAmount: this.totalAmount,
+                coupon: this.coupon,
+                discountAmount: this.discountAmount,
+                discountedTotalAmount: this.discountedTotalAmount
+            });
+        },
+
+        // Sepet verisini güncelle
+        updateCart(cartData) {
+            if (!cartData) return;
+
+            this.cart = cartData;
+
+            // Güvenli atama
+            if (Array.isArray(cartData.items)) {
+                this.items = cartData.items.map(item => ({
+                    product: {
+                        _id: item.product._id,
+                        name: item.product.name,
+                        price: item.product.price,
+                        images: item.product.images || [],
+                        sku: item.product.sku,
+                        stock: item.product.stock || 0,
+                        slug: item.product.slug || '',
+                        productType: item.product.productType || 'default'
+                    },
+                    quantity: item.quantity,
+                    price: item.price,
+                    unit: item.unit || 'adet',
+                    _id: item._id
+                }));
+            } else {
+                this.items = [];
+            }
+
+            this.totalAmount = cartData.totalAmount || 0;
+
+            // Kupon bilgilerini güncelle veya temizle
+            this.coupon = cartData.coupon || null;
+            this.discountAmount = cartData.discountAmount || 0;
+            this.discountedTotalAmount = cartData.discountedTotalAmount || this.totalAmount;
+
+            console.log('CartStore güncellendi:', {
+                items: this.items.length,
+                totalAmount: this.totalAmount,
+                coupon: this.coupon,
+                discountAmount: this.discountAmount,
+                discountedTotalAmount: this.discountedTotalAmount
+            });
+        },
+
+        // Reset fonksiyonuna kupon alanlarını da ekle
+        resetState() {
+            this.items = [];
+            this.totalAmount = 0;
+            this.loading = false;
+            this.error = null;
+            this.checkoutStarted = false;
+            this.cart = null;
+            this.activeReservations = {};
+            this.reservationStatus = {};
+            this.reservationTimer = null;
+            this.coupon = null;
+            this.discountAmount = 0;
+            this.discountedTotalAmount = 0;
         }
     }
 });

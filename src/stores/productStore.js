@@ -8,6 +8,7 @@ export const useProductStore = defineStore('product', {
         products: [],
         newProducts: [],
         discountedProducts: [],
+        categoryProducts: [],     // Kategori ürünleri için yeni state
         product: null,
         loading: false,
         error: null,
@@ -312,49 +313,21 @@ export const useProductStore = defineStore('product', {
             }
         },
 
-
-        async updateProduct(id, updateData) {
+        // Ürün güncelleme
+        async updateProduct(id, data) {
             try {
-                this.loading = true;
-                this.error = null;
-
-                console.log('Store - Update öncesi:', {
-                    id,
-                    updateData
-                });
-
-                const response = await api.put(`/products/${id}`, updateData, {
+                // FormData için özel headers ayarı
+                const config = {
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'multipart/form-data'
                     }
-                });
+                };
 
-                console.log('Store - Backend yanıtı:', response.data);
-
-                if (response.data.success) {
-                    // Tekil ürün state'ini güncelle
-                    this.product = response.data.data;
-
-                    // products array'inde de güncelle
-                    const index = this.products.findIndex(p => p._id === id);
-                    if (index !== -1) {
-                        this.products[index] = response.data.data;
-                        console.log('Store - Products array güncellendi:', this.products[index]);
-                    }
-
-                    console.log('Store - State güncellendi:', {
-                        product: this.product,
-                        productsArray: index !== -1 ? this.products[index] : 'Ürün listede bulunamadı'
-                    });
-                }
-
+                const response = await api.put(`/products/${id}`, data, config);
                 return response.data;
             } catch (error) {
-                console.error('Store - Ürün güncelleme hatası:', error);
-                this.error = error.response?.data?.message || 'Ürün güncellenirken bir hata oluştu';
+                console.error('Ürün güncelleme hatası:', error);
                 throw error;
-            } finally {
-                this.loading = false;
             }
         },
 
@@ -440,6 +413,44 @@ export const useProductStore = defineStore('product', {
 
         clearError() {
             this.error = null;
+        },
+
+        // Kategori ID'si ile ürünleri getirme
+        async fetchProductsByCategoryId(categoryId, params = {}) {
+            try {
+                this.loading = true;
+                this.error = null;
+
+                const validFilters = Object.entries({
+                    ...this.filters,
+                    ...params
+                }).reduce((acc, [key, value]) => {
+                    if (value !== null && value !== '' && value !== undefined) {
+                        acc[key] = value;
+                    }
+                    return acc;
+                }, {});
+
+                const queryParams = new URLSearchParams({
+                    limit: params.limit || 24,
+                    category: categoryId,
+                    ...validFilters
+                });
+
+                const response = await api.get(`/products?${queryParams}`);
+
+                if (response.data.success) {
+                    this.categoryProducts = response.data.data.docs;
+                }
+
+                return response.data;
+            } catch (error) {
+                console.error('Fetch Products by Category ID Error:', error);
+                this.error = error.response?.data?.message || 'Kategoriye ait ürünler yüklenirken bir hata oluştu';
+                throw error;
+            } finally {
+                this.loading = false;
+            }
         }
     }
 });
