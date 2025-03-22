@@ -12,7 +12,7 @@
             <p class="text-gray-600">Ünvanı: Mühendisler Ticaret Kollektif Şirketi</p>
             <p class="text-gray-600">Adresi: Şükran Mah. Sahibi Ata Cad. 38 Meram, Konya</p>
             <p class="text-gray-600">Telefon: 03323513128</p>
-            <p class="text-gray-600">E-posta: muhendisleryeni@gmail.com</p>
+            <p class="text-gray-600">E-posta: iletisim@tarimsepetim.com.tr</p>
           </div>
         </div>
       </div>
