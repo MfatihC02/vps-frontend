@@ -59,8 +59,8 @@
               </div>
               <div>
                 <h3 class="font-semibold text-gray-800">E-posta</h3>
-                <a href="mailto:muhendislerticaretyeni@gmail.com" class="text-gray-600 hover:text-green-600 transition-colors">
-                  muhendislerticaretyeni@gmail.com
+                <a href="mailto:iletisim@tarimsepetim.com.tr" class="text-gray-600 hover:text-green-600 transition-colors">
+                  iletisim@tarimsepetim.com.tr
                 </a>
               </div>
             </div>
