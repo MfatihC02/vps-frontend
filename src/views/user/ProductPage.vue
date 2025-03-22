@@ -42,14 +42,10 @@
           :content="Number(product?.price?.current).toFixed(2)"
         />
         <meta itemprop="priceCurrency" content="TRY" />
-        <link
-          itemprop="availability"
-          :href="
-            stockInfo?.quantity > 0
-              ? 'http://schema.org/InStock'
-              : 'http://schema.org/OutOfStock'
-          "
-        />
+       <link
+  itemprop="availability"
+  href="http://schema.org/InStock"
+/>
         <meta itemprop="priceValidUntil" :content="priceValidUntil" />
         <link itemprop="url" :content="currentUrl" />
 
