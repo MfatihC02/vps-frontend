@@ -45,7 +45,7 @@ export default {
             <ul class="list-none space-y-2">
               <li>Şirket Ünvanı: Mühendisler Ticaret Kollektif Şirketi</li>
               <li>Adres: Şükran Mah. Sahibi Ata Cad. 38 Meram, Konya</li>
-              <li>E-posta: muhendislerticaretyeni@gmail.com</li>
+              <li>E-posta: iletisim@tarimsepetim.com.tr</li>
               <li>Telefon: 0332 351 31 28</li>
             </ul>
           `
@@ -132,7 +132,7 @@ export default {
             <p class="font-medium mb-2">İletişim Bilgileri:</p>
             <ul class="list-none space-y-2 mb-4">
               <li>Adres: Şükran Mah. Sahibi Ata Cad. 38 Meram, Konya</li>
-              <li>E-posta: muhendislerticaretyeni@gmail.com</li>
+              <li>E-posta: iletisim@tarimsepetim.com.tr</li>
               <li>Telefon: 0332 351 31 28</li>
             </ul>
 
