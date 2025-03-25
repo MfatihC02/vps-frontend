@@ -27,7 +27,7 @@
         <picture v-if="currentImage">
           <source
             :srcset="`
-              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:eco,w_400,dpr_auto,c_limit/')} 400w,
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:eco,w_400,dpr_auto,c_limit,e_blur:1000/')} 400w,
               ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:eco,w_600,dpr_auto,c_limit/')} 600w,
               ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:eco,w_800,dpr_auto,c_limit/')} 800w
             `"
@@ -52,7 +52,6 @@
             itemprop="image"
             fetchpriority="high"
             decoding="async"
-            loading="eager"
             @load="handleImageLoad"
           />
         </picture>
@@ -113,13 +112,13 @@
           @click="selectImage(idx)"
           class="relative flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden focus:outline-none transition-all duration-200 transform hover:scale-105 snap-center"
           :class="{
-            'ring-2 ring-[#2F5E32] shadow-md': selectedImageIndex === idx,
-            'opacity-60 hover:opacity-100': selectedImageIndex !== idx,
+            'ring-2 ring-[#2F5E32] shadow-md': currentImageIndex === idx,
+            'opacity-60 hover:opacity-100': currentImageIndex !== idx,
             'cursor-not-allowed': loading,
           }"
           :disabled="loading"
           role="tab"
-          :aria-selected="selectedImageIndex === idx"
+          :aria-selected="currentImageIndex === idx"
           :aria-label="`Görsel ${idx + 1}`"
         >
           <picture>
@@ -221,30 +220,27 @@ export default {
 
   setup(props) {
     const zoomed = ref(false);
-    const loading = ref(false);
-    const selectedImageIndex = ref(0);
+    const loading = ref(true);
+    const currentImageIndex = ref(0);
+    const showLightbox = ref(false);
     const touchStartX = ref(0);
     const touchEndX = ref(0);
-    const showLightbox = ref(false);
 
-    // Görüntüleri sıralama
     const sortedImages = computed(() => {
-      if (!props.images.length) return [];
-      return [...props.images].sort((a, b) => (a.order || 0) - (b.order || 0));
+      return props.images || [];
     });
 
-    // Mevcut görüntü
     const currentImage = computed(() => {
-      return sortedImages.value[selectedImageIndex.value] || null;
+      return sortedImages.value[currentImageIndex.value];
     });
 
-    // Navigasyon durumu
-    const isFirstImage = computed(() => selectedImageIndex.value === 0);
+    const isFirstImage = computed(() => currentImageIndex.value === 0);
     const isLastImage = computed(() => {
-      return selectedImageIndex.value === sortedImages.value.length - 1;
+      return (
+        currentImageIndex.value === sortedImages.value.length - 1
+      );
     });
 
-    // Touch olayları için yeni fonksiyonlar
     const handleTouchStart = (e) => {
       touchStartX.value = e.touches[0].clientX;
     };
@@ -254,7 +250,7 @@ export default {
     };
 
     const handleTouchEnd = () => {
-      const swipeThreshold = 50; // minimum kaydırma mesafesi
+      const swipeThreshold = 50; 
       const swipeDistance = touchEndX.value - touchStartX.value;
 
       if (Math.abs(swipeDistance) > swipeThreshold) {
@@ -266,12 +262,14 @@ export default {
       }
     };
 
-    // Görsel yükleme işleyicisi
     const handleImageLoad = () => {
       loading.value = false;
     };
 
-    // Lightbox işlemleri
+    const toggleZoom = () => {
+      zoomed.value = !zoomed.value;
+    };
+
     const openLightbox = () => {
       showLightbox.value = true;
       document.body.style.overflow = "hidden";
@@ -282,94 +280,70 @@ export default {
       document.body.style.overflow = "";
     };
 
-    // Navigasyon metodları
     const nextImage = () => {
-      if (props.loading || !sortedImages.value.length) return;
-      selectedImageIndex.value =
-        (selectedImageIndex.value + 1) % sortedImages.value.length;
+      if (loading.value || !sortedImages.value.length) return;
+      currentImageIndex.value =
+        (currentImageIndex.value + 1) % sortedImages.value.length;
     };
 
     const prevImage = () => {
-      if (props.loading || !sortedImages.value.length) return;
-      selectedImageIndex.value =
-        (selectedImageIndex.value - 1 + sortedImages.value.length) %
+      if (loading.value || !sortedImages.value.length) return;
+      currentImageIndex.value =
+        (currentImageIndex.value - 1 + sortedImages.value.length) %
         sortedImages.value.length;
     };
 
     const selectImage = (index) => {
-      if (props.loading) return;
-      selectedImageIndex.value = index;
+      if (loading.value) return;
+      currentImageIndex.value = index;
     };
 
-    const toggleZoom = () => {
-      zoomed.value = !zoomed.value;
-    };
-
-    // Klavye navigasyonu
-    const handleKeyPress = (event) => {
-      if (showLightbox.value) {
-        switch (event.key) {
-          case "ArrowLeft":
-            prevImage();
-            break;
-          case "ArrowRight":
-            nextImage();
-            break;
-          case "Escape":
-            closeLightbox();
-            break;
-        }
-      }
-    };
-
-    // Klavye event listener'ları
     onMounted(() => {
-      window.addEventListener("keydown", handleKeyPress);
+      if (props.images?.[0]?.url) {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = props.images[0].url.replace(
+          '/upload/',
+          '/upload/f_auto,q_auto:eco,w_600,dpr_auto,c_limit/'
+        );
+        link.fetchPriority = 'high';
+        document.head.appendChild(link);
+      }
     });
 
-    onBeforeUnmount(() => {
-      window.removeEventListener("keydown", handleKeyPress);
-    });
-
-    // Preload next image
-    watch(selectedImageIndex, (newIndex) => {
-      const nextIndex = (newIndex + 1) % sortedImages.value.length;
-      const nextImage = sortedImages.value[nextIndex];
-      if (nextImage) {
+    watch(() => currentImageIndex.value, (newIndex) => {
+      const nextIndex = newIndex + 1;
+      if (sortedImages.value[nextIndex]) {
         const img = new Image();
-        img.src = nextImage.url.replace(
-          "/upload/",
-          "/upload/f_auto,q_auto:eco,w_600,dpr_auto,c_limit/"
+        img.fetchPriority = 'low';
+        img.loading = 'lazy';
+        img.src = sortedImages.value[nextIndex].url.replace(
+          '/upload/',
+          '/upload/f_auto,q_auto:eco,w_600,dpr_auto,c_limit/'
         );
       }
     });
 
-    // Error handling için
-    const handleImageError = (event) => {
-      event.target.src = "/fallback-image.jpg"; // Fallback görsel
-      loading.value = false;
-    };
-
     return {
       zoomed,
       loading,
-      selectedImageIndex,
       currentImage,
+      currentImageIndex,
       sortedImages,
       isFirstImage,
       isLastImage,
-      selectImage,
-      prevImage,
-      nextImage,
-      handleTouchStart,
-      handleTouchMove,
-      handleTouchEnd,
+      showLightbox,
+      toggleZoom,
       handleImageLoad,
       openLightbox,
       closeLightbox,
-      showLightbox,
-      toggleZoom,
-      handleImageError,
+      handleTouchStart,
+      handleTouchMove,
+      handleTouchEnd,
+      nextImage,
+      prevImage,
+      selectImage,
     };
   },
 };
