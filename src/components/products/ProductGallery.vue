@@ -44,9 +44,13 @@
             ${currentImage.url.replace(
               '/upload/',
               '/upload/f_auto,q_auto,w_800,dpr_auto/'
-            )} 800w
+            )} 800w,
+            ${currentImage.url.replace(
+              '/upload/',
+              '/upload/f_auto,q_auto,w_1200,dpr_auto/'
+            )} 1200w
           `"
-          :sizes="'(max-width: 768px) 100vw, 600px'"
+          :sizes="'(max-width: 640px) 100vw, (max-width: 1024px) 600px, 800px'"
           :alt="currentImage.alt || `${currentImageIndex + 1}. ürün görseli`"
           class="w-full h-full object-contain transition-all duration-300"
           :class="{
@@ -57,6 +61,7 @@
           @click="toggleZoom"
           itemprop="image"
           fetchpriority="high"
+          decoding="async"
           loading="eager"
           @load="handleImageLoad"
         />
@@ -127,16 +132,12 @@
           :aria-label="`Görsel ${idx + 1}`"
         >
           <img
-            :src="
-              img.url.replace(
-                '/upload/',
-                '/upload/f_auto,q_auto,w_200,h_200,c_fill,g_center/'
-              )
-            "
+            :src="img.url.replace('/upload/', '/upload/f_auto,q_auto,w_200,h_200,c_fill,g_center/')"
             :alt="`Küçük görsel ${idx + 1}`"
             class="w-full h-full object-cover transition-opacity duration-200"
             :class="{ 'opacity-50': loading }"
             loading="lazy"
+            decoding="async"
             width="200"
             height="200"
           />
