@@ -1,15 +1,15 @@
 <template>
   <div class="max-w-2xl mx-auto space-y-8 flex-grow">
     <!-- Ürün Başlığı ve Değerlendirme -->
-    <div class="space-y-4 sm:space-y-6">
+    <div class="space-y-4 sm:space-y-6 min-h-[120px]">
       <h1
-        class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 font-montserrat tracking-tight"
+        class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 font-montserrat tracking-tight min-h-[40px]"
       >
-        {{ product.name }}
+        {{ product.name || 'Yükleniyor...' }}
       </h1>
 
       <div
-        class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0 sm:space-x-6"
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0 sm:space-x-6 min-h-[48px]"
       >
         <div class="flex items-center space-x-4 sm:space-x-6">
           <div class="flex space-x-1">
@@ -51,15 +51,15 @@
     </div>
     <!-- Fiyat ve İndirim Bilgisi -->
     <div
-      class="bg-gradient-to-br from-white to-gray-50 p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm border border-gray-100"
+      class="bg-gradient-to-br from-white to-gray-50 p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 min-h-[100px]"
     >
       <div class="flex flex-wrap items-center justify-between">
         <!-- Sol taraf: Fiyat ve İndirim -->
-        <div class="flex items-baseline gap-2 sm:gap-4">
+        <div class="flex items-baseline gap-2 sm:gap-4 min-h-[36px]">
           <span
             class="text-2xl sm:text-3xl font-bold text-gray-900 font-montserrat tracking-tight"
           >
-            ₺{{ formatPrice(Number(product.price.current)) }}
+            {{ product.price?.current ? `₺${formatPrice(Number(product.price.current))}` : 'Yükleniyor...' }}
           </span>
           <template v-if="product.price.discount > 0">
             <span
@@ -98,7 +98,7 @@
 
     <!-- Adet Seçimi ve Sepete Ekleme -->
     <div
-      class="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 space-y-4"
+      class="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 space-y-4 min-h-[200px]"
     >
       <!-- Giriş yapmamış kullanıcılar için bilgilendirme -->
       <div class="flex flex-col space-y-3">
