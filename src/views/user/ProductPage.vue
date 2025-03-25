@@ -42,11 +42,10 @@
           :content="Number(product?.price?.current).toFixed(2)"
         />
         <meta itemprop="priceCurrency" content="TRY" />
-       <link
-  itemprop="availability"
-  href="http://schema.org/InStock"
-/>
-        <meta itemprop="priceValidUntil" :content="priceValidUntil" />
+        <link
+          itemprop="availability"
+          href="http://schema.org/InStock"
+        />        <meta itemprop="priceValidUntil" :content="priceValidUntil" />
         <link itemprop="url" :content="currentUrl" />
 
         <!-- Kargo Detayları -->
@@ -254,23 +253,42 @@
         class="bg-white rounded-none sm:rounded-xl shadow-sm transition-all duration-300 hover:shadow-md mx-[-10px] sm:mx-0"
       >
         <div class="p-2 sm:p-4 lg:p-6">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
-            <!-- Ürün Galerisi -->
-            <div class="w-full max-w-xl mx-auto lg:max-w-none">
-              <ProductGallery
-                :images="product?.images"
-                :loading="loading"
-                class="w-full max-w-md mx-auto"
-              />
+          <!-- Ana grid için minimum yükseklik tanımı eklendi -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 min-h-[600px]">
+            <!-- Sol Kolon: Ürün Galerisi -->
+            <div class="w-full lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)]">
+              <Suspense>
+                <template #default>
+                  <ProductGallery
+                    :images="product?.images || []"
+                    :loading="loading"
+                    @image-loaded="handleImageLoad"
+                  />
+                </template>
+                <template #fallback>
+                  <div class="w-full h-[70vh] bg-gray-50 rounded-xl animate-pulse"></div>
+                </template>
+              </Suspense>
             </div>
 
-            <!-- Ürün Detayları -->
-            <div class="flex flex-col space-y-6">
-              <ProductDetails
-                :product="formattedProductDetails"
-                :productId="product?._id"
-                class="flex-grow"
-              />
+            <!-- Sağ Kolon: Ürün Detayları -->
+            <div class="space-y-6">
+              <Suspense>
+                <template #default>
+                  <ProductDetails
+                    :product="product"
+                    :loading="loading"
+                    @add-to-cart="handleAddToCart"
+                  />
+                </template>
+                <template #fallback>
+                  <div class="space-y-4 animate-pulse">
+                    <div class="h-8 bg-gray-200 rounded w-3/4"></div>
+                    <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                    <div class="h-24 bg-gray-200 rounded"></div>
+                  </div>
+                </template>
+              </Suspense>
             </div>
           </div>
 
@@ -469,6 +487,14 @@ export default {
       return marked.parse(product.value.description.detailed);
     });
 
+    const handleImageLoad = () => {
+      console.log("Image loaded");
+    };
+
+    const handleAddToCart = () => {
+      console.log("Add to cart clicked");
+    };
+
     return {
       loading,
       error,
@@ -481,6 +507,8 @@ export default {
       priceValidUntil,
       currentUrl,
       parsedDetailedDescription,
+      handleImageLoad,
+      handleAddToCart,
     };
   },
 };
