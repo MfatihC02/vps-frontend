@@ -27,22 +27,20 @@
         <picture v-if="currentImage">
           <source
             :srcset="`
-              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto,w_400,dpr_auto/')} 400w,
-              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto,w_600,dpr_auto/')} 600w,
-              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto,w_800,dpr_auto/')} 800w,
-              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto,w_1200,dpr_auto/')} 1200w
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:eco,w_400,dpr_auto,c_limit/')} 400w,
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:eco,w_600,dpr_auto,c_limit/')} 600w,
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:eco,w_800,dpr_auto,c_limit/')} 800w
             `"
             type="image/webp"
           />
           <img
-            :src="currentImage.url.replace('/upload/', '/upload/f_auto,q_auto,w_800,dpr_auto/')"
+            :src="currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:eco,w_600,dpr_auto,c_limit/')"
             :srcset="`
-              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto,w_400,dpr_auto/')} 400w,
-              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto,w_600,dpr_auto/')} 600w,
-              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto,w_800,dpr_auto/')} 800w,
-              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto,w_1200,dpr_auto/')} 1200w
+              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:eco,w_400,dpr_auto,c_limit/')} 400w,
+              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:eco,w_600,dpr_auto,c_limit/')} 600w,
+              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:eco,w_800,dpr_auto,c_limit/')} 800w
             `"
-            :sizes="'(max-width: 640px) 100vw, (max-width: 1024px) 600px, 800px'"
+            :sizes="'(max-width: 480px) 95vw, (max-width: 768px) 75vw, 600px'"
             :alt="currentImage.alt || `${currentImageIndex + 1}. ürün görseli`"
             class="w-full h-full object-contain transition-all duration-300"
             :class="{
@@ -126,18 +124,16 @@
         >
           <picture>
             <source
-              :srcset="img.url.replace('/upload/', '/upload/f_webp,q_auto,w_200,h_200,c_fill,g_center/')"
+              :srcset="img.url.replace('/upload/', '/upload/f_webp,q_auto:eco,w_150,h_150,c_fill,g_center/')"
               type="image/webp"
             />
             <img
-              :src="img.url.replace('/upload/', '/upload/f_auto,q_auto,w_200,h_200,c_fill,g_center/')"
+              :src="img.url.replace('/upload/', '/upload/f_auto,q_auto:eco,w_150,h_150,c_fill,g_center/')"
               :alt="`Küçük görsel ${idx + 1}`"
               class="w-full h-full object-cover transition-opacity duration-200"
               :class="{ 'opacity-50': loading }"
               loading="lazy"
               decoding="async"
-              width="200"
-              height="200"
             />
           </picture>
           <div
@@ -163,11 +159,11 @@
           :src="
             currentImage?.url.replace(
               '/upload/',
-              '/upload/f_auto,q_auto,w_1024,h_1024,c_pad,g_center,b_white/'
+              '/upload/f_auto,q_auto:eco,w_800,h_800,c_limit,g_center/'
             )
           "
           :alt="currentImage?.alt"
-          class="w-full h-auto max-h-[90vh] object-contain mx-auto"
+          class="max-w-full max-h-full object-contain"
           loading="lazy"
         />
         <button
@@ -343,7 +339,7 @@ export default {
         const img = new Image();
         img.src = nextImage.url.replace(
           "/upload/",
-          "/upload/f_auto,q_auto,w_600,dpr_auto/"
+          "/upload/f_auto,q_auto:eco,w_600,dpr_auto,c_limit/"
         );
       }
     });
