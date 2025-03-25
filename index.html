@@ -3,8 +3,18 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/favlogo.jpg" />
+  <link rel="icon" type="image/svg+xml" href="/favlogo.webp" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Kritik CSS ve Font Preload -->
+  <link rel="preload" href="/assets/index-Dw7LCfth.css" as="style" />
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" as="style" />
+  
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://code.iconify.design" crossorigin />
 
   <!-- SEO Meta Etiketleri -->
   <title>TARIM SEPETİM | Zirai Ürünler, Gübre ve Tohum </title>
@@ -32,16 +42,25 @@
   <!-- Mobil Tema Rengi -->
   <meta name="theme-color" content="#2F5E32" />
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;600;700&family=Source+Serif+Pro:wght@400;600;700&display=swap"
-    rel="stylesheet">
-  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js" async defer></script>
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/index-Dw7LCfth.css" />
 
-  <!-- Google Analytics Kütüphanesi -->
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&display=swap"
+    rel="stylesheet" media="print" onload="this.media='all'" />
+
+  <!-- Iconify -->
+  <script type="module">
+    const loadIconify = async () => {
+      const script = document.createElement('script');
+      script.src = 'https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js';
+      script.async = true;
+      document.head.appendChild(script);
+    };
+    window.addEventListener('load', loadIconify);
+  </script>
+
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-YB2K8VFDHZ"></script>
 </head>
 
