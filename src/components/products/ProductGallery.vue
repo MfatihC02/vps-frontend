@@ -24,47 +24,40 @@
           ></div>
         </div>
 
-        <img
-          v-if="currentImage"
-          :src="
-            currentImage.url.replace(
-              '/upload/',
-              '/upload/f_auto,q_auto,w_600,dpr_auto/'
-            )
-          "
-          :srcset="`
-            ${currentImage.url.replace(
-              '/upload/',
-              '/upload/f_auto,q_auto,w_400,dpr_auto/'
-            )} 400w,
-            ${currentImage.url.replace(
-              '/upload/',
-              '/upload/f_auto,q_auto,w_600,dpr_auto/'
-            )} 600w,
-            ${currentImage.url.replace(
-              '/upload/',
-              '/upload/f_auto,q_auto,w_800,dpr_auto/'
-            )} 800w,
-            ${currentImage.url.replace(
-              '/upload/',
-              '/upload/f_auto,q_auto,w_1200,dpr_auto/'
-            )} 1200w
-          `"
-          :sizes="'(max-width: 640px) 100vw, (max-width: 1024px) 600px, 800px'"
-          :alt="currentImage.alt || `${currentImageIndex + 1}. ürün görseli`"
-          class="w-full h-full object-contain transition-all duration-300"
-          :class="{
-            'opacity-0': loading,
-            'scale-[1.6] cursor-zoom-out': zoomed,
-            'cursor-zoom-in': !zoomed,
-          }"
-          @click="toggleZoom"
-          itemprop="image"
-          fetchpriority="high"
-          decoding="async"
-          loading="eager"
-          @load="handleImageLoad"
-        />
+        <picture v-if="currentImage">
+          <source
+            :srcset="`
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto,w_400,dpr_auto/')} 400w,
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto,w_600,dpr_auto/')} 600w,
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto,w_800,dpr_auto/')} 800w,
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto,w_1200,dpr_auto/')} 1200w
+            `"
+            type="image/webp"
+          />
+          <img
+            :src="currentImage.url.replace('/upload/', '/upload/f_auto,q_auto,w_800,dpr_auto/')"
+            :srcset="`
+              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto,w_400,dpr_auto/')} 400w,
+              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto,w_600,dpr_auto/')} 600w,
+              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto,w_800,dpr_auto/')} 800w,
+              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto,w_1200,dpr_auto/')} 1200w
+            `"
+            :sizes="'(max-width: 640px) 100vw, (max-width: 1024px) 600px, 800px'"
+            :alt="currentImage.alt || `${currentImageIndex + 1}. ürün görseli`"
+            class="w-full h-full object-contain transition-all duration-300"
+            :class="{
+              'opacity-0': loading,
+              'scale-[1.6] cursor-zoom-out': zoomed,
+              'cursor-zoom-in': !zoomed,
+            }"
+            @click="toggleZoom"
+            itemprop="image"
+            fetchpriority="high"
+            decoding="async"
+            loading="eager"
+            @load="handleImageLoad"
+          />
+        </picture>
         <div
           v-else
           class="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50"
@@ -131,16 +124,22 @@
           :aria-selected="selectedImageIndex === idx"
           :aria-label="`Görsel ${idx + 1}`"
         >
-          <img
-            :src="img.url.replace('/upload/', '/upload/f_auto,q_auto,w_200,h_200,c_fill,g_center/')"
-            :alt="`Küçük görsel ${idx + 1}`"
-            class="w-full h-full object-cover transition-opacity duration-200"
-            :class="{ 'opacity-50': loading }"
-            loading="lazy"
-            decoding="async"
-            width="200"
-            height="200"
-          />
+          <picture>
+            <source
+              :srcset="img.url.replace('/upload/', '/upload/f_webp,q_auto,w_200,h_200,c_fill,g_center/')"
+              type="image/webp"
+            />
+            <img
+              :src="img.url.replace('/upload/', '/upload/f_auto,q_auto,w_200,h_200,c_fill,g_center/')"
+              :alt="`Küçük görsel ${idx + 1}`"
+              class="w-full h-full object-cover transition-opacity duration-200"
+              :class="{ 'opacity-50': loading }"
+              loading="lazy"
+              decoding="async"
+              width="200"
+              height="200"
+            />
+          </picture>
           <div
             v-if="loading"
             class="absolute inset-0 flex items-center justify-center bg-white/50"
