@@ -23,15 +23,6 @@
       crossorigin
     />
     <div class="w-full px-[10px] sm:container sm:mx-auto sm:px-4 py-4 sm:py-8">
-      <!-- Resource Hints -->
-      <link
-        v-if="product?.images?.[0]?.url"
-        rel="preload"
-        as="image"
-        :href="optimizeMainImageUrl(product.images[0].url)"
-        :imagesrcset="generateSrcSet(product.images[0].url)"
-        :imagesizes="'(max-width: 640px) 95vw, (max-width: 1024px) 70vw, 800px'"
-      />
       <!-- SEO için yapısal veri -->
       <meta itemprop="name" :content="product?.name" />
       <meta itemprop="description" :content="product?.description?.meta" />
@@ -514,38 +505,6 @@ export default {
       return marked.parse(product.value.description.detailed);
     });
 
-    // Cloudinary optimizasyon fonksiyonları
-    const optimizeMainImageUrl = (url) => {
-      if (!url) return '';
-      return url.replace(
-        '/upload/',
-        '/upload/f_auto,q_auto:best,w_800,dpr_auto,c_limit,fl_progressive/'
-      );
-    };
-
-    const generateSrcSet = (url) => {
-      if (!url) return '';
-      const widths = [400, 600, 800, 1200];
-      return widths
-        .map(
-          (w) =>
-            `${url.replace(
-              '/upload/',
-              `/upload/f_auto,q_auto:best,w_${w},dpr_auto,c_limit,fl_progressive/`
-            )} ${w}w`
-        )
-        .join(', ');
-    };
-
-    // Cache-Control başlığı ekle
-    onMounted(() => {
-      if (product.value?.images?.[0]?.url) {
-        const img = new Image();
-        img.src = optimizeMainImageUrl(product.value.images[0].url);
-        img.fetchPriority = 'high';
-      }
-    });
-
     const handleImageLoad = () => {
       console.log("Image loaded");
     };
@@ -566,8 +525,6 @@ export default {
       priceValidUntil,
       currentUrl,
       parsedDetailedDescription,
-      optimizeMainImageUrl,
-      generateSrcSet,
       handleImageLoad,
       handleAddToCart,
     };
