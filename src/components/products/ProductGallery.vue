@@ -27,22 +27,22 @@
         <picture v-if="currentImage">
           <source
             :srcset="`
-              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto,w_400,dpr_auto/')} 400w,
-              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto,w_600,dpr_auto/')} 600w,
-              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto,w_800,dpr_auto/')} 800w,
-              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto,w_1200,dpr_auto/')} 1200w
+              ${optimizeImageUrl(currentImage.url, 400)} 400w,
+              ${optimizeImageUrl(currentImage.url, 600)} 600w,
+              ${optimizeImageUrl(currentImage.url, 800)} 800w,
+              ${optimizeImageUrl(currentImage.url, 1200)} 1200w
             `"
             type="image/webp"
           />
           <img
-            :src="currentImage.url.replace('/upload/', '/upload/f_auto,q_auto,w_800,dpr_auto/')"
+            :src="optimizeImageUrl(currentImage.url, 800)"
             :srcset="`
-              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto,w_400,dpr_auto/')} 400w,
-              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto,w_600,dpr_auto/')} 600w,
-              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto,w_800,dpr_auto/')} 800w,
-              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto,w_1200,dpr_auto/')} 1200w
+              ${optimizeImageUrl(currentImage.url, 400)} 400w,
+              ${optimizeImageUrl(currentImage.url, 600)} 600w,
+              ${optimizeImageUrl(currentImage.url, 800)} 800w,
+              ${optimizeImageUrl(currentImage.url, 1200)} 1200w
             `"
-            :sizes="'(max-width: 640px) 100vw, (max-width: 1024px) 600px, 800px'"
+            :sizes="'(max-width: 640px) 95vw, (max-width: 1024px) 70vw, 800px'"
             :alt="currentImage.alt || `${currentImageIndex + 1}. ürün görseli`"
             class="w-full h-full object-contain transition-all duration-300"
             :class="{
@@ -126,11 +126,11 @@
         >
           <picture>
             <source
-              :srcset="img.url.replace('/upload/', '/upload/f_webp,q_auto,w_200,h_200,c_fill,g_center/')"
+              :srcset="optimizeImageUrl(img.url, 200)"
               type="image/webp"
             />
             <img
-              :src="img.url.replace('/upload/', '/upload/f_auto,q_auto,w_200,h_200,c_fill,g_center/')"
+              :src="optimizeImageUrl(img.url, 200)"
               :alt="`Küçük görsel ${idx + 1}`"
               class="w-full h-full object-cover transition-opacity duration-200"
               :class="{ 'opacity-50': loading }"
@@ -163,7 +163,7 @@
           :src="
             currentImage?.url.replace(
               '/upload/',
-              '/upload/f_auto,q_auto,w_1024,h_1024,c_pad,g_center,b_white/'
+              '/upload/f_auto,q_auto:best,w_1024,h_1024,c_pad,g_center,b_white,fl_progressive/'
             )
           "
           :alt="currentImage?.alt"
@@ -329,6 +329,7 @@ export default {
     // Klavye event listener'ları
     onMounted(() => {
       window.addEventListener("keydown", handleKeyPress);
+      preloadMainImage();
     });
 
     onBeforeUnmount(() => {
@@ -341,10 +342,7 @@ export default {
       const nextImage = sortedImages.value[nextIndex];
       if (nextImage) {
         const img = new Image();
-        img.src = nextImage.url.replace(
-          "/upload/",
-          "/upload/f_auto,q_auto,w_600,dpr_auto/"
-        );
+        img.src = optimizeImageUrl(nextImage.url, 600);
       }
     });
 
@@ -352,6 +350,26 @@ export default {
     const handleImageError = (event) => {
       event.target.src = "/fallback-image.jpg"; // Fallback görsel
       loading.value = false;
+    };
+
+    // Cloudinary optimizasyon fonksiyonu
+    const optimizeImageUrl = (url, width) => {
+      if (!url) return '';
+      return url.replace(
+        '/upload/',
+        `/upload/f_auto,q_auto:best,w_${width},dpr_auto,c_limit,fl_progressive/`
+      );
+    };
+
+    // Preload ana görseli
+    const preloadMainImage = () => {
+      if (props.images?.[0]?.url) {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = optimizeImageUrl(props.images[0].url, 800);
+        document.head.appendChild(link);
+      }
     };
 
     return {
@@ -374,6 +392,7 @@ export default {
       showLightbox,
       toggleZoom,
       handleImageError,
+      optimizeImageUrl,
     };
   },
 };
