@@ -1,72 +1,75 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/favlogo.webp" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Kritik CSS ve Font Preload -->
-  <link rel="preload" href="/assets/index-Dw7LCfth.css" as="style" />
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" as="style" />
   
-  <!-- Preconnect -->
+  <!-- Resource Hints -->
   <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://code.iconify.design" crossorigin />
-
-  <!-- SEO Meta Etiketleri -->
-  <title>TARIM SEPETİM | Zirai Ürünler, Gübre ve Tohum </title>
-  <meta name="description"
-    content="70 yıllık tecrübesiyle Türkiye'nin güvenilir zirai ürün tedarikçisi. Kaliteli gübre, tohum, fide ve zirai aletler için Mühendisler Ticaret güvencesi." />
-  <meta name="keywords"
-    content="zirai ürünler, gübre, tohum, fide, zirai alet, tarım malzemeleri, mühendisler ticaret" />
-  <meta name="author" content="Mühendisler Ticaret" />
-
-  <!-- İletişim Meta Etiketi -->
-  <meta name="contact" content="iletisim@tarimsepetim.com.tr" />
-
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Mühendisler Ticaret | 70 Yıllık Güven" />
-  <meta property="og:description"
-    content="Kaliteli zirai ürünler, gübre, tohum, fide ve zirai aletler. 70 yıllık tecrübe ve güvenle hizmetinizdeyiz." />
-  <meta property="og:url" content="https://www.tarimsepetim.com.tr/" />
-
-  <!-- Ek SEO Meta Etiketleri -->
-  <meta name="robots" content="index, follow" />
-  <meta name="revisit-after" content="7 days" />
-  <meta http-equiv="content-language" content="tr" />
-
-  <!-- Mobil Tema Rengi -->
-  <meta name="theme-color" content="#2F5E32" />
-
-  <!-- CSS -->
+  <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+  
+  <!-- Kritik CSS -->
+  <link rel="preload" href="/assets/index-Dw7LCfth.css" as="style" />
   <link rel="stylesheet" href="/assets/index-Dw7LCfth.css" />
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&display=swap"
-    rel="stylesheet" media="print" onload="this.media='all'" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/webp" href="/favlogo.webp" />
+  
+  <!-- Google Fonts Optimizasyonu -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    rel="preload"
+    as="style"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&display=swap"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&display=swap"
+    rel="stylesheet"
+    media="print"
+    onload="this.media='all'"
+  />
 
-  <!-- Iconify -->
+  <!-- SEO Meta Etiketleri -->
+  <title>TARIM SEPETİM | Zirai Ürünler, Gübre ve Tohum</title>
+  <meta
+    name="description"
+    content="70 yıllık tecrübesiyle Türkiye'nin güvenilir zirai ürün tedarikçisi. Kaliteli gübre, tohum, fide ve zirai aletler için Mühendisler Ticaret güvencesi."
+  />
+  <meta
+    name="keywords"
+    content="zirai ürünler, gübre, tohum, fide, zirai alet, tarım malzemeleri, mühendisler ticaret"
+  />
+  <meta name="author" content="Mühendisler Ticaret" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Mühendisler Ticaret | 70 Yıllık Güven" />
+  <meta
+    property="og:description"
+    content="Kaliteli zirai ürünler, gübre, tohum, fide ve zirai aletler. 70 yıllık tecrübe ve güvenle hizmetinizdeyiz."
+  />
+  <meta property="og:url" content="https://www.tarimsepetim.com.tr/" />
+
+  <!-- Ek Meta -->
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#2F5E32" />
+
+  <!-- Iconify Optimizasyonu -->
   <script type="module">
-    const loadIconify = async () => {
+    window.addEventListener('load', () => {
       const script = document.createElement('script');
       script.src = 'https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js';
       script.async = true;
       document.head.appendChild(script);
-    };
-    window.addEventListener('load', loadIconify);
+    });
   </script>
 
-  <!-- Google Analytics -->
+  <!-- Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-YB2K8VFDHZ"></script>
 </head>
-
 <body>
   <div id="app"></div>
   <script type="module" src="/src/main.js"></script>
 </body>
-
 </html>
