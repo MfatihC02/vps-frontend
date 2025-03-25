@@ -16,11 +16,20 @@
             to="/"
             class="flex items-center space-x-2 text-emerald-700 hover:text-emerald-600 transition"
           >
-            <img
-              src="/favlogo.jpg"
-              alt="TARIM SEPETİM Logo"
-              class="h-8 w-8 object-contain rounded-full"
-            />
+            <picture>
+              <source srcset="/favlogo.webp" type="image/webp" />
+              <source srcset="/favlogo.jpg" type="image/jpeg" />
+              <img
+                src="/favlogo.jpg"
+                alt="TARIM SEPETİM Logo"
+                class="h-8 w-8 object-contain rounded-full"
+                width="32"
+                height="32"
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
+              />
+            </picture>
             <span class="text-xl font-bold hidden sm:block">{{
               storeName
             }}</span>
