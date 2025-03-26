@@ -3,7 +3,7 @@
     <!-- Tab Navigation -->
     <nav class="sticky top-16 bg-white/90 backdrop-blur-md z-30 shadow-lg">
       <div class="w-full">
-        <div class="grid grid-cols-3 gap-1.5 px-2 sm:px-4 relative py-1">
+        <div class="grid grid-cols-2 gap-4 px-4 sm:px-6 relative py-2">
           <a
             v-for="tab in tabs"
             :key="tab.id"
@@ -167,11 +167,6 @@ export default {
         id: 'new',
         name: 'Yeni Ürünler',
         title: 'Yeni Ürünler',
-      },
-      {
-        id: 'discounted',
-        name: 'İndirimli Ürünler',
-        title: 'İndirimli Ürünler',
       }
     ];
 
@@ -224,8 +219,6 @@ export default {
           return productStore.products;
         case 'new':
           return productStore.newProducts;
-        case 'discounted':
-          return productStore.discountedProducts;
         default:
           return [];
       }
@@ -237,8 +230,6 @@ export default {
           return 'Sizin';
         case 'new':
           return 'Yeni';
-        case 'discounted':
-          return 'İndirimli';
         default:
           return '';
       }
@@ -249,8 +240,6 @@ export default {
         case 'recommended':
           return 'İçin';
         case 'new':
-          return 'Ürünler';
-        case 'discounted':
           return 'Ürünler';
         default:
           return '';
