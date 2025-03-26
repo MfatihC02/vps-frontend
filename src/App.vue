@@ -2,15 +2,17 @@
   <div class="flex flex-col min-h-screen w-full">
     <!-- InfoBar: Sabit üst çubuk -->
     <div class="fixed top-0 left-0 right-0 z-50">
-      <InfoBar />
+      <Header class="flex-shrink-0 w-full" />
+
     </div>
 
     <!-- Kampanya Banner -->
     <CampaignBanner />
 
     <!-- Ana İçerik: Header, Main ve Footer -->
-    <div class="w-full mt-[60px]"> <!-- Boşluğu azalttık -->
-      <Header class="flex-shrink-0 w-full" />
+    <div class="flex flex-col flex-grow w-full mt-[70px]">
+      <InfoBar />
+
       <main class="flex-grow w-full">
         <router-view v-slot="{ Component }">
           <div>
@@ -18,7 +20,7 @@
           </div>
         </router-view>
       </main>
-      <Footer class="flex-shrink-0 footer" />
+      <Footer class="flex-shrink-0 footer w-full" />
     </div>
   </div>
 </template>
@@ -79,6 +81,7 @@ main {
 .footer {
   flex-shrink: 0;
   height: 400px; /* Sabit footer yüksekliği */
+  width: 100%;
   contain: content;
 }
 
@@ -98,6 +101,11 @@ main {
 @media (max-width: 768px) {
   main {
     min-height: 300px;
+  }
+  
+  .footer {
+    height: 300px; /* Mobil için daha küçük footer yüksekliği */
+    display: block; /* Footer'ın mobilde düzgün görünmesini sağla */
   }
 
   /* Touch cihazlar için scroll optimizasyonu */
