@@ -7,7 +7,6 @@ export const useProductStore = defineStore('product', {
         searchResults: [],        // Yeni eklenen state
         products: [],
         newProducts: [],
-        discountedProducts: [],
         categoryProducts: [],     // Kategori ürünleri için yeni state
         product: null,
         loading: false,
@@ -30,7 +29,6 @@ export const useProductStore = defineStore('product', {
         },
         getRecommendedProducts: (state) => state.products,
         getNewProducts: (state) => state.newProducts,
-        getDiscountedProducts: (state) => state.discountedProducts,
         isLoading: (state) => state.loading,
         getError: (state) => state.error,
         getSearchResults: (state) => state.searchResults,
@@ -121,7 +119,7 @@ export const useProductStore = defineStore('product', {
                 }, {});
 
                 const queryParams = new URLSearchParams({
-                    limit: params.limit || 12,
+                    limit: params.limit || 24,
                     ...validFilters
                 });
 
@@ -158,26 +156,21 @@ export const useProductStore = defineStore('product', {
                     params: {
                         search: 'öneÇıkan',
                         status: 'active',
-                        limit: 12,
+                        limit: 24,
                         sort: '-createdAt'
                     }
                 });
                 this.products = recommendedResponse.data.data.docs;
 
-                // Yeni ürünler için özel sorgu - son eklenen 12 ürün
+                // Yeni ürünler için özel sorgu - son eklenen 24 ürün
                 const newProductsResponse = await api.get('/products', {
                     params: {
-                        limit: 12,
+                        limit: 24,
                         sort: '-createdAt',
                         status: 'active'
                     }
                 });
                 this.newProducts = newProductsResponse.data.data.docs;
-
-                // İndirimli ürünler
-                this.discountedProducts = allProducts.filter(product => {
-                    return product.price?.discount > 0;
-                });
 
             } catch (err) {
                 console.error('Ürünler yüklenirken hata:', err);
@@ -219,7 +212,7 @@ export const useProductStore = defineStore('product', {
                 }, {});
 
                 const queryParams = new URLSearchParams({
-                    limit: params.limit || 12,
+                    limit: params.limit || 24,
                     sortBy: params.sortBy || 'price_asc',
                     ...validFilters
                 });
