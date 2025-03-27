@@ -56,7 +56,7 @@
 
         <!-- Desktop Kategori Listesi -->
         <div
-          class="hidden md:block w-64 flex-shrink-0 transition-all duration-300"
+          class="hidden md:block w-72 lg:w-80 flex-shrink-0 transition-all duration-300 sticky top-20"
         >
           <div
             class="bg-gray-50/80 backdrop-blur-sm rounded-lg shadow-sm border border-gray-100"
@@ -66,14 +66,14 @@
             >
               Kategoriler
             </h2>
-            <div class="w-full">
+            <div class="w-full max-h-[calc(100vh-6rem)] overflow-y-auto">
               <CategoryList />
             </div>
           </div>
         </div>
 
         <!-- Sağ İçerik Alanı -->
-        <div class="flex-1 min-w-0 -mx-4 md:mx-0">
+        <div class="flex-1 min-w-0">
           <TabNavigation />
         </div>
       </div>
