@@ -38,8 +38,8 @@
               <!-- Tab Name with Responsive Text -->
               <div class="hidden min-[400px]:block flex-1">{{ tab.name }}</div>
               <div class="block min-[400px]:hidden">
-                <div>{{ getFirstWord(tab.id) }}</div>
-                <div class="text-[11px] opacity-90">{{ getSecondWord(tab.id) }}</div>
+                <div>{{ tab.id === 'recommended' ? 'Sizin' : 'Yeni' }}</div>
+                <div class="text-[11px] opacity-90">{{ tab.id === 'recommended' ? 'İçin' : 'Ürünler' }}</div>
               </div>
               
               <!-- Count Badge -->
@@ -137,6 +137,17 @@
                 :product="product"
               />
             </div>
+
+            <!-- Tohum kategorileri için alt kategorileri göster -->
+            <template v-if="tab.id === 'recommended' && seedCategories && seedCategories.length">
+              <category-slider
+                v-for="category in seedCategories"
+                :key="category._id"
+                :category-id="category._id"
+                :category-title="category.name"
+                class="mt-8"
+              />
+            </template>
           </section>
         </template>
       </div>
@@ -147,13 +158,19 @@
 <script>
 import { ref, onMounted, computed, onBeforeUnmount } from 'vue';
 import { useProductStore } from "@/stores/productStore.js";
+import { useCategoryStore } from "@/stores/categoryStore.js";
 import ProductCard from './ProductCard.vue';
+import CategorySlider from './CategorySlider.vue';
 
 export default {
   name: "TabNavigation",
-  components: { ProductCard },
+  components: { 
+    ProductCard,
+    CategorySlider
+  },
   setup() {
     const productStore = useProductStore();
+    const categoryStore = useCategoryStore();
     const activeTab = ref("recommended");
     let observers = [];
 
@@ -169,6 +186,39 @@ export default {
         title: 'Yeni Ürünler',
       }
     ];
+
+    // Tohum kategorileri
+    const seedCategories = computed(() => {
+      console.log('Computing seed categories...');
+      const categories = categoryStore.categoryTree;
+      console.log('Category Tree:', categories);
+
+      if (!categories || categories.length === 0) {
+        console.log('No categories available');
+        return [];
+      }
+
+      // Sebze Tohumları ana kategorisini bul
+      const sebzeTohumlari = categories.find(cat => cat.name === "Sebze Tohumları");
+      console.log('Sebze Tohumları Category:', sebzeTohumlari);
+      
+      if (!sebzeTohumlari?.children) {
+        console.log('No children found for Sebze Tohumları');
+        return [];
+      }
+
+      return sebzeTohumlari.children.filter(cat => cat.isActive);
+    });
+
+    // Hibrit Tohumlar kategorisi ID'si
+    const hibridTohumlarId = computed(() => {
+      const category = categoryStore.categories.find(cat => 
+        cat.name === "Hibrit Tohumlar" && 
+        cat.ancestors?.some(a => a.name === "Sebze Tohumları")
+      );
+      console.log('Found Hibrit Tohumlar category:', category);
+      return category?._id;
+    });
 
     const scrollToTab = (tabId) => {
       activeTab.value = tabId;
@@ -213,8 +263,19 @@ export default {
       });
     };
 
+    // Ürün yükleme fonksiyonu
+    const retryLoading = async () => {
+      try {
+        console.log('Loading all product sections...');
+        await productStore.fetchAllSections();
+      } catch (err) {
+        console.error('Error loading products:', err);
+      }
+    };
+
+    // Sekmeye göre ürünleri getir
     const getProductsBySection = (sectionId) => {
-      switch (sectionId) {
+      switch(sectionId) {
         case 'recommended':
           return productStore.products;
         case 'new':
@@ -224,41 +285,23 @@ export default {
       }
     };
 
-    const getFirstWord = (tabId) => {
-      switch (tabId) {
-        case 'recommended':
-          return 'Sizin';
-        case 'new':
-          return 'Yeni';
-        default:
-          return '';
-      }
-    };
-
-    const getSecondWord = (tabId) => {
-      switch (tabId) {
-        case 'recommended':
-          return 'İçin';
-        case 'new':
-          return 'Ürünler';
-        default:
-          return '';
-      }
-    };
-
-    const retryLoading = async () => {
-      try {
-        await productStore.fetchAllSections();
-      } catch (error) {
-        console.error('Ürünler yüklenirken hata:', error);
-      }
-    };
-
+    // Lifecycle hooks
     onMounted(async () => {
-      productStore.initializeSocketListeners();
-      await retryLoading();
-      // Sayfa yüklendikten sonra observer'ları kur
-      setupIntersectionObservers();
+      try {
+        // Kategori ağacını yükle
+        if (!categoryStore.categoryTree.length) {
+          await categoryStore.fetchCategoryTree();
+        }
+
+        // Ürünleri yükle ve socket bağlantısını başlat
+        productStore.initializeSocketListeners();
+        await retryLoading();
+        
+        // Observer'ları kur
+        setupIntersectionObservers();
+      } catch (err) {
+        console.error('Error in TabNavigation mount:', err);
+      }
     });
 
     onBeforeUnmount(() => {
@@ -267,59 +310,19 @@ export default {
     });
 
     return {
-      activeTab,
       tabs,
-      productStore,
-      scrollToTab,
-      retryLoading,
-      getProductsBySection,
-      getFirstWord,
-      getSecondWord,
+      activeTab,
       loading: computed(() => productStore.loading),
-      error: computed(() => productStore.error)
+      error: computed(() => productStore.error),
+      seedCategories,
+      getProductsBySection,
+      retryLoading,
+      scrollToTab
     };
   }
 };
 </script>
 
 <style scoped>
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-@keyframes slideIn {
-  from { 
-    transform: scaleX(0);
-    opacity: 0;
-  }
-  to { 
-    transform: scaleX(1);
-    opacity: 1;
-  }
-}
-
-.animate-slideIn {
-  animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  transform-origin: left;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-in-up {
-  animation: fadeInUp 0.5s ease-out forwards;
-}
+/* ... */
 </style>
