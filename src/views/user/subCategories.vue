@@ -171,6 +171,13 @@
     <!-- Alt kategori yoksa ürünleri göster -->
     <CategoryProduct v-else :category-slug="getLastSlug" />
   </div>
+
+  <!-- SEO Schema -->
+  <script type="application/ld+json" v-if="currentCategory">
+    {{
+      schemaData
+    }}
+  </script>
 </template>
 
 <script setup>
@@ -275,6 +282,35 @@ const getMetaData = computed(() => {
       category.metadata.keywords.length > 0
         ? category.metadata.keywords.join(", ")
         : `${category.name}, e-ticaret, ürünler`,
+  };
+});
+
+// Schema.org yapısı
+const schemaData = computed(() => {
+  if (!currentCategory.value) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": currentCategory.value.metadata?.title || `${currentCategory.value.name} | Tarım Sepetim`,
+    "description": currentCategory.value.metadata?.description,
+    "url": `https://tarimsepetim.com/kategori/${currentCategory.value.slug}`,
+    "image": currentCategory.value.image,
+    "keywords": currentCategory.value.metadata?.keywords?.join(", "),
+    "mainEntity": {
+      "@type": "ItemList",
+      "numberOfItems": currentCategory.value.productCount,
+      "itemListElement": (currentCategory.value.children || []).map((child, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "item": {
+          "@type": "WebPage",
+          "name": child.name,
+          "description": child.metadata?.description,
+          "url": `https://tarimsepetim.com/kategori/${child.slug}`
+        }
+      }))
+    }
   };
 });
 
