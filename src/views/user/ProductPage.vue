@@ -23,123 +23,107 @@
       crossorigin
     />
     <div class="w-full px-[10px] sm:container sm:mx-auto sm:px-4 py-4 sm:py-8">
+      <!-- LCP Preload -->
+      <link
+        v-if="product?.images?.[0]?.url"
+        rel="preload"
+        as="image"
+        :href="product.images[0].url.replace('/upload/', '/upload/f_auto,q_auto:eco,w_600,dpr_auto,c_limit/')"
+        :imagesrcset="`
+          ${product.images[0].url.replace('/upload/', '/upload/f_webp,q_auto:eco,w_400,dpr_auto,c_limit,e_blur:1000/')} 400w,
+          ${product.images[0].url.replace('/upload/', '/upload/f_webp,q_auto:eco,w_600,dpr_auto,c_limit/')} 600w,
+          ${product.images[0].url.replace('/upload/', '/upload/f_webp,q_auto:eco,w_800,dpr_auto,c_limit/')} 800w
+        `"
+        :imagesizes="'(max-width: 480px) 95vw, (max-width: 768px) 75vw, 600px'"
+        fetchpriority="high"
+      />
       <!-- SEO için yapısal veri -->
-      <meta itemprop="name" :content="product?.name" />
-      <meta itemprop="description" :content="product?.description?.meta" />
-      <meta itemprop="sku" :content="product?.sku" />
+      <div v-if="product && isValidProduct" itemscope itemtype="http://schema.org/Product">
+        <meta itemprop="name" :content="product.name" />
+        <meta itemprop="description" :content="product.description?.meta" />
+        <meta itemprop="sku" :content="product.sku" />
+        <meta itemprop="productID" :content="product._id" />
+        <meta itemprop="category" :content="getCategoryName" />
+        
+        <!-- Ürün Resimleri -->
+        <link
+          v-if="product.images?.[0]?.url"
+          itemprop="image"
+          :content="product.images[0].url"
+        />
+        <meta
+          v-for="(image, index) in product.images"
+          :key="index"
+          v-if="index > 0"
+          itemprop="image"
+          :content="image.url"
+        />
+
+        <!-- Marka Bilgisi -->
+        <div itemprop="brand" itemscope itemtype="http://schema.org/Brand">
+          <meta itemprop="name" :content="product.brand" />
+        </div>
+
+        <!-- Fiyat Bilgisi -->
+        <div v-if="formattedPrice" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+          <meta itemprop="price" :content="formattedPrice" />
+          <meta itemprop="priceCurrency" content="TRY" />
+          <link
+            itemprop="availability"
+            :href="stockInfo?.quantity > 0 ? 'http://schema.org/InStock' : 'http://schema.org/OutOfStock'"
+          />
+          <meta itemprop="priceValidUntil" :content="priceValidUntil" />
+          <link itemprop="url" :content="currentUrl" />
+          <meta itemprop="itemCondition" content="http://schema.org/NewCondition"/>
+
+          <!-- Kargo Detayları -->
+          <div itemprop="shippingDetails" itemscope itemtype="http://schema.org/OfferShippingDetails">
+            <div itemprop="deliveryTime" itemscope itemtype="http://schema.org/ShippingDeliveryTime">
+              <meta itemprop="handlingTime" content="P1D" />
+              <meta itemprop="transitTime" content="P3D" />
+            </div>
+            <div itemprop="shippingDestination" itemscope itemtype="http://schema.org/DefinedRegion">
+              <meta itemprop="addressCountry" content="TR" />
+            </div>
+          </div>
+
+          <!-- Satıcı Bilgileri -->
+          <div itemprop="seller" itemscope itemtype="http://schema.org/Organization">
+            <meta itemprop="name" content="AgroSeed" />
+            <meta itemprop="telephone" content="+90 545 599 36 88" />
+            <meta itemprop="email" content="info@agroseed.com" />
+          </div>
+
+          <!-- İade Politikası -->
+          <div itemprop="hasMerchantReturnPolicy" itemscope itemtype="http://schema.org/MerchantReturnPolicy">
+            <meta itemprop="returnPolicyCategory" content="http://schema.org/MerchantReturnFiniteReturnWindow" />
+            <meta itemprop="returnMethod" content="http://schema.org/ReturnByMail" />
+            <meta itemprop="merchantReturnDays" content="14" />
+            <meta itemprop="returnFees" content="http://schema.org/ReturnFeesCustomer" />
+            <meta itemprop="applicableCountry" content="TR" />
+          </div>
+        </div>
+
+        <!-- Değerlendirme Bilgisi -->
+        <div
+          v-if="product.rating?.average && product.rating?.count"
+          itemprop="aggregateRating"
+          itemscope
+          itemtype="http://schema.org/AggregateRating"
+        >
+          <meta itemprop="ratingValue" :content="product.rating.average" />
+          <meta itemprop="reviewCount" :content="product.rating.count" />
+          <meta itemprop="bestRating" content="5" />
+          <meta itemprop="worstRating" content="1" />
+        </div>
+      </div>
+      <!-- Ürün Detayları için gizli div -->
       <div class="hidden">
         <div
           itemprop="description"
           v-if="product?.description?.detailed"
           v-html="parsedDetailedDescription"
         ></div>
-      </div>
-      <!-- Ürün Resimleri -->
-      <link
-        v-if="product?.images?.length > 0"
-        itemprop="image"
-        :content="product.images[0].url"
-      />
-      <meta
-        v-for="(image, index) in product?.images"
-        :key="index"
-        v-if="index > 0"
-        itemprop="image"
-        :content="image.url"
-      />
-
-      <!-- Marka Bilgisi -->
-      <div itemprop="brand" itemscope itemtype="http://schema.org/Brand">
-        <meta itemprop="name" :content="product?.brand" />
-      </div>
-
-      <!-- Fiyat Bilgisi -->
-      <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
-        <meta
-          itemprop="price"
-          :content="Number(product?.price?.current).toFixed(2)"
-        />
-        <meta itemprop="priceCurrency" content="TRY" />
-        <link
-          itemprop="availability"
-          href="http://schema.org/InStock"
-        />        <meta itemprop="priceValidUntil" :content="priceValidUntil" />
-        <link itemprop="url" :content="currentUrl" />
-
-        <!-- Kargo Detayları -->
-        <div
-          itemprop="shippingDetails"
-          itemscope
-          itemtype="http://schema.org/OfferShippingDetails"
-        >
-          <div
-            itemprop="shippingRate"
-            itemscope
-            itemtype="http://schema.org/MonetaryAmount"
-          >
-            <meta itemprop="value" content="0" />
-            <meta itemprop="currency" content="TRY" />
-          </div>
-          <div
-            itemprop="deliveryTime"
-            itemscope
-            itemtype="http://schema.org/ShippingDeliveryTime"
-          >
-            <meta itemprop="handlingTime" content="P1D" />
-            <meta itemprop="transitTime" content="P3D" />
-          </div>
-          <div
-            itemprop="shippingDestination"
-            itemscope
-            itemtype="http://schema.org/DefinedRegion"
-          >
-            <meta itemprop="addressCountry" content="TR" />
-          </div>
-        </div>
-
-        <!-- İade Politikası -->
-        <div
-          itemprop="hasMerchantReturnPolicy"
-          itemscope
-          itemtype="http://schema.org/MerchantReturnPolicy"
-        >
-          <meta
-            itemprop="returnPolicyCategory"
-            content="http://schema.org/MerchantReturnFiniteReturnWindow"
-          />
-          <div
-            itemprop="returnPolicyCountry"
-            itemscope
-            itemtype="http://schema.org/Country"
-          >
-            <meta itemprop="name" content="TR" />
-          </div>
-          <meta
-            itemprop="returnMethod"
-            content="http://schema.org/ReturnByMail"
-          />
-          <meta itemprop="merchantReturnDays" content="14" />
-          <meta itemprop="returnFees" content="http://schema.org/FreeReturn" />
-          <meta itemprop="applicableCountry" content="TR" />
-          <div
-            itemprop="returnPolicySeasonalOverride"
-            itemscope
-            itemtype="http://schema.org/MerchantReturnPolicySeasonalOverride"
-          >
-            <meta itemprop="name" content="false" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Değerlendirme Bilgisi -->
-      <div
-        v-if="product?.rating?.average"
-        itemprop="aggregateRating"
-        itemscope
-        itemtype="http://schema.org/AggregateRating"
-      >
-        <meta itemprop="ratingValue" :content="product.rating.average" />
-        <meta itemprop="reviewCount" :content="product.rating.count" />
       </div>
 
       <!-- Breadcrumb - Zenginleştirilmiş SEO -->
@@ -419,18 +403,53 @@ export default {
     // SEO için meta veriler
     const updateMetaTags = () => {
       if (product.value) {
-        document.title = `${product.value.name} - Zirai Ürünler`;
-        const metaDescription = document.querySelector(
-          'meta[name="description"]'
-        );
-        if (metaDescription) {
-          metaDescription.setAttribute(
-            "content",
-            product.value.description ||
-              `${product.value.name} - Kaliteli zirai ürün çeşitleri uygun fiyatlarla`
-          );
+        const title = `${product.value.name} - Tarım Sepetim`;
+        const description = product.value.description?.meta || 
+          `${product.value.name} - Detaylı ürün bilgileri, özellikleri ve fiyatı`;
+        
+        document.title = title;
+        
+        // Meta description güncelleme
+        let metaDescription = document.querySelector('meta[name="description"]');
+        if (!metaDescription) {
+          metaDescription = document.createElement('meta');
+          metaDescription.name = 'description';
+          document.head.appendChild(metaDescription);
         }
+        metaDescription.content = description;
+
+        // Open Graph meta etiketleri
+        updateOpenGraphTags({
+          title: title,
+          description: description,
+          image: product.value.images?.[0]?.url,
+          url: window.location.href
+        });
       }
+    };
+
+    // Open Graph meta etiketlerini güncelleme
+    const updateOpenGraphTags = ({ title, description, image, url }) => {
+      const ogTags = {
+        'og:title': title,
+        'og:description': description,
+        'og:image': image,
+        'og:url': url,
+        'og:type': 'product',
+        'og:site_name': 'Tarım Sepetim'
+      };
+
+      Object.entries(ogTags).forEach(([property, content]) => {
+        if (content) {
+          let metaTag = document.querySelector(`meta[property="${property}"]`);
+          if (!metaTag) {
+            metaTag = document.createElement('meta');
+            metaTag.setAttribute('property', property);
+            document.head.appendChild(metaTag);
+          }
+          metaTag.setAttribute('content', content);
+        }
+      });
     };
 
     // Ürün ve stok bilgisi çekme
@@ -505,6 +524,15 @@ export default {
       return marked.parse(product.value.description.detailed);
     });
 
+    const isValidProduct = computed(() => {
+      return product.value && product.value._id;
+    });
+
+    const formattedPrice = computed(() => {
+      if (!product.value) return null;
+      return Number(product.value.price.current).toFixed(2);
+    });
+
     const handleImageLoad = () => {
       console.log("Image loaded");
     };
@@ -527,6 +555,8 @@ export default {
       parsedDetailedDescription,
       handleImageLoad,
       handleAddToCart,
+      isValidProduct,
+      formattedPrice,
     };
   },
 };
