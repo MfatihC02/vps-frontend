@@ -4,6 +4,10 @@
     <nav class="sticky top-16 bg-white/90 backdrop-blur-md z-30 shadow-lg">
       <div class="w-full">
         <div class="grid grid-cols-2 gap-4 px-4 sm:px-6 relative py-2">
+          <!-- Tab Başlıkları Arasındaki Metin -->
+          <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-sm text-gray-400 font-medium hidden sm:block">
+            veya
+          </div>
           <a
             v-for="tab in tabs"
             :key="tab.id"
@@ -140,6 +144,14 @@
 
             <!-- Tohum kategorileri için alt kategorileri göster -->
             <template v-if="tab.id === 'recommended' && seedCategories && seedCategories.length">
+              <div class="mt-12 mb-6">
+                <h3 class="text-xl font-semibold text-gray-700 text-center">
+                  <span class="text-emerald-600">Farklı Ürünleri</span> Keşfedin
+                </h3>
+                <p class="text-gray-500 text-center mt-2">
+                  Birbirinden özel tohum çeşitlerimizi inceleyin
+                </p>
+              </div>
               <category-slider
                 v-for="category in seedCategories"
                 :key="category._id"
