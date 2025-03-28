@@ -127,8 +127,8 @@ const routes = [
     component: ProductDetail,
     props: true,
     meta: {
-      title: route => `${route.params.slug} | Ürün Detayı`,
-      description: route => `${route.params.slug} ürününün detaylı bilgileri ve özellikleri`
+      title: null,
+      description: null
     }
   },
   {
@@ -264,8 +264,8 @@ const routes = [
     name: 'admin-coupons',
     component: CouponList,
     meta: {
-      requiresAuth: true,
-      requiresAdmin: true,
+      // requiresAuth: true,
+      // requiresAdmin: true,
       title: 'Kupon Yönetimi',
       description: 'Kupon yönetim paneli. İndirim kuponları oluşturma, düzenleme ve yönetme.'
     }
@@ -368,9 +368,14 @@ router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
   const userStore = useUserStore();
 
-  document.title = to.meta.title
-    ? `${to.meta.title} | E-Ticaret`
-    : 'E-Ticaret';
+  // Dinamik title kontrolü
+  if (typeof to.meta.title === 'function') {
+    document.title = `${to.meta.title(to)} | Tarım Sepetim`;
+  } else if (to.meta.title) {
+    document.title = `${to.meta.title} | Tarım Sepetim`;
+  } else {
+    document.title = 'Tarım Sepetim';
+  }
 
   try {
     const isAuthenticated = await checkAuth(authStore);
