@@ -14,11 +14,11 @@
           >
             <Icon
               icon="mdi:whatsapp"
-              class="text-lg text-green-600 shrink-0 transform transition-transform duration-300 group-hover:scale-110"
+              class="text-xl text-green-600 shrink-0 transform transition-transform duration-300 group-hover:scale-110"
               aria-hidden="true"
             />
-            <span class="text-xs sm:text-sm whitespace-nowrap hidden xs:inline">
-              WhatsApp
+            <span class="text-sm sm:text-base font-bold whitespace-nowrap hidden xs:inline text-green-600">
+              WhatsApp Sipariş
             </span>
           </a>
         </div>
@@ -38,24 +38,6 @@
             İletişim
           </router-link>
         </div>
-
-        <!-- Sağ taraf - Sosyal medya ikonları -->
-        <div class="flex items-center space-x-3">
-          <a
-            v-for="(social, index) in socialLinks"
-            :key="index"
-            :href="social.url"
-            class="group relative flex items-center justify-center hover:text-green-600 transition-colors duration-200"
-            target="_blank"
-            rel="noopener noreferrer"
-            :aria-label="social.label"
-          >
-            <Icon
-              :icon="social.icon"
-              class="text-sm sm:text-base transform transition-transform duration-300 group-hover:scale-110"
-            />
-          </a>
-        </div>
       </div>
     </div>
   </div>
@@ -68,31 +50,7 @@ export default {
   name: "InfoBar",
   components: {
     Icon,
-  },
-  data() {
-    return {
-      socialLinks: [
-        {
-          icon: "mdi:facebook",
-          url: "#",
-          name: "Facebook",
-          label: "Bizi Facebook'ta takip et",
-        },
-        {
-          icon: "mdi:instagram",
-          url: "#",
-          name: "Instagram",
-          label: "Bizi Instagram'da takip et",
-        },
-        {
-          icon: "mdi:linkedin",
-          url: "#",
-          name: "LinkedIn",
-          label: "Bizi LinkedIn'de takip et",
-        },
-      ],
-    };
-  },
+  }
 };
 </script>
 
