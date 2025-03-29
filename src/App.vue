@@ -75,14 +75,19 @@ main {
   flex: 1 0 auto;
   min-height: 500px;
   width: 100%;
-  contain: content; /* Layout shift'i azalt */
+  contain: layout; /* Layout shift'i azalt */
+  content-visibility: auto; /* Görünür olmayan içeriği optimize et */
 }
 
 .footer {
   flex-shrink: 0;
-  height: 400px; /* Sabit footer yüksekliği */
+  min-height: 400px; /* Minimum yükseklik */
   width: 100%;
-  contain: content;
+  display: grid; /* Grid layout kullanarak içeriği düzenle */
+  grid-template-rows: auto 1fr; /* İçeriği otomatik boyutlandır */
+  contain: layout; /* Sadece layout containment uygula */
+  content-visibility: auto; /* Görünür olmayan içeriği optimize et */
+  contain-intrinsic-size: 0 400px; /* Tahmini boyut belirt */
 }
 
 /* Sayfa geçiş animasyonları */
@@ -104,8 +109,9 @@ main {
   }
   
   .footer {
-    height: 300px; /* Mobil için daha küçük footer yüksekliği */
-    display: block; /* Footer'ın mobilde düzgün görünmesini sağla */
+    min-height: auto; /* Otomatik yükseklik */
+    padding-bottom: env(safe-area-inset-bottom, 0); /* Safe area desteği */
+    contain-intrinsic-size: 0 300px; /* Mobil için tahmini boyut */
   }
 
   /* Touch cihazlar için scroll optimizasyonu */
@@ -117,5 +123,5 @@ main {
   .mt-[60px] {
     margin-top: 40px;
   }
-}   
+}
 </style>
