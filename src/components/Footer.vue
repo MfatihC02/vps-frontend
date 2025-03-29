@@ -5,8 +5,19 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <!-- Kurumsal -->
         <div class="space-y-4">
-          <h3 class="text-lg font-semibold text-white mb-4">Kurumsal</h3>
-          <ul class="space-y-2">
+          <button 
+            @click="toggleSection('kurumsal')" 
+            class="w-full flex items-center justify-between text-lg font-semibold text-white mb-4 sm:cursor-default"
+          >
+            <span>Kurumsal</span>
+            <iconify-icon
+              icon="mdi:chevron-down"
+              :class="{'rotate-180': sections.kurumsal}"
+              class="sm:hidden transition-transform duration-300"
+              width="24"
+            ></iconify-icon>
+          </button>
+          <ul :class="{'hidden sm:block': !sections.kurumsal}" class="space-y-2">
             <li>
               <router-link
                 to="/hakkimizda"
@@ -14,7 +25,7 @@
               >
                 <iconify-icon
                   icon="mdi:chevron-right"
-                  style="color: #34c759"
+                  class="text-green-500"
                   width="16"
                 ></iconify-icon>
                 Hakkımızda
@@ -27,7 +38,7 @@
               >
                 <iconify-icon
                   icon="mdi:chevron-right"
-                  style="color: #34c759"
+                  class="text-green-500"
                   width="16"
                 ></iconify-icon>
                 İletişim
@@ -40,7 +51,7 @@
               >
                 <iconify-icon
                   icon="mdi:chevron-right"
-                  style="color: #34c759"
+                  class="text-green-500"
                   width="16"
                 ></iconify-icon>
                 Kariyer
@@ -53,7 +64,7 @@
               >
                 <iconify-icon
                   icon="mdi:chevron-right"
-                  style="color: #34c759"
+                  class="text-green-500"
                   width="16"
                 ></iconify-icon>
                 Blog
@@ -64,10 +75,19 @@
 
         <!-- Müşteri Hizmetleri -->
         <div class="space-y-4">
-          <h3 class="text-lg font-semibold text-white mb-4">
-            Müşteri Hizmetleri
-          </h3>
-          <ul class="space-y-2">
+          <button 
+            @click="toggleSection('musteri')" 
+            class="w-full flex items-center justify-between text-lg font-semibold text-white mb-4 sm:cursor-default"
+          >
+            <span>Müşteri Hizmetleri</span>
+            <iconify-icon
+              icon="mdi:chevron-down"
+              :class="{'rotate-180': sections.musteri}"
+              class="sm:hidden transition-transform duration-300"
+              width="24"
+            ></iconify-icon>
+          </button>
+          <ul :class="{'hidden sm:block': !sections.musteri}" class="space-y-2">
             <li>
               <router-link
                 to="/faq"
@@ -75,7 +95,7 @@
               >
                 <iconify-icon
                   icon="mdi:chevron-right"
-                  style="color: #34c759"
+                  class="text-green-500"
                   width="16"
                 ></iconify-icon>
                 Sıkça Sorulan Sorular
@@ -88,7 +108,7 @@
               >
                 <iconify-icon
                   icon="mdi:chevron-right"
-                  style="color: #34c759"
+                  class="text-green-500"
                   width="16"
                 ></iconify-icon>
                 İade ve Değişim Politikası
@@ -101,7 +121,7 @@
               >
                 <iconify-icon
                   icon="mdi:chevron-right"
-                  style="color: #34c759"
+                  class="text-green-500"
                   width="16"
                 ></iconify-icon>
                 Gizlilik Politikası
@@ -112,14 +132,23 @@
 
         <!-- İletişim Bilgileri -->
         <div class="space-y-4">
-          <h3 class="text-lg font-semibold text-white mb-4">
-            İletişim Bilgileri
-          </h3>
-          <ul class="space-y-3">
+          <button 
+            @click="toggleSection('iletisim')" 
+            class="w-full flex items-center justify-between text-lg font-semibold text-white mb-4 sm:cursor-default"
+          >
+            <span>İletişim Bilgileri</span>
+            <iconify-icon
+              icon="mdi:chevron-down"
+              :class="{'rotate-180': sections.iletisim}"
+              class="sm:hidden transition-transform duration-300"
+              width="24"
+            ></iconify-icon>
+          </button>
+          <ul :class="{'hidden sm:block': !sections.iletisim}" class="space-y-3">
             <li class="flex items-start space-x-3">
               <iconify-icon
                 icon="mdi:map-marker"
-                style="color: #34c759"
+                class="text-green-500"
                 width="20"
               ></iconify-icon>
               <span>Şükran Mah. Sahibi Ata Cad. No:38 Meram, Konya</span>
@@ -131,7 +160,7 @@
               >
                 <iconify-icon
                   icon="mdi:phone"
-                  style="color: #34c759"
+                  class="text-green-500"
                   width="20"
                 ></iconify-icon>
                 <span>0332 351 31 28</span>
@@ -144,7 +173,7 @@
               >
                 <iconify-icon
                   icon="mdi:email"
-                  style="color: #34c759"
+                  class="text-green-500"
                   width="20"
                 ></iconify-icon>
                 <span>iletisim@tarimsepetim.com.tr</span>
@@ -153,7 +182,7 @@
             <li class="flex items-start space-x-3">
               <iconify-icon
                 icon="mdi:clock"
-                style="color: #34c759"
+                class="text-green-500"
                 width="20"
               ></iconify-icon>
               <div>
@@ -164,76 +193,57 @@
           </ul>
         </div>
 
-        <!-- Sosyal Medya & Bülten -->
-        <div class="space-y-6">
-          <div>
-            <h3 class="text-lg font-semibold text-white mb-4">Sosyal Medya</h3>
-            <div class="flex space-x-4">
-              <a 
-                href="https://www.instagram.com/muhendislerticaretkonya/"
-                class="transform hover:scale-110 transition-transform duration-200"
-              >
-                <iconify-icon
-                  icon="mdi:instagram"
-                  style="color: #e4405f"
-                  width="24"
-                ></iconify-icon>
-              </a>
-              <a
-                href="#"
-                class="transform hover:scale-110 transition-transform duration-200"
-              >
-                <iconify-icon
-                  icon="mdi:linkedin"
-                  style="color: #0a66c2"
-                  width="24"
-                ></iconify-icon>
-              </a>
-              <a 
-                href="#"
-                class="transform hover:scale-110 transition-transform duration-200"
-              >
-                <iconify-icon
-                  icon="mdi:youtube"
-                  style="color: #ff0000"
-                  width="24"
-                ></iconify-icon>
-              </a>
-            </div>
+        <!-- Sosyal Medya -->
+        <div class="block w-full">
+          <h3 class="text-lg font-semibold text-white mb-6">Sosyal Medya</h3>
+          <!-- Sosyal Medya İkonları -->
+          <div class="flex space-x-4 mb-6">
+            <a 
+              href="https://www.instagram.com/muhendislerticaretkonya/"
+              class="transform hover:scale-110 transition-transform duration-200"
+            >
+              <iconify-icon
+                icon="mdi:instagram"
+                class="text-[#e4405f]"
+                width="28"
+              ></iconify-icon>
+            </a>
+            <a
+              href="#"
+              class="transform hover:scale-110 transition-transform duration-200"
+            >
+              <iconify-icon
+                icon="mdi:linkedin"
+                class="text-[#0a66c2]"
+                width="28"
+              ></iconify-icon>
+            </a>
+            <a 
+              href="#"
+              class="transform hover:scale-110 transition-transform duration-200"
+            >
+              <iconify-icon
+                icon="mdi:youtube"
+                class="text-[#ff0000]"
+                width="28"
+              ></iconify-icon>
+            </a>
           </div>
-
-          <div>
-            <h3 class="text-lg font-semibold text-white mb-4">E-Bülten</h3>
-            <form @submit.prevent="subscribeNewsletter" class="space-y-3">
-              <div class="relative">
-                <input
-                  type="email"
-                  v-model="newsletterEmail"
-                  placeholder="E-posta adresiniz"
-                  class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:border-green-500 text-white"
-                  required
-                />
-                <button
-                  type="submit"
-                  class="absolute right-2 top-1/2 transform -translate-y-1/2 text-green-500 hover:text-green-400"
-                  :disabled="isSubscribing"
-                >
-                  <iconify-icon
-                    icon="mdi:send"
-                    style="color: #34c759"
-                    width="20"
-                    v-if="!isSubscribing"
-                  ></iconify-icon>
-                  <iconify-icon
-                    icon="mdi:loading"
-                    style="color: #34c759"
-                    width="20"
-                    v-else
-                  ></iconify-icon>
-                </button>
-              </div>
-            </form>
-          </div>
+          <!-- WhatsApp Button -->
+          <a 
+            href="https://wa.me/905516419012"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center gap-3 bg-[#25D366] hover:bg-[#20BD5A] text-white p-3 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg group w-full justify-center sm:justify-start"
+          >
+            <iconify-icon
+              icon="mdi:whatsapp"
+              width="28"
+              height="28"
+              class="transition-transform duration-300 group-hover:scale-110"
+            ></iconify-icon>
+            <span class="font-semibold text-base">WhatsApp'tan Sipariş Ver</span>
+          </a>
         </div>
       </div>
     </div>
@@ -291,7 +301,7 @@
     >
       <iconify-icon
         icon="mdi:arrow-up"
-        style="color: white"
+        class="text-white"
         width="24"
       ></iconify-icon>
     </button>
@@ -301,28 +311,23 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 
-const newsletterEmail = ref("");
-const isSubscribing = ref(false);
 const showScrollTop = ref(false);
 
-// E-bülten aboneliği
-const subscribeNewsletter = async () => {
-  if (!newsletterEmail.value) return;
+// Dropdown sections state
+const sections = ref({
+  kurumsal: false,
+  musteri: false,
+  iletisim: false
+});
 
-  isSubscribing.value = true;
-  try {
-    // API çağrısı burada yapılacak
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simüle edilmiş API çağrısı
-    newsletterEmail.value = "";
-    alert("Bültene başarıyla abone oldunuz!");
-  } catch (error) {
-    alert("Bir hata oluştu. Lütfen tekrar deneyin.");
-  } finally {
-    isSubscribing.value = false;
+// Toggle section visibility
+const toggleSection = (section) => {
+  if (window.innerWidth < 640) { // Sadece mobil görünümde çalışsın
+    sections.value[section] = !sections.value[section];
   }
 };
 
-// Scroll to top fonksiyonları
+// Scroll to top functions
 const checkScroll = () => {
   showScrollTop.value = window.pageYOffset > 300;
 };
@@ -345,46 +350,14 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Özel animasyonlar */
-.icon-[fontisto--loading] {
-  animation: spin 1s linear infinite;
-}
-
+/* Sadece spin animasyonu için gerekli stil */
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-/* Footer ana stili */
-footer {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Mobil düzen düzeltmeleri */
-@media (max-width: 768px) {
-  footer {
-    width: 100%;
-    display: block;
-    height: auto;
-  }
-  
-  .grid {
-    display: grid;
-    gap: 1.5rem;
-  }
-  
-  .border-t.border-gray-700 {
-    padding-top: 0.75rem;
-    margin-top: 0.75rem;
-  }
-  
-  .container {
-    width: 100%;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
+.icon-[fontisto--loading] {
+  animation: spin 1s linear infinite;
 }
 </style>
