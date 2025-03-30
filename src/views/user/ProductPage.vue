@@ -257,19 +257,20 @@
       >
         <div class="p-2 sm:p-4 lg:p-6">
           <!-- Ana grid için minimum yükseklik tanımı eklendi -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 min-h-[600px]">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
             <!-- Sol Kolon: Ürün Galerisi -->
-            <div class="w-full lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)]">
+            <div class="w-full lg:relative">
               <Suspense>
                 <template #default>
                   <ProductGallery
                     :images="product?.images || []"
                     :loading="loading"
                     @image-loaded="handleImageLoad"
+                    class="lg:sticky lg:top-4"
                   />
                 </template>
                 <template #fallback>
-                  <div class="w-full h-[70vh] bg-gray-50 rounded-xl animate-pulse"></div>
+                  <div class="w-full aspect-[4/3] md:aspect-[16/9] lg:aspect-square bg-gray-50 rounded-xl animate-pulse"></div>
                 </template>
               </Suspense>
             </div>
