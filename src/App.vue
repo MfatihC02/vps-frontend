@@ -67,7 +67,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  overflow-x: hidden; /* Yatay kaymayı önle */
+  overflow-x: hidden;
 }
 
 /* Layout shift önleme */
@@ -75,26 +75,30 @@ main {
   flex: 1 0 auto;
   min-height: 500px;
   width: 100%;
-  contain: layout; /* Layout shift'i azalt */
-  content-visibility: auto; /* Görünür olmayan içeriği optimize et */
+  contain: layout;
+  content-visibility: auto;
 }
 
 .footer {
-  flex-shrink: 0;
-  min-height: 400px; /* Minimum yükseklik */
-  width: 100%;
-  display: grid; /* Grid layout kullanarak içeriği düzenle */
-  grid-template-rows: auto 1fr; /* İçeriği otomatik boyutlandır */
-  contain: layout; /* Sadece layout containment uygula */
-  content-visibility: auto; /* Görünür olmayan içeriği optimize et */
-  contain-intrinsic-size: 0 400px; /* Tahmini boyut belirt */
+  contain: size layout;
+  content-visibility: auto;
+  contain-intrinsic-size: 600px;
+  display: block;
+  height: 600px;
+}
+
+@media (min-width: 768px) {
+  .footer {
+    height: 500px;
+    contain-intrinsic-size: 500px;
+  }
 }
 
 /* Sayfa geçiş animasyonları */
 .page-enter-active,
 .page-leave-active {
   transition: opacity 0.2s ease;
-  will-change: opacity; /* GPU hızlandırma */
+  will-change: opacity;
 }
 
 .page-enter-from,
@@ -106,12 +110,6 @@ main {
 @media (max-width: 768px) {
   main {
     min-height: 300px;
-  }
-  
-  .footer {
-    min-height: auto; /* Otomatik yükseklik */
-    padding-bottom: env(safe-area-inset-bottom, 0); /* Safe area desteği */
-    contain-intrinsic-size: 0 300px; /* Mobil için tahmini boyut */
   }
 
   /* Touch cihazlar için scroll optimizasyonu */
