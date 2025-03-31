@@ -1,8 +1,8 @@
 <template>
-  <footer class="bg-gray-900 text-gray-300">
+  <footer class="bg-gray-900 text-gray-300 h-[600px] md:h-[500px] w-full flex flex-col">
     <!-- Üst Footer -->
-    <div class="container mx-auto px-4 py-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div class="container mx-auto px-4 py-8 flex-1">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 flex-grow">
         <!-- Kurumsal -->
         <div class="space-y-4">
           <button 
@@ -249,7 +249,7 @@
     </div>
 
     <!-- Alt Footer -->
-    <div class="border-t border-gray-800">
+    <div class="border-t border-gray-800 mt-auto">
       <div class="container mx-auto px-4 py-4">
         <!-- Ödeme Yöntemleri -->
         <div class="flex justify-center md:justify-start space-x-6 mb-4">
