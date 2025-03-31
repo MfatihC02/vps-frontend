@@ -24,6 +24,14 @@
       crossorigin
     />
     <div class="w-full px-[10px] sm:container sm:mx-auto sm:px-4 py-4 sm:py-8">
+      <!-- Hızlı Yüklenen Başlık -->
+      <h1 
+        v-if="initialTitle"
+        class="text-[#2F5E32] font-semibold text-xl mb-4"
+      >
+        {{ initialTitle }}
+      </h1>
+
       <!-- LCP Preload -->
       <link
         v-if="product?.images?.[0]?.url"
@@ -39,7 +47,7 @@
         fetchpriority="high"
       />
       <!-- SEO için yapısal veri -->
-      <div itemscope itemtype="http://schema.org/Product">
+      <div itemscope itemtype="http://schema.org/Product" class="hidden">
         <meta itemprop="name" :content="product.name" />
         <meta itemprop="description" :content="product.description?.meta" />
         <meta itemprop="sku" :content="product.sku" />
@@ -209,7 +217,7 @@
             itemtype="https://schema.org/ListItem"
             class="text-[#2F5E32]"
           >
-            <span itemprop="name">{{ product.name }}</span>
+            <span itemprop="name" class="sr-only">{{ product.name }}</span>
             <meta
               itemprop="position"
               :content="
@@ -257,20 +265,19 @@
       >
         <div class="p-2 sm:p-4 lg:p-6">
           <!-- Ana grid için minimum yükseklik tanımı eklendi -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 min-h-[600px]">
             <!-- Sol Kolon: Ürün Galerisi -->
-            <div class="w-full lg:relative">
+            <div class="w-full lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)]">
               <Suspense>
                 <template #default>
                   <ProductGallery
                     :images="product?.images || []"
                     :loading="loading"
                     @image-loaded="handleImageLoad"
-                    class="lg:sticky lg:top-4"
                   />
                 </template>
                 <template #fallback>
-                  <div class="w-full aspect-[4/3] md:aspect-[16/9] lg:aspect-square bg-gray-50 rounded-xl animate-pulse"></div>
+                  <div class="w-full h-[70vh] bg-gray-50 rounded-xl animate-pulse"></div>
                 </template>
               </Suspense>
             </div>
@@ -297,7 +304,7 @@
           </div>
 
           <!-- Tab Sistemi -->
-          <div class="mt-8 border-t pt-8">
+          <div class="mt-8 border-t pt-8 min-h-[400px]">
             <TabGroup>
               <TabList class="flex space-x-1 border-b">
                 <Tab v-slot="{ selected }" as="template">
@@ -390,11 +397,27 @@ export default {
     const stockStore = useStockStore();
     const route = useRoute();
     const retryCount = ref(0);
+    const initialTitle = ref('');
+
+    // URL'den başlığı hemen çıkar
+    onBeforeMount(() => {
+      initialTitle.value = route.params.slug
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    });
 
     // Store'dan reactive değerler
     const loading = computed(() => productStore.isLoading);
     const error = computed(() => productStore.getError);
-    const product = computed(() => productStore.product);
+    const product = computed(() => {
+      const p = productStore.product;
+      if (p) {
+        // Başlığı güncelle
+        initialTitle.value = p.name;
+      }
+      return p;
+    });
 
     // Stok bilgisi
     const stockInfo = computed(() => {
@@ -559,6 +582,7 @@ export default {
       handleAddToCart,
       isValidProduct,
       formattedPrice,
+      initialTitle,
     };
   },
 };
