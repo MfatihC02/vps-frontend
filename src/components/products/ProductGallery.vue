@@ -1,52 +1,59 @@
 <template>
   <section
-    class="product-gallery"
+    class="product-gallery -mt-4 sticky top-0"
     itemscope
     itemtype="http://schema.org/ImageGallery"
   >
     <!-- Ana görsel görüntüleme alanı -->
-    <div class="relative pb-8">
+    <div class="relative h-screen overflow-y-auto pb-8">
       <!-- Ana Görsel Container -->
       <div
-        class="relative w-full aspect-[4/3] md:aspect-[16/9] lg:aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 group"
+        class="relative w-full h-[70vh] rounded-xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 group sticky top-0 z-10"
         :class="{ 'animate-pulse': loading }"
-        @touchstart.passive="handleTouchStart"
-        @touchmove.passive="handleTouchMove"
-        @touchend.passive="handleTouchEnd"
+        @touchstart="handleTouchStart"
+        @touchmove="handleTouchMove"
+        @touchend="handleTouchEnd"
       >
         <!-- Loading Placeholder -->
         <div
           v-if="loading"
           class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100"
-          aria-label="Yükleniyor"
         >
           <div
             class="w-12 h-12 rounded-full border-4 border-gray-200 border-t-[#2F5E32] animate-spin"
-            role="progressbar"
           ></div>
         </div>
 
         <picture v-if="currentImage">
           <source
             :srcset="`
-              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:good,w_400,h_400,c_fit/')} 400w,
-              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:good,w_600,h_600,c_fit/')} 600w,
-              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:good,w_800,h_800,c_fit/')} 800w,
-              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:good,w_1200,h_1200,c_fit/')} 1200w
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:good,w_400,dpr_auto,c_limit,e_blur:1000/')} 400w,
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:good,w_600,dpr_auto,c_limit/')} 600w,
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:good,w_800,dpr_auto,c_limit/')} 800w
             `"
             type="image/webp"
+            media="(max-width: 768px)"
+          />
+          <source
+            :srcset="`
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:eco,w_600,dpr_auto,c_limit/')} 600w,
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:eco,w_800,dpr_auto,c_limit/')} 800w,
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:eco,w_1200,dpr_auto,c_limit/')} 1200w
+            `"
+            type="image/webp"
+            media="(min-width: 769px)"
           />
           <img
-            :src="currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:good,w_600,h_600,c_fit/')"
+            :src="currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:good,w_400,dpr_auto,c_limit/')"
             :srcset="`
-              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:good,w_400,h_400,c_fit/')} 400w,
-              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:good,w_600,h_600,c_fit/')} 600w,
-              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:good,w_800,h_800,c_fit/')} 800w,
-              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:good,w_1200,h_1200,c_fit/')} 1200w
+              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:good,w_400,dpr_auto,c_limit/')} 400w,
+              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:good,w_600,dpr_auto,c_limit/')} 600w
             `"
-            :sizes="'(max-width: 480px) 100vw, (max-width: 768px) 75vw, (max-width: 1024px) 50vw, 800px'"
+            :sizes="'(max-width: 480px) 95vw, (max-width: 768px) 75vw, 600px'"
             :alt="currentImage.alt || `${currentImageIndex + 1}. ürün görseli`"
-            class="w-full h-full object-contain transition-transform duration-300"
+            class="w-full h-full object-contain transition-all duration-300"
+            width="400"
+            height="400"
             :class="{
               'opacity-0': loading,
               'scale-[1.6] cursor-zoom-out': zoomed,
@@ -56,9 +63,6 @@
             itemprop="image"
             fetchpriority="high"
             decoding="async"
-            loading="eager"
-            width="800"
-            height="800"
             @load="handleImageLoad"
           />
         </picture>
@@ -109,7 +113,7 @@
       <!-- Thumbnail Navigator -->
       <div
         v-if="sortedImages.length > 1"
-        class="mt-4 grid grid-flow-col auto-cols-[4.5rem] md:auto-cols-[5rem] gap-2 sm:gap-3 overflow-x-auto scrollbar-thin pb-2 snap-x"
+        class="mt-4 flex gap-2 sm:gap-3 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 pb-2 snap-x"
         role="tablist"
         aria-label="Ürün görselleri"
       >
@@ -117,7 +121,7 @@
           v-for="(img, idx) in sortedImages"
           :key="img.publicId || idx"
           @click="selectImage(idx)"
-          class="relative aspect-square rounded-lg overflow-hidden focus:outline-none transition-transform duration-200 transform hover:scale-105 snap-center focus:ring-2 focus:ring-[#2F5E32]"
+          class="relative flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden focus:outline-none transition-all duration-200 transform hover:scale-105 snap-center"
           :class="{
             'ring-2 ring-[#2F5E32] shadow-md': currentImageIndex === idx,
             'opacity-60 hover:opacity-100': currentImageIndex !== idx,
@@ -130,24 +134,23 @@
         >
           <picture>
             <source
-              :srcset="img.url.replace('/upload/', '/upload/f_webp,q_auto:good,w_120,h_120,c_fill,g_center/')"
+              :srcset="img.url.replace('/upload/', '/upload/f_webp,q_auto:eco,w_100,h_100,c_fill,g_center/')"
               type="image/webp"
             />
             <img
-              :src="img.url.replace('/upload/', '/upload/f_auto,q_auto:good,w_120,h_120,c_fill,g_center/')"
+              :src="img.url.replace('/upload/', '/upload/f_auto,q_auto:eco,w_100,h_100,c_fill,g_center/')"
               :alt="`Küçük görsel ${idx + 1}`"
               class="w-full h-full object-cover transition-opacity duration-200"
               :class="{ 'opacity-50': loading }"
               loading="lazy"
               decoding="async"
-              width="120"
-              height="120"
+              width="100"
+              height="100"
             />
           </picture>
           <div
             v-if="loading"
             class="absolute inset-0 flex items-center justify-center bg-white/50"
-            aria-hidden="true"
           >
             <div
               class="w-4 h-4 border-2 border-[#2F5E32] border-t-transparent rounded-full animate-spin"
@@ -196,7 +199,7 @@ import {
   X,
 } from "lucide-vue-next";
 import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
-import { useThrottleFn } from "@vueuse/core";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "ProductGallery",
@@ -235,7 +238,6 @@ export default {
     const showLightbox = ref(false);
     const touchStartX = ref(0);
     const touchEndX = ref(0);
-    let preloadedImages = new Set();
 
     const sortedImages = computed(() => {
       return props.images || [];
@@ -247,20 +249,21 @@ export default {
 
     const isFirstImage = computed(() => currentImageIndex.value === 0);
     const isLastImage = computed(() => {
-      return currentImageIndex.value === sortedImages.value.length - 1;
+      return (
+        currentImageIndex.value === sortedImages.value.length - 1
+      );
     });
 
-    // Touch olayları için throttle
-    const handleTouchStart = useThrottleFn((e) => {
+    const handleTouchStart = (e) => {
       touchStartX.value = e.touches[0].clientX;
-    }, 16);
+    };
 
-    const handleTouchMove = useThrottleFn((e) => {
+    const handleTouchMove = (e) => {
       touchEndX.value = e.touches[0].clientX;
-    }, 16);
+    };
 
-    const handleTouchEnd = useThrottleFn(() => {
-      const swipeThreshold = 50;
+    const handleTouchEnd = () => {
+      const swipeThreshold = 50; 
       const swipeDistance = touchEndX.value - touchStartX.value;
 
       if (Math.abs(swipeDistance) > swipeThreshold) {
@@ -270,15 +273,15 @@ export default {
           nextImage();
         }
       }
-    }, 16);
+    };
 
     const handleImageLoad = () => {
       loading.value = false;
     };
 
-    const toggleZoom = useThrottleFn(() => {
+    const toggleZoom = () => {
       zoomed.value = !zoomed.value;
-    }, 300);
+    };
 
     const openLightbox = () => {
       showLightbox.value = true;
@@ -290,74 +293,63 @@ export default {
       document.body.style.overflow = "";
     };
 
-    const preloadImage = (url) => {
-      if (preloadedImages.has(url)) return;
-      
-      const img = new Image();
-      img.fetchPriority = 'low';
-      img.loading = 'lazy';
-      img.src = url.replace(
-        '/upload/',
-        '/upload/f_auto,q_auto:good,w_600,h_600,c_fit/'
-      );
-      preloadedImages.add(url);
-    };
-
-    const preloadAdjacentImages = () => {
-      const nextIndex = currentImageIndex.value + 1;
-      const prevIndex = currentImageIndex.value - 1;
-
-      if (sortedImages.value[nextIndex]) {
-        preloadImage(sortedImages.value[nextIndex].url);
-      }
-      if (sortedImages.value[prevIndex]) {
-        preloadImage(sortedImages.value[prevIndex].url);
-      }
-    };
-
-    const nextImage = useThrottleFn(() => {
+    const nextImage = () => {
       if (loading.value || !sortedImages.value.length) return;
       currentImageIndex.value =
         (currentImageIndex.value + 1) % sortedImages.value.length;
-    }, 300);
+    };
 
-    const prevImage = useThrottleFn(() => {
+    const prevImage = () => {
       if (loading.value || !sortedImages.value.length) return;
       currentImageIndex.value =
         (currentImageIndex.value - 1 + sortedImages.value.length) %
         sortedImages.value.length;
-    }, 300);
+    };
 
-    const selectImage = useThrottleFn((index) => {
+    const selectImage = (index) => {
       if (loading.value) return;
       currentImageIndex.value = index;
-    }, 300);
+    };
 
     onMounted(() => {
       if (props.images?.[0]?.url) {
+        // Ana görseli preload et
         const link = document.createElement('link');
         link.rel = 'preload';
         link.as = 'image';
         link.href = props.images[0].url.replace(
           '/upload/',
-          '/upload/f_auto,q_auto:good,w_600,h_600,c_fit/'
+          '/upload/f_auto,q_auto:good,w_400,dpr_auto,c_limit/'
         );
         link.fetchPriority = 'high';
         document.head.appendChild(link);
-        
-        // İlk birkaç görseli önyükle
-        sortedImages.value.slice(0, 3).forEach(img => {
-          preloadImage(img.url);
-        });
+
+        // Bir sonraki görseli düşük öncelikle preload et
+        if (props.images[1]?.url) {
+          const nextLink = document.createElement('link');
+          nextLink.rel = 'preload';
+          nextLink.as = 'image';
+          nextLink.href = props.images[1].url.replace(
+            '/upload/',
+            '/upload/f_auto,q_auto:eco,w_400,dpr_auto,c_limit/'
+          );
+          nextLink.fetchPriority = 'low';
+          document.head.appendChild(nextLink);
+        }
       }
     });
 
-    watch(() => currentImageIndex.value, () => {
-      preloadAdjacentImages();
-    });
-
-    onBeforeUnmount(() => {
-      preloadedImages.clear();
+    watch(() => currentImageIndex.value, (newIndex) => {
+      const nextIndex = (newIndex + 1) % sortedImages.value.length;
+      if (sortedImages.value[nextIndex]) {
+        const img = new Image();
+        img.fetchPriority = 'low';
+        img.loading = 'lazy';
+        img.src = sortedImages.value[nextIndex].url.replace(
+          '/upload/',
+          '/upload/f_auto,q_auto:eco,w_400,dpr_auto,c_limit/'
+        );
+      }
     });
 
     return {
@@ -385,31 +377,37 @@ export default {
 </script>
 
 <style scoped>
-/* Performans optimizasyonları */
+/* Performans optimizasyonları için CSS */
 .product-gallery {
-  contain: content;
-  overscroll-behavior: contain;
+  z-index: 10;
+  height: 100vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Mobil kaydırma performansı */
+  overscroll-behavior: contain; /* Overscroll etkilerini kontrol et */
 }
 
 .product-gallery img {
-  will-change: transform;
+  will-change: transform, opacity;
   transform: translateZ(0);
   backface-visibility: hidden;
-  contain: paint;
+  contain: paint; /* Paint alanını sınırla */
 }
 
-/* Smooth transitions */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+/* Mobil için optimize edilmiş transition'lar */
+@media (max-width: 768px) {
+  .product-gallery img {
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+  }
 }
 
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+/* Desktop için normal transition'lar */
+@media (min-width: 769px) {
+  .product-gallery img {
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  }
 }
 
-/* Scrollbar styles */
+/* Thumbnail scrollbar optimizasyonu */
 .scrollbar-thin {
   scrollbar-width: thin;
   -webkit-overflow-scrolling: touch;
@@ -434,25 +432,14 @@ export default {
   background: #a8a8a8;
 }
 
-/* Touch optimizasyonları */
-@media (hover: none) {
-  .product-gallery {
-    touch-action: pan-y pinch-zoom;
-  }
-  
-  .product-gallery img {
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
-  }
+/* Fade animasyonları */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease-out;
 }
 
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .product-gallery img,
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: none !important;
-  }
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
