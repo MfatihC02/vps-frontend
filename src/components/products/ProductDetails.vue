@@ -498,18 +498,17 @@ export default {
         // Yorumları yükle
         await loadReviews();
         await nextTick();
-        if (props.product?.name) {
-          // Başlık içeriğini hazırla
-          const titleContent = props.product.name;
-          
-          // requestAnimationFrame ile render zamanlaması
-          requestAnimationFrame(() => {
-            if (titleRef.value) {
-              titleRef.value.textContent = titleContent;
-              isTitleReady.value = true;
-            }
-          });
-        }
+        
+        // Başlık hazır olduğunda isTitleReady'i güncelle
+        watch(() => product.value?.name, (newName) => {
+          if (newName) {
+            requestAnimationFrame(() => {
+              if (titleRef.value) {
+                isTitleReady.value = true;
+              }
+            });
+          }
+        }, { immediate: true });
       } catch (error) {
         console.error("Veriler yüklenirken hata:", error);
       }
