@@ -369,7 +369,7 @@ import { ChevronRight } from "lucide-vue-next";
 import { useProductStore } from "@/stores/productStore";
 import { useStockStore } from "@/stores/stockStore";
 import { marked } from "marked";
-import { computed, onMounted, ref, watchEffect,onBeforeMount  } from "vue";
+import { computed, onMounted, ref, watchEffect,onBeforeMount,nextTick  } from "vue";
 import { useRoute } from "vue-router";
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue";
 import ProductGallery from "@/components/products/ProductGallery.vue";
