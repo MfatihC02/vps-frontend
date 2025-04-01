@@ -263,9 +263,9 @@
         v-else-if="product"
         class="bg-white rounded-none sm:rounded-xl shadow-sm transition-all duration-300 hover:shadow-md mx-[-10px] sm:mx-0"
       >
-        <div class="p-2 sm:p-4 lg:p-6">
-          <!-- Ana grid için minimum yükseklik tanımı eklendi -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 min-h-[600px]">
+        <div class="p-0 sm:p-4 lg:p-6">
+          <!-- Ana grid için minimum yükseklik tanımı güncellendi -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 sm:gap-4 lg:gap-8">
             <!-- Sol Kolon: Ürün Galerisi -->
             <div class="w-full lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)]">
               <Suspense>
@@ -277,13 +277,13 @@
                   />
                 </template>
                 <template #fallback>
-                  <div class="w-full h-[70vh] bg-gray-50 rounded-xl animate-pulse"></div>
+                  <div class="w-full h-[50vh] md:h-[70vh] bg-gray-50 rounded-xl animate-pulse"></div>
                 </template>
               </Suspense>
             </div>
 
             <!-- Sağ Kolon: Ürün Detayları -->
-            <div class="space-y-6">
+            <div class="space-y-3 sm:space-y-4 lg:space-y-6 px-3 sm:px-0">
               <Suspense>
                 <template #default>
                   <ProductDetails
@@ -304,7 +304,7 @@
           </div>
 
           <!-- Tab Sistemi -->
-          <div class="mt-8 border-t pt-8 min-h-[400px]">
+          <div class="mt-8 border-t pt-8">
             <TabGroup>
               <TabList class="flex space-x-1 border-b">
                 <Tab v-slot="{ selected }" as="template">
