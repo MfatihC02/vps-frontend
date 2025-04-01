@@ -1,68 +1,29 @@
 <template>
-  <div class="space-y-6">
-    <!-- Tab Navigation -->
-    <nav 
-      class="relative flex space-x-1 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 p-1.5 shadow-sm" 
-      role="tablist"
-    >
-      <!-- Aktif Tab Göstergesi -->
-      <div
-        class="absolute h-[85%] top-[7.5%] transition-all duration-300 ease-spring"
-        :class="[
-          'rounded-lg bg-white shadow-sm border border-gray-200',
-          selectedTab === 'details' ? 'w-full left-[0.375rem]' : 'w-full left-[0.375rem]'
-        ]"
-      ></div>
-
-      <!-- Tab Butonları -->
-      <button
-        v-for="tab in tabs"
-        :key="tab.id"
-        @click="handleTabChange(tab.id)"
-        class="relative z-10 w-full py-2.5 text-sm font-medium leading-5 transition-all duration-200"
-        :class="[
-          'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2F5E32] focus-visible:ring-offset-2',
-          selectedTab === tab.id
-            ? 'text-[#2F5E32]'
-            : 'text-gray-600 hover:text-[#2F5E32]'
-        ]"
-        :aria-selected="selectedTab === tab.id"
-        role="tab"
-      >
-        <div class="flex items-center justify-center space-x-2">
-          <component 
-            :is="tab.icon" 
-            class="w-4 h-4"
-            :class="selectedTab === tab.id ? 'text-[#2F5E32]' : 'text-gray-400'"
-          />
-          <span>{{ tab.name }}</span>
-        </div>
-      </button>
-    </nav>
+  <div class="space-y-4 sm:space-y-6">
 
     <!-- Tab Content -->
-    <div class="relative mt-6">
+    <div class="relative mt-4 sm:mt-6">
       <!-- Details Tab -->
       <div
         v-show="selectedTab === 'details'"
-        class="transition-all duration-300"
+        class="transition-all duration-200"
         :class="[
           selectedTab === 'details' ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 absolute inset-0'
         ]"
       >
         <div
-          class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 prose prose-green max-w-none hover:shadow-md transition-all duration-300"
-          v-html="content"
+          class="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 prose prose-green max-w-none hover:shadow-md transition-all duration-200"
+          v-html="sanitizedContent"
         ></div>
 
         <!-- Anahtar Kelimeler -->
-        <section v-if="description?.keywords?.length" class="mt-8 pt-6 border-t">
-          <h4 class="text-lg font-semibold text-gray-900 mb-4 font-montserrat">İlgili Anahtar Kelimeler</h4>
-          <div class="flex flex-wrap gap-2">
+        <section v-if="description?.keywords?.length" class="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t">
+          <h4 class="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 font-montserrat">İlgili Anahtar Kelimeler</h4>
+          <div class="flex flex-wrap gap-1.5 sm:gap-2">
             <span
               v-for="keyword in description.keywords"
               :key="keyword"
-              class="px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-medium"
+              class="px-2.5 sm:px-3 py-1 bg-green-50 text-green-700 rounded-full text-xs sm:text-sm font-medium"
             >
               {{ keyword }}
             </span>
@@ -74,10 +35,18 @@
 </template>
 
 <script>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { FileText } from "lucide-vue-next";
+
+// Marked ayarlarını optimize et
+marked.setOptions({
+  gfm: true,
+  breaks: true,
+  smartLists: true,
+  smartypants: true
+});
 
 export default {
   name: "ProductSpecifications",
@@ -99,6 +68,7 @@ export default {
   setup(props) {
     const selectedTab = ref("details");
     const isTabChanging = ref(false);
+    const contentCache = ref(null);
 
     const tabs = [
       { id: "details", name: "Detaylar", icon: "FileText" },
@@ -110,15 +80,21 @@ export default {
       selectedTab.value = tabId;
     };
 
-    // Markdown işleme
-    const content = computed(() => {
-      const detailedContent = props.description?.detailed;
-      console.log('Detailed Content:', detailedContent);
-      if (!detailedContent) return '';
+    // Markdown işleme ve önbellekleme
+    const sanitizedContent = computed(() => {
+      if (!props.description?.detailed) return '';
       
-      const rawHtml = marked.parse(detailedContent);
-      console.log('Parsed HTML:', rawHtml);
-      return DOMPurify.sanitize(rawHtml);
+      if (!contentCache.value) {
+        const rawHtml = marked.parse(props.description.detailed);
+        contentCache.value = DOMPurify.sanitize(rawHtml);
+      }
+      
+      return contentCache.value;
+    });
+
+    // Önbelleği temizle
+    onMounted(() => {
+      contentCache.value = null;
     });
 
     return {
@@ -126,7 +102,7 @@ export default {
       isTabChanging,
       tabs,
       handleTabChange,
-      content
+      sanitizedContent
     };
   },
 };
@@ -139,14 +115,21 @@ export default {
 
 :deep(.prose) {
   max-width: none;
-  font-family: 'Source Serif Pro', Georgia, serif;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
 :deep(.prose p) {
-  margin-top: 1em;
-  margin-bottom: 1em;
-  line-height: 1.75;
-  font-size: 1.125rem;
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+  line-height: 1.625;
+  font-size: 0.9375rem;
+  
+  @media (min-width: 640px) {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    line-height: 1.75;
+    font-size: 1.125rem;
+  }
 }
 
 :deep(.prose strong) {
@@ -157,34 +140,58 @@ export default {
 :deep(.prose h3) {
   color: #1a1a1a;
   font-weight: 700;
-  margin-top: 2em;
-  margin-bottom: 1em;
-  font-size: 1.5rem;
-  font-family: 'Montserrat', sans-serif;
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  font-size: 1.25rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  
+  @media (min-width: 640px) {
+    margin-top: 2em;
+    margin-bottom: 1em;
+    font-size: 1.5rem;
+  }
 }
 
 :deep(.prose h4) {
   color: #2F5E32;
   font-weight: 600;
-  margin-top: 1.5em;
-  margin-bottom: 0.75em;
-  font-size: 1.25rem;
-  font-family: 'Montserrat', sans-serif;
+  margin-top: 1.25em;
+  margin-bottom: 0.5em;
+  font-size: 1.125rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  
+  @media (min-width: 640px) {
+    margin-top: 1.5em;
+    margin-bottom: 0.75em;
+    font-size: 1.25rem;
+  }
 }
 
 :deep(.prose ul) {
-  margin-top: 0.75em;
-  margin-bottom: 1em;
+  margin-top: 0.5em;
+  margin-bottom: 0.75em;
   list-style-type: none;
   padding-left: 0;
+  
+  @media (min-width: 640px) {
+    margin-top: 0.75em;
+    margin-bottom: 1em;
+  }
 }
 
 :deep(.prose li) {
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-  padding-left: 1.5em;
+  margin-top: 0.375em;
+  margin-bottom: 0.375em;
+  padding-left: 1.25em;
   position: relative;
-  font-size: 1.125rem;
+  font-size: 0.9375rem;
+  
+  @media (min-width: 640px) {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    padding-left: 1.5em;
+    font-size: 1.125rem;
+  }
 }
 
 :deep(.prose li::before) {
@@ -193,5 +200,17 @@ export default {
   font-weight: bold;
   position: absolute;
   left: 0;
+}
+
+/* Mobil optimizasyonları */
+@media (max-width: 640px) {
+  :deep(.prose) {
+    content-visibility: auto;
+    contain: content;
+  }
+  
+  :deep(.prose *) {
+    transition-duration: 200ms;
+  }
 }
 </style>
