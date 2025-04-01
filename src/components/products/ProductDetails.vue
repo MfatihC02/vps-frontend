@@ -286,7 +286,7 @@ import { useStockStore } from "@/stores/stockStore";
 import { useReviewStore } from "@/stores/reviewStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useRouter } from "vue-router";
-import { computed, ref, onMounted, watch } from "vue";
+import { computed, ref, onMounted, watch,nextTick  } from "vue";
 import { storeToRefs } from "pinia";
 import { useToast } from "vue-toastification";
 import { useRoute } from "vue-router";
