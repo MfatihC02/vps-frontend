@@ -130,8 +130,7 @@
               {{ errors.password }}
             </p>
             <p class="text-gray-500 text-xs mt-1">
-              Şifre en az 8 karakter uzunluğunda olmalı ve en az bir büyük harf,
-              bir küçük harf, bir rakam ve bir özel karakter içermelidir.
+              Şifre en az 6 karakter uzunluğunda olmalı ve en az bir rakam içermelidir.
             </p>
           </div>
 
@@ -270,19 +269,15 @@ const validateEmail = () => {
 
 const validatePassword = () => {
   errors.password = "";
-  if (password.value.length < 8) {
-    errors.password = "Şifre en az 8 karakter olmalıdır";
+  if (password.value.length < 6) {
+    errors.password = "Şifre en az 6 karakter olmalıdır";
     return;
   }
 
-  const hasUpperCase = /[A-Z]/.test(password.value);
-  const hasLowerCase = /[a-z]/.test(password.value);
   const hasNumbers = /\d/.test(password.value);
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password.value);
 
-  if (!(hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar)) {
-    errors.password =
-      "Şifre en az bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter içermelidir";
+  if (!hasNumbers) {
+    errors.password = "Şifre en az bir rakam içermelidir";
   }
 };
 
