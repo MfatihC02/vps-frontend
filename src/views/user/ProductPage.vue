@@ -24,13 +24,7 @@
       crossorigin
     />
     <div class="w-full px-[10px] sm:container sm:mx-auto sm:px-4 py-4 sm:py-8">
-      <!-- Hızlı Yüklenen Başlık -->
-      <h1 
-        v-if="initialTitle"
-        class="text-[#2F5E32] font-semibold text-xl mb-4"
-      >
-        {{ initialTitle }}
-      </h1>
+      
 
       <!-- LCP Preload -->
       <link
