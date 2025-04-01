@@ -13,14 +13,14 @@
     <div class="flex flex-col flex-grow w-full mt-[70px]">
       <InfoBar />
 
-      <main class="flex-grow w-full">
+      <main class="flex-grow min-h-[calc(100vh-100px)]">
         <router-view v-slot="{ Component }">
           <div>
             <component :is="Component" />
           </div>
         </router-view>
       </main>
-      <Footer class="flex-shrink-0 footer w-full" />
+      <Footer class="flex-shrink-0 h-[700px]" />
     </div>
   </div>
 </template>
@@ -73,25 +73,16 @@ body {
 /* Layout shift önleme */
 main {
   flex: 1 0 auto;
-  min-height: 500px;
   width: 100%;
   contain: layout;
   content-visibility: auto;
 }
 
 .footer {
+  height: 300px;
+  flex-shrink: 0;
   contain: size layout;
   content-visibility: auto;
-  contain-intrinsic-size: 600px;
-  display: block;
-  height: 600px;
-}
-
-@media (min-width: 768px) {
-  .footer {
-    height: 500px;
-    contain-intrinsic-size: 500px;
-  }
 }
 
 /* Sayfa geçiş animasyonları */
@@ -109,7 +100,7 @@ main {
 /* Mobil optimizasyonları */
 @media (max-width: 768px) {
   main {
-    min-height: 300px;
+    min-height: calc(100vh - 370px);
   }
 
   /* Touch cihazlar için scroll optimizasyonu */
