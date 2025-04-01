@@ -2,11 +2,31 @@
   <div class="max-w-2xl mx-auto space-y-8 flex-grow">
     <!-- Ürün Başlığı ve Değerlendirme -->
     <div class="space-y-4 sm:space-y-6 min-h-[120px]">
-      <h1
-        class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 font-montserrat tracking-tight min-h-[40px]"
+      <!-- Başlık Skeleton -->
+      <div 
+        v-if="!isTitleReady"
+        class="animate-pulse"
+        aria-hidden="true"
       >
-        {{ product.name || 'Yükleniyor...' }}
-      </h1>
+        <div class="h-7 sm:h-8 bg-gray-200 rounded-md w-3/4 mb-4"></div>
+      </div>
+
+      <!-- Optimize edilmiş başlık render -->
+      <Transition
+        name="fade"
+        appear
+        @before-enter="startTitleTransition"
+        @after-enter="endTitleTransition"
+      >
+        <h1 
+          v-show="isTitleReady"
+          ref="titleRef"
+          class="text-2xl sm:text-3xl font-bold text-gray-900 font-montserrat tracking-tight min-h-[40px]"
+          :class="{ 'opacity-0': !isTitleReady }"
+        >
+          {{ product.name || 'Yükleniyor...' }}
+        </h1>
+      </Transition>
 
       <div
         class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0 sm:space-x-6 min-h-[48px]"
@@ -311,6 +331,8 @@ export default {
     const route = useRoute();
     const toast = useToast();
     const quantity = ref(1);
+    const isTitleReady = ref(false);
+    const titleRef = ref(null);
 
     const { loading, error } = storeToRefs(cartStore);
     const { productReviews } = storeToRefs(reviewStore);
@@ -453,6 +475,18 @@ export default {
       }
     };
 
+    const startTitleTransition = () => {
+      if (titleRef.value) {
+        titleRef.value.style.willChange = 'opacity';
+      }
+    };
+
+    const endTitleTransition = () => {
+      if (titleRef.value) {
+        titleRef.value.style.willChange = 'auto';
+      }
+    };
+
     onMounted(async () => {
       try {
         // Stok bilgisini yükle
@@ -463,6 +497,19 @@ export default {
         }
         // Yorumları yükle
         await loadReviews();
+        await nextTick();
+        if (props.product?.name) {
+          // Başlık içeriğini hazırla
+          const titleContent = props.product.name;
+          
+          // requestAnimationFrame ile render zamanlaması
+          requestAnimationFrame(() => {
+            if (titleRef.value) {
+              titleRef.value.textContent = titleContent;
+              isTitleReady.value = true;
+            }
+          });
+        }
       } catch (error) {
         console.error("Veriler yüklenirken hata:", error);
       }
@@ -506,7 +553,23 @@ export default {
       currentUrl,
       description,
       getOneYearFromNow,
+      isTitleReady,
+      titleRef,
+      startTitleTransition,
+      endTitleTransition
     };
   },
 };
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
