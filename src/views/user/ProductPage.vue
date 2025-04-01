@@ -261,7 +261,7 @@
       <!-- Ana İçerik -->
       <article
         v-else-if="product"
-        class="bg-white rounded-none sm:rounded-xl shadow-sm transition-all duration-300 hover:shadow-md mx-[-10px] sm:mx-0"
+        class="bg-white rounded-none sm:rounded-xl shadow-sm transition-all duration-300 hover:shadow-md mx-[-10px] sm:mx-0 min-h-[800px]"
       >
         <div class="p-0 sm:p-4 lg:p-6">
           <!-- Ana grid için minimum yükseklik tanımı güncellendi -->
