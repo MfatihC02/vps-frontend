@@ -1,18 +1,18 @@
 <template>
   <section
-    class="product-gallery -mt-4 sticky top-0"
+    class="product-gallery"
     itemscope
     itemtype="http://schema.org/ImageGallery"
   >
     <!-- Ana görsel görüntüleme alanı -->
-    <div class="relative h-screen overflow-y-auto pb-8">
+    <div class="relative pb-4 md:pb-8">
       <!-- Ana Görsel Container -->
       <div
-        class="relative w-full h-[70vh] rounded-xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 group sticky top-0 z-10"
+        class="relative w-full h-[50vh] md:h-[70vh] rounded-xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 group sticky top-0 z-10"
         :class="{ 'animate-pulse': loading }"
-        @touchstart="handleTouchStart"
-        @touchmove="handleTouchMove"
-        @touchend="handleTouchEnd"
+        @touchstart.passive="handleTouchStart"
+        @touchmove.passive="handleTouchMove"
+        @touchend.passive="handleTouchEnd"
       >
         <!-- Loading Placeholder -->
         <div
@@ -27,9 +27,9 @@
         <picture v-if="currentImage">
           <source
             :srcset="`
-              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:good,w_400,dpr_auto,c_limit,e_blur:1000/')} 400w,
-              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:good,w_600,dpr_auto,c_limit/')} 600w,
-              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:good,w_800,dpr_auto,c_limit/')} 800w
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:good,w_300,dpr_auto,c_limit,e_blur:1000/')} 300w,
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:good,w_400,dpr_auto,c_limit/')} 400w,
+              ${currentImage.url.replace('/upload/', '/upload/f_webp,q_auto:good,w_600,dpr_auto,c_limit/')} 600w
             `"
             type="image/webp"
             media="(max-width: 768px)"
@@ -44,16 +44,16 @@
             media="(min-width: 769px)"
           />
           <img
-            :src="currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:good,w_400,dpr_auto,c_limit/')"
+            :src="currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:good,w_300,dpr_auto,c_limit/')"
             :srcset="`
-              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:good,w_400,dpr_auto,c_limit/')} 400w,
-              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:good,w_600,dpr_auto,c_limit/')} 600w
+              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:good,w_300,dpr_auto,c_limit/')} 300w,
+              ${currentImage.url.replace('/upload/', '/upload/f_auto,q_auto:good,w_400,dpr_auto,c_limit/')} 400w
             `"
-            :sizes="'(max-width: 480px) 95vw, (max-width: 768px) 75vw, 600px'"
+            :sizes="'(max-width: 480px) 90vw, (max-width: 768px) 70vw, 600px'"
             :alt="currentImage.alt || `${currentImageIndex + 1}. ürün görseli`"
             class="w-full h-full object-contain transition-all duration-300"
-            width="400"
-            height="400"
+            width="300"
+            height="300"
             :class="{
               'opacity-0': loading,
               'scale-[1.6] cursor-zoom-out': zoomed,
@@ -113,7 +113,7 @@
       <!-- Thumbnail Navigator -->
       <div
         v-if="sortedImages.length > 1"
-        class="mt-4 flex gap-2 sm:gap-3 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 pb-2 snap-x"
+        class="mt-4 flex gap-1.5 sm:gap-3 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 pb-2 snap-x"
         role="tablist"
         aria-label="Ürün görselleri"
       >
@@ -319,7 +319,7 @@ export default {
         link.as = 'image';
         link.href = props.images[0].url.replace(
           '/upload/',
-          '/upload/f_auto,q_auto:good,w_400,dpr_auto,c_limit/'
+          '/upload/f_auto,q_auto:good,w_300,dpr_auto,c_limit/'
         );
         link.fetchPriority = 'high';
         document.head.appendChild(link);
@@ -331,7 +331,7 @@ export default {
           nextLink.as = 'image';
           nextLink.href = props.images[1].url.replace(
             '/upload/',
-            '/upload/f_auto,q_auto:eco,w_400,dpr_auto,c_limit/'
+            '/upload/f_auto,q_auto:eco,w_300,dpr_auto,c_limit/'
           );
           nextLink.fetchPriority = 'low';
           document.head.appendChild(nextLink);
@@ -347,7 +347,7 @@ export default {
         img.loading = 'lazy';
         img.src = sortedImages.value[nextIndex].url.replace(
           '/upload/',
-          '/upload/f_auto,q_auto:eco,w_400,dpr_auto,c_limit/'
+          '/upload/f_auto,q_auto:eco,w_300,dpr_auto,c_limit/'
         );
       }
     });
@@ -380,23 +380,27 @@ export default {
 /* Performans optimizasyonları için CSS */
 .product-gallery {
   z-index: 10;
-  height: 100vh;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch; /* Mobil kaydırma performansı */
-  overscroll-behavior: contain; /* Overscroll etkilerini kontrol et */
+  contain: content;
 }
 
 .product-gallery img {
   will-change: transform, opacity;
   transform: translateZ(0);
   backface-visibility: hidden;
-  contain: paint; /* Paint alanını sınırla */
+  contain: paint;
 }
 
 /* Mobil için optimize edilmiş transition'lar */
 @media (max-width: 768px) {
   .product-gallery img {
     transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+    contain: size layout paint;
+    content-visibility: auto;
+  }
+  
+  .product-gallery {
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
   }
 }
 
