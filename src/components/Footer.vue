@@ -199,7 +199,7 @@
           <!-- Sosyal Medya İkonları -->
           <div class="flex space-x-4 mb-6">
             <a 
-              href="https://www.instagram.com/muhendislerticaretkonya/"
+              href="https://www.instagram.com/tarimsepetim"
               class="transform hover:scale-110 transition-transform duration-200"
             >
               <iconify-icon
