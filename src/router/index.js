@@ -2,6 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useUserStore } from '@/stores/userStore'
+import { useProductStore } from '@/stores/productStore'
 
 // Eager loading components
 import DashboardPage from '@/views/user/dashboardPage.vue'
@@ -124,11 +125,44 @@ const routes = [
   {
     path: '/urun/:slug',
     name: 'product-detail',
-    component: ProductDetail,
+    component: () => import('@/views/user/ProductPage.vue'),
     props: true,
     meta: {
       title: null,
       description: null
+    },
+    async beforeEnter(to, from, next) {
+      const productStore = useProductStore();
+      const slug = to.params.slug;
+      try {
+        console.log(`beforeEnter: Fetching product with slug: ${slug}`);
+        await productStore.fetchProductBySlug(slug);
+        // Optional: Check if product was actually found. fetchProductBySlug should handle errors/404 internally
+        if (!productStore.product) {
+           console.error(`beforeEnter: Product not found for slug: ${slug}`);
+           // Redirect to a 404 page or home with error
+           next({
+             name: 'home', // Or a dedicated 404 route name
+             query: {
+               error: 'product_not_found',
+               message: 'Aradığınız ürün bulunamadı.'
+             }
+           });
+           return; // Stop further execution
+        }
+        console.log(`beforeEnter: Product fetched successfully for slug: ${slug}`);
+        next(); // Proceed to the route component
+      } catch (error) {
+        console.error(`beforeEnter: Error fetching product for slug ${slug}:`, error);
+        // Redirect on error (e.g., network error, server error)
+        next({
+          name: 'home',
+          query: {
+            error: 'product_fetch_failed',
+            message: 'Ürün bilgileri yüklenirken bir sunucu hatası oluştu.'
+          }
+        });
+      }
     }
   },
   {
