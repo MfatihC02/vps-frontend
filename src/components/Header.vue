@@ -14,10 +14,10 @@
         <!-- Logo -->
         <router-link to="/" class="ml-2 flex items-center">
           <picture>
-            <source srcset="/logo.webp" type="image/webp" />
-            <source srcset="/logo.webp" type="image/jpeg" />
+            <source srcset="/rounded_logo_low.webp" type="image/webp" />
+            <source srcset="/rounded_logo_low.webp" type="image/jpeg" />
             <img
-              src="/logo.webp"
+              src="/rounded_logo_low.webp"
               alt="TARIM SEPETİM Logo"
               class="h-7 w-7 object-contain rounded-full"
               width="28"
@@ -169,10 +169,10 @@
             class="flex items-center space-x-2 text-emerald-700 hover:text-emerald-600 transition"
           >
             <picture>
-              <source srcset="/logo.webp" type="image/webp" />
-              <source srcset="/logo.webp" type="image/jpeg" />
+              <source srcset="/rounded_logo_low.webp" type="image/webp" />
+              <source srcset="/rounded_logo_low.webp" type="image/jpeg" />
               <img
-                src="/logo.webp"
+                src="/rounded_logo_low.webp"
                 alt="TARIM SEPETİM Logo"
                 class="h-8 w-8 object-contain rounded-full"
                 width="32"
