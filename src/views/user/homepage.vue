@@ -1,6 +1,23 @@
 <!-- Homepage.vue -->
 <template>
   <div class="min-h-screen bg-white transition-colors duration-300">
+    <!-- SEO Schema -->
+    <div itemscope itemtype="https://schema.org/Organization" class="hidden">
+      <!-- Temel Bilgiler -->
+      <meta itemprop="name" content="Tarım Sepetim" />
+      <meta itemprop="url" content="https://www.tarimsepetim.com.tr" />
+      
+      <!-- İletişim Bilgileri -->
+      <meta itemprop="telephone" content="+90 5516419012" />
+      <meta itemprop="email" content="iletisim@tarimsepetim.com.tr" />
+      
+      <!-- Sosyal Medya -->
+      <meta itemprop="sameAs" content="https://www.instagram.com/tarimsepetim" />
+
+      <!-- Hakkımızda -->
+      <meta itemprop="description" content="Tarım Sepetim, kaliteli tohum ve tarım ürünlerinde güvenilir alışverişin adresi. Hızlı kargo, %100 müşteri memnuniyeti ve güvenli ödeme seçenekleriyle profesyonel tarım çözümleri sunuyoruz." />
+    </div>
+
     <main
       class="container mx-auto max-w-[1920px] transition-all duration-300 pt-16 md:pt-20"
     >
