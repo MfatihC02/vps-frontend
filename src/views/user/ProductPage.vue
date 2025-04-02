@@ -2,8 +2,6 @@
   <main
     class="min-h-screen bg-[#FAFAFA]"
     v-if="product && isValidProduct"
-    itemscope
-    itemtype="http://schema.org/Product"
   >
     <!-- Preload critical resources -->
     <link
