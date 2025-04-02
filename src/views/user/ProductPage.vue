@@ -472,26 +472,49 @@ export default {
     // Ürün ve stok bilgisi çekme
     const fetchProduct = async () => {
       try {
-        const slug = route.params.slug;
-        await productStore.fetchProductBySlug(slug);
+        // Slug artık beforeEnter'da kullanıldığı için burada tekrar almaya gerek yok
+        // const slug = route.params.slug;
+        // Ürün çekme işlemi beforeEnter'da yapıldı, burada sadece stok çekilebilir
+        // await productStore.fetchProductBySlug(slug);
         if (product.value?._id) {
+          // Stok çekme işlemini burada bırakabiliriz veya bunu da beforeEnter'a taşıyabiliriz.
+          // Şimdilik burada bırakalım.
           await stockStore.fetchStockByProduct(product.value._id);
+        } else {
+          // Eğer beforeEnter'dan geçilip buraya gelindiyse ama product ID yoksa bir sorun vardır.
+          // Ancak beforeEnter kontrolü bunu engellemeli.
+          console.warn('fetchProduct called in onMounted but product ID is missing. This should not happen.');
         }
-        updateMetaTags();
+        // Meta etiket güncellemesi artık onMounted içinde yapılacak
+        // updateMetaTags();
       } catch (err) {
-        console.error("Ürün yüklenirken hata:", err);
+        // Stok çekme sırasında hata olursa burası çalışır
+        console.error("Stok yüklenirken hata:", err);
       }
     };
 
-    // Yeniden deneme fonksiyonu
+    // Yeniden deneme fonksiyonu - beforeEnter sonrası hala stok için gerekebilir?
+    // Veya hata yönetimi tamamen beforeEnter'da yapılıyorsa kaldırılabilir.
+    // Şimdilik bırakalım.
     const retryLoading = async () => {
       if (retryCount.value < 3) {
         retryCount.value++;
-        await fetchProduct();
+        // Sadece stok çekmeyi tekrar dene?
+        if (product.value?._id) {
+          await stockStore.fetchStockByProduct(product.value._id);
+        } else {
+            console.warn('retryLoading called but product ID is missing.');
+        }
       }
     };
 
-    onMounted(fetchProduct);
+    onMounted(() => {
+      // Bileşen mount edildiğinde ürün verisi zaten hazır olmalı.
+      // Stok bilgisini burada çekebiliriz.
+      fetchProduct(); // Sadece stok çekmek için çağır
+      // Meta etiketleri burada güncelleyelim, çünkü product verisi artık mevcut olmalı.
+      updateMetaTags(); 
+    });
 
     // Computed properties
     const formattedProductDetails = computed(() => {
