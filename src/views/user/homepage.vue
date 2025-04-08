@@ -91,6 +91,7 @@
 
         <!-- Sağ İçerik Alanı -->
         <div class="flex-1 min-w-0">
+          <TrustBadges />
           <TabNavigation />
         </div>
       </div>
@@ -105,6 +106,7 @@ import CategoryList from "@/components/CategoryList.vue";
 import { Icon } from "@iconify/vue";
 import TabNavigation from "@/components/products/TabNavigation.vue";
 import PartnerLogos from "@/components/PartnerLogos.vue";
+import TrustBadges from '@/components/TrustBadges.vue';
 
 const isSidebarOpen = ref(false);
 </script>
