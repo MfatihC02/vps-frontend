@@ -1,71 +1,6 @@
 <template>
   <div class="w-full">
     <!-- Tab Navigation -->
-    <nav class="sticky top-16 bg-white/90 backdrop-blur-md z-30 shadow-lg">
-      <div class="w-full">
-        <div class="grid grid-cols-2 gap-4 px-4 sm:px-6 relative py-2">
-          <!-- Tab Başlıkları Arasındaki Metin -->
-          <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-sm text-gray-400 font-medium hidden sm:block">
-            veya
-          </div>
-          <a
-            v-for="tab in tabs"
-            :key="tab.id"
-            :href="'#' + tab.id"
-            class="flex py-2.5 min-[400px]:py-3.5 px-2 min-[400px]:px-4 text-sm font-medium 
-                   transition-all duration-300 hover:text-emerald-600 focus:outline-none rounded-xl
-                   relative group overflow-hidden text-center w-full"
-            :class="[
-              activeTab === tab.id
-                ? 'text-emerald-600 bg-emerald-50/50'
-                : 'text-gray-600 hover:bg-gray-50/80'
-            ]"
-            @click.prevent="scrollToTab(tab.id)"
-          >
-            <!-- Tab Background Effect -->
-            <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-emerald-600/5 
-                        opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            
-            <!-- Tab Content -->
-            <div class="relative flex flex-col min-[400px]:flex-row items-center justify-center 
-                        gap-1 min-[400px]:gap-2 w-full">
-              <!-- Tab Icons -->
-              <i :class="[
-                'fas',
-                tab.id === 'recommended' ? 'fa-star' : 
-                tab.id === 'new' ? 'fa-sparkles' : 
-                'fa-tag',
-                'text-xs',
-                activeTab === tab.id ? 'text-emerald-500' : 'text-gray-400'
-              ]"></i>
-              
-              <!-- Tab Name with Responsive Text -->
-              <div class="hidden min-[400px]:block flex-1">{{ tab.name }}</div>
-              <div class="block min-[400px]:hidden">
-                <div>{{ tab.id === 'recommended' ? 'Sizin' : 'Yeni' }}</div>
-                <div class="text-[11px] opacity-90">{{ tab.id === 'recommended' ? 'İçin' : 'Ürünler' }}</div>
-              </div>
-              
-              <!-- Count Badge -->
-              <span v-if="tab.count" 
-                    class="absolute top-1 right-1 min-[400px]:static min-[400px]:ml-1 
-                           text-[10px] min-[400px]:text-xs bg-emerald-100 text-emerald-600 
-                           px-1.5 min-[400px]:px-2 py-0.5 rounded-full shadow-sm 
-                           transition-all duration-300 group-hover:bg-emerald-500 
-                           group-hover:text-white">
-                {{ tab.count }}
-              </span>
-            </div>
-
-            <!-- Active Indicator -->
-            <div v-if="activeTab === tab.id"
-                 class="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r 
-                        from-emerald-500 to-emerald-600 animate-slideIn"></div>
-          </a>
-        </div>
-      </div>
-    </nav>
-
     <!-- Content -->
     <div class="px-4">
       <div class="space-y-12 py-8">
@@ -189,12 +124,12 @@ export default {
     const tabs = [
       {
         id: 'recommended',
-        name: 'Sizin İçin Önerilen',
+        name: '',
         title: 'Sizin İçin Önerilen',
       },
       {
         id: 'new',
-        name: 'Yeni Ürünler',
+        name: '',
         title: 'Yeni Ürünler',
       }
     ];
