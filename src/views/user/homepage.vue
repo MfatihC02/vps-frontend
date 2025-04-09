@@ -1,7 +1,7 @@
 <!-- Homepage.vue -->
 <template>
   <div class="min-h-screen bg-white transition-colors duration-300">
-    <!-- SEO Schema -->
+    <!-- SEO Schema - Enhanced version of original microdata format -->
     <div itemscope itemtype="https://schema.org/Organization" class="hidden">
       <!-- Temel Bilgiler -->
       <meta itemprop="name" content="Tarım Sepetim" />
@@ -16,6 +16,12 @@
 
       <!-- Hakkımızda -->
       <meta itemprop="description" content="Tarım Sepetim, kaliteli tohum ve tarım ürünlerinde güvenilir alışverişin adresi. Hızlı kargo, %100 müşteri memnuniyeti ve güvenli ödeme seçenekleriyle profesyonel tarım çözümleri sunuyoruz." />
+      
+      <!-- Mühendisler Ticaret Bağlantısı -->
+      <div itemprop="parentOrganization" itemscope itemtype="https://schema.org/Organization">
+        <meta itemprop="name" content="Mühendisler Ticaret" />
+        <meta itemprop="description" content="Tarım sektöründe faaliyet gösteren Mühendisler Ticaret firması" />
+      </div>
     </div>
 
     <main
@@ -91,6 +97,15 @@
 
         <!-- Sağ İçerik Alanı -->
         <div class="flex-1 min-w-0">
+          <!-- Mühendisler Ticaret bilgisi -->
+          <div class=" py-2 px-3 bg-green-50 rounded-lg text-center">
+  <p class="text-xs sm:text-sm text-gray-700">
+    <span class="font-medium">Tarım Sepetim</span>, 
+    <span class="font-bold text-[#0F6735]">Mühendisler Ticaret</span> 
+    <span class="whitespace-nowrap">tarafından işletilmektedir.</span>
+  </p>
+</div>
+          
           <TrustBadges />
           <TabNavigation />
         </div>
@@ -98,7 +113,6 @@
     </main>
   </div>
 </template>
-
 <script setup>
 import { ref } from "vue";
 import InfoBar from "@/components/InfoBar.vue";
