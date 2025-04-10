@@ -52,7 +52,11 @@
             <div
               v-for="product in displayProducts"
               :key="product._id"
-              class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-green-100 hover:shadow-lg transition-all duration-300"
+              @click="$router.push({
+                name: 'product-detail',
+                params: { slug: product.slug },
+              })"
+              class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-green-100 hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1 active:translate-y-0 active:scale-[0.99]"
             >
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <!-- Ürün Resmi -->
@@ -158,30 +162,6 @@
                       v-html="parseMarkdown(product.description.meta)"
                     ></p>
                   </div>
-
-                  <!-- Butonlar -->
-                  <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4">
-                    <button
-                      class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 active:bg-green-800 transition-colors text-sm sm:text-base font-medium"
-                    >
-                      <ShoppingCart class="w-4 h-4 sm:w-5 sm:h-5" />
-                      <span class="hidden sm:inline">Sepete Ekle</span>
-                      <span class="sm:hidden">Sepet</span>
-                    </button>
-                    <button
-                      @click="
-                        $router.push({
-                          name: 'product-detail',
-                          params: { slug: product.slug },
-                        })
-                      "
-                      class="flex items-center justify-center gap-2 px-4 py-2.5 border border-green-200 text-green-700 rounded-lg hover:bg-green-50 transition-colors text-sm sm:text-base"
-                    >
-                      <Eye class="w-4 h-4 sm:w-5 sm:h-5" />
-                      <span class="hidden sm:inline">Detayları Gör</span>
-                      <span class="sm:hidden">Detay</span>
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
@@ -217,7 +197,7 @@
     </div>
   </div>
 </template>
-  <script setup>
+<script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { useProductStore } from "@/stores/productStore";
 import { useCategoryStore } from "@/stores/categoryStore";
@@ -347,13 +327,13 @@ watch([() => props.categorySlug, sortBy], () => {
   display: none;
 }
 
-/* Ürün Kartı Animasyonları */
+/* Ürün Kartı Animasyonları - Güncellendi */
 .product-card {
-  @apply transition-all duration-300;
+  @apply transition-all duration-300 will-change-transform;
 }
 
 .product-card:hover {
-  @apply shadow-lg;
+  @apply shadow-lg shadow-green-100/50;
 }
 
 .product-card img {
@@ -367,21 +347,13 @@ watch([() => props.categorySlug, sortBy], () => {
 /* Responsive Tasarım */
 @screen xs {
   .product-card {
-    @apply hover:-translate-y-1;
+    @apply hover:-translate-y-1 active:translate-y-0 active:scale-[0.99];
   }
 }
 
 @media (max-width: 425px) {
-  .product-card button {
-    @apply text-sm py-2;
-  }
-
-  .product-card .button-text {
-    @apply hidden;
-  }
-
-  .product-card .button-icon {
-    @apply w-4 h-4;
+  .product-card {
+    @apply active:scale-[0.98];
   }
 }
 
