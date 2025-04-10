@@ -171,13 +171,6 @@
     <!-- Alt kategori yoksa ürünleri göster -->
     <CategoryProduct v-else :category-slug="getLastSlug" />
   </div>
-
-  <!-- SEO Schema -->
-  <script type="application/ld+json" v-if="currentCategory">
-    {{
-      schemaData
-    }}
-  </script>
 </template>
 
 <script setup>
@@ -314,9 +307,8 @@ const schemaData = computed(() => {
   };
 });
 
-useHead(() => ({
-  title: getMetaData.value.title,
-  meta: [
+useHead(() => {
+  const metaTags = [
     {
       name: "description",
       content: getMetaData.value.description,
@@ -325,8 +317,24 @@ useHead(() => ({
       name: "keywords",
       content: getMetaData.value.keywords,
     },
-  ],
-}));
+  ];
+
+  // JSON-LD script'i dinamik olarak ekle
+  const scripts = [];
+  if (currentCategory.value && schemaData.value) {
+    scripts.push({
+      type: 'application/ld+json',
+      // innerHTML string beklediği için JSON.stringify kullan
+      innerHTML: JSON.stringify(schemaData.value)
+    });
+  }
+
+  return {
+    title: getMetaData.value.title,
+    meta: metaTags,
+    script: scripts, // script dizisini head'e ekle
+  };
+});
 
 // Yardımcı fonksiyonlar
 const getOrderGroupTitle = (order) => {
