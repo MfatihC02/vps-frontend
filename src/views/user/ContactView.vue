@@ -70,15 +70,14 @@
           <div class="bg-white rounded-2xl shadow-xl p-8">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Konum</h2>
             <div class="rounded-lg overflow-hidden">
-              <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d196.8530322395173!2d32.49953041739535!3d37.86851383552356!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14d085044c52cb69%3A0xc90d2033b9571d37!2sSahibiata%20Cd.%20No%3A38!5e0!3m2!1str!2str!4v1735197374559!5m2!1str!2str" 
-                width="100%" 
-                height="300" 
-                style="border:0;" 
-                allowfullscreen="" 
+                            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3148.548490639054!2d32.497233!3d37.894240499999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cfe07b0899d54f%3A0x436192197f0a8702!2sM%C3%BChendisler%20Tar%C4%B1m%20Ticaret!5e0!3m2!1str!2str!4v1744633619560!5m2!1str!2str"
+                width="300"
+                height="300"
+                style="border: 0"
+                allowfullscreen=""
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
-                class="rounded-lg"
               ></iframe>
             </div>
           </div>
