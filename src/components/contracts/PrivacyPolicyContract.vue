@@ -1,20 +1,37 @@
 <template>
   <div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
     <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
-      <h1 class="text-3xl font-bold text-center text-gray-900 mb-8">KİŞİSEL VERİLERİN KORUNMASI VE GİZLİLİK SÖZLEŞMESİ</h1>
-      
+      <h1 class="text-3xl font-bold text-center text-gray-900 mb-8">
+        KİŞİSEL VERİLERİN KORUNMASI VE GİZLİLİK SÖZLEŞMESİ
+      </h1>
+
       <!-- Giriş -->
       <div class="prose prose-gray max-w-none mb-8">
         <p>
-          Bu sözleşme ("Sözleşme"), Mühendisler Ticaret Kollektif Şirketi ("Şirket") tarafından, internet sitesi, mobil uygulama ve diğer elektronik ortamlarda toplanan kişisel verilerin işlenmesi, saklanması, aktarılması ve korunması hususlarında veri sahiplerine sunulan bilgi ve taahhütleri düzenlemek amacıyla hazırlanmıştır. İşbu Sözleşme; 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") başta olmak üzere ilgili tüm mevzuata uygun olarak düzenlenmiştir.
+          Bu sözleşme ("Sözleşme"), Mühendisler Ticaret Kollektif Şirketi
+          ("Şirket") tarafından, internet sitesi, mobil uygulama ve diğer
+          elektronik ortamlarda toplanan kişisel verilerin işlenmesi,
+          saklanması, aktarılması ve korunması hususlarında veri sahiplerine
+          sunulan bilgi ve taahhütleri düzenlemek amacıyla hazırlanmıştır. İşbu
+          Sözleşme; 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK")
+          başta olmak üzere ilgili tüm mevzuata uygun olarak düzenlenmiştir.
         </p>
       </div>
 
       <!-- Maddeler -->
       <div class="space-y-8">
-        <div v-for="(section, index) in sections" :key="index" class="border-t pt-6">
-          <h2 class="text-xl font-semibold text-gray-800 mb-4">{{ section.title }}</h2>
-          <div class="prose prose-gray max-w-none" v-html="section.content"></div>
+        <div
+          v-for="(section, index) in sections"
+          :key="index"
+          class="border-t pt-6"
+        >
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">
+            {{ section.title }}
+          </h2>
+          <div
+            class="prose prose-gray max-w-none"
+            v-html="section.content"
+          ></div>
         </div>
       </div>
     </div>
@@ -23,35 +40,35 @@
 
 <script>
 export default {
-  name: 'PrivacyPolicyContract',
+  name: "PrivacyPolicyContract",
   data() {
     return {
       sections: [
         {
-          title: '1. AMAÇ VE KAPSAM',
+          title: "1. AMAÇ VE KAPSAM",
           content: `
             <h3 class="text-lg font-medium mb-2">1.1. Amaç:</h3>
             <p class="mb-4">Bu Sözleşme; Şirket'in işletmesi kapsamında toplanan kişisel verilerin nasıl işleneceğini, hangi amaçlarla kullanılacağını, hangi hukuki dayanaklara ve saklama sürelerine tabi olacağını, veri sahiplerinin haklarını ve Şirket'in bu veriler karşısındaki sorumluluklarını açıklamak amacıyla hazırlanmıştır.</p>
             
             <h3 class="text-lg font-medium mb-2">1.2. Kapsam:</h3>
             <p>Sözleşme; Şirket'in internet sitesi, mobil uygulama ve benzeri platformlarında veri toplama, işleme, saklama, aktarma ve koruma faaliyetlerini kapsar. Sözleşme kapsamında, gerçek kişilere ait kişisel veriler (ör. ad, soyad, iletişim bilgileri, kimlik ve finansal bilgiler, IP adresi vb.) düzenlenir.</p>
-          `
+          `,
         },
         {
-          title: '2. VERİ SORUMLUSU',
+          title: "2. VERİ SORUMLUSU",
           content: `
             <p class="mb-4">Şirket, toplanan kişisel verilerin işlenmesinde "Veri Sorumlusu" sıfatıyla hareket eder.</p>
             <p class="font-medium mb-2">İletişim Bilgileri:</p>
             <ul class="list-none space-y-2">
               <li>Şirket Ünvanı: Mühendisler Ticaret Kollektif Şirketi</li>
-              <li>Adres: Şükran Mah. Sahibi Ata Cad. 38 Meram, Konya</li>
+              <li>Adres: Musalla Bağlılar Mah, Yeni İstanbul Cd. No:8 Selçuklu, Konya</li>
               <li>E-posta: iletisim@tarimsepetim.com.tr</li>
-              <li>Telefon: 0332 351 31 28</li>
+              <li>Telefon: 0332 235 11 28</li>
             </ul>
-          `
+          `,
         },
         {
-          title: '3. TOPLANAN KİŞİSEL VERİLER VE HUKUKİ DAYANAKLARI',
+          title: "3. TOPLANAN KİŞİSEL VERİLER VE HUKUKİ DAYANAKLARI",
           content: `
             <h3 class="text-lg font-medium mb-2">3.1. Toplanan Kişisel Veri Kategorileri:</h3>
             <ul class="list-disc pl-5 mb-4 space-y-2">
@@ -68,10 +85,10 @@ export default {
               <li>Şirket'in meşru menfaatleri kapsamında veri işlenmesi (KVKK Md. 5/2(f))</li>
               <li>Açık rıza esasına dayalı işleme (KVKK Md. 5/1) – yalnızca pazarlama ve benzeri ilave işlemler için</li>
             </ul>
-          `
+          `,
         },
         {
-          title: '4. KİŞİSEL VERİLERİN İŞLENME AMAÇLARI',
+          title: "4. KİŞİSEL VERİLERİN İŞLENME AMAÇLARI",
           content: `
             <ul class="list-disc pl-5 space-y-2">
               <li>Üyelik ve Hesap Yönetimi: Üyelik oluşturulması, hesap yönetimi, sipariş işlemleri ve teslimat süreçlerinin gerçekleştirilmesi.</li>
@@ -80,10 +97,10 @@ export default {
               <li>Yasal Yükümlülükler: Vergi, muhasebe, mesafeli satış ve diğer yasal düzenlemelere uygunluk sağlanması.</li>
               <li>Pazarlama (Açık Rıza İle): Sadece ilgili veri sahibinin açık rızası varsa pazarlama ve reklam iletişimleri.</li>
             </ul>
-          `
+          `,
         },
         {
-          title: '5. GÜVENLİK ÖNLEMLERİ',
+          title: "5. GÜVENLİK ÖNLEMLERİ",
           content: `
             <p class="mb-4">Şirket, kişisel verilerin korunması amacıyla;</p>
             <ul class="list-disc pl-5 space-y-2">
@@ -91,20 +108,20 @@ export default {
               <li>Güvenlik duvarı, saldırı tespit sistemleri, düzenli sızma testleri ve güvenlik eğitimleri ile idari tedbirler alır,</li>
               <li>Erişim yetkilerini periyodik olarak gözden geçirir ve eski hesapları kapatır.</li>
             </ul>
-          `
+          `,
         },
         {
-          title: '6. KİŞİSEL VERİLERİN AKTARILMASI',
+          title: "6. KİŞİSEL VERİLERİN AKTARILMASI",
           content: `
             <h3 class="text-lg font-medium mb-2">6.1. Yurtiçi Aktarım:</h3>
             <p class="mb-4">Kişisel veriler, ödeme hizmeti sağlayıcıları, kargo şirketleri, hukuk büroları ve yetkili kamu kurumları gibi, yalnızca ilgili hizmetin ifası için gerekli olan üçüncü taraflara aktarılabilir.</p>
 
             <h3 class="text-lg font-medium mb-2">6.2. Yurtdışı Aktarım:</h3>
             <p>Şirket, kişisel verileri yurtdışına aktarmamaktadır.</p>
-          `
+          `,
         },
         {
-          title: '7. KİŞİSEL VERİ SAHİBİNİN HAKLARI',
+          title: "7. KİŞİSEL VERİ SAHİBİNİN HAKLARI",
           content: `
             <p class="mb-4">KVKK Madde 11 uyarınca veri sahipleri;</p>
             <ul class="list-disc pl-5 space-y-2">
@@ -117,10 +134,10 @@ export default {
               <li>Münhasıran otomatik sistemlerle analiz edilip kişinin aleyhine sonuç doğurulmasına itiraz etme,</li>
               <li>Kanuna aykırı işlenme nedeniyle zararın giderilmesini talep etme haklarına sahiptir.</li>
             </ul>
-          `
+          `,
         },
         {
-          title: '8. BAŞVURU VE İLETİŞİM',
+          title: "8. BAŞVURU VE İLETİŞİM",
           content: `
             <p class="mb-4">Veri sahipleri, kişisel verileriyle ilgili taleplerini;</p>
             <ul class="list-disc pl-5 mb-4 space-y-2">
@@ -131,16 +148,16 @@ export default {
 
             <p class="font-medium mb-2">İletişim Bilgileri:</p>
             <ul class="list-none space-y-2 mb-4">
-              <li>Adres: Şükran Mah. Sahibi Ata Cad. 38 Meram, Konya</li>
+              <li>Adres: Musalla Bağlılar Mah, Yeni İstanbul Cd. No:8 Selçuklu, Konya</li>
               <li>E-posta: iletisim@tarimsepetim.com.tr</li>
-              <li>Telefon: 0332 351 31 28</li>
+              <li>Telefon: 0332 235 11 28 </li>
             </ul>
 
             <p>Başvurulara en geç 30 gün içinde yanıt verilecektir.</p>
-          `
+          `,
         },
         {
-          title: '9. SORUMLULUĞUN SINIRLANMASI',
+          title: "9. SORUMLULUĞUN SINIRLANMASI",
           content: `
             <h3 class="text-lg font-medium mb-2">9.1. Genel Sorumluluk:</h3>
             <p class="mb-4">Şirket, kişisel verilerin korunması için gerekli tüm teknik ve idari tedbirleri uygulamış olsa dahi, tüm özeni göstermesine rağmen meydana gelebilecek veri ihlallerinde, ancak Şirket'in kasıtlı veya ağır ihmal durumları tespit edildiğinde sorumluluğu artar.</p>
@@ -156,31 +173,31 @@ export default {
               <li>Ancak, veri işleme sürecinde kasıtlı hareket veya ağır ihmal tespit edilirse, Şirketin sorumluluğu tam olarak gündeme gelebilir.</li>
               <li>Bu madde, satıcı lehine risk azaltıcı bir uygulama olarak öne çıkmakla birlikte, veri sahiplerinin KVKK'da öngörülen haklarını ihmal etmemek amacıyla, Şirket'in yükümlülüklerini tamamen ortadan kaldırmaz.</li>
             </ul>
-          `
+          `,
         },
         {
-          title: '10. POLİTİKANIN GÜNCELLENMESİ',
+          title: "10. POLİTİKANIN GÜNCELLENMESİ",
           content: `
             <p>Şirket, yasal değişiklikler, ticari kararlar veya veri işleme süreçlerindeki güncellemeler doğrultusunda işbu Sözleşme'yi güncelleyebilir. Güncellemeler, Şirket'in internet sitesi üzerinden duyurulacak ve yeni metin yayınlandığı tarihte yürürlüğe girecektir.</p>
-          `
+          `,
         },
         {
-          title: '11. YÜRÜRLÜK',
+          title: "11. YÜRÜRLÜK",
           content: `
             <p>İşbu Sözleşme, taraflarca elektronik ortamda onaylandığı tarihte yürürlüğe girer.</p>
-          `
+          `,
         },
         {
-          title: '12. DİĞER HÜKÜMLER',
+          title: "12. DİĞER HÜKÜMLER",
           content: `
             <ul class="list-disc pl-5 space-y-2">
               <li>İşbu Sözleşme, KVKK ve ilgili mevzuat hükümleriyle çeliştiği durumlarda, mevzuat hükümleri esas alınır.</li>
               <li>Taraflar, kişisel verilerin işlenmesi ve aktarılması hususundaki uyuşmazlıkların çözümünde, ilgili mevzuata uygun olarak hareket edecektir.</li>
             </ul>
-          `
-        }
-      ]
-    }
-  }
-}
+          `,
+        },
+      ],
+    };
+  },
+};
 </script>
