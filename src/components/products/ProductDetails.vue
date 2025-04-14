@@ -2,10 +2,10 @@
   <div class="max-w-2xl mx-auto space-y-8 flex-grow">
     <!-- Ürün Başlığı ve Değerlendirme -->
     <div class="space-y-4 sm:space-y-6 min-h-[120px]">
-      <h1 
+      <h1
         class="text-2xl sm:text-3xl font-bold text-gray-900 font-montserrat tracking-tight min-h-[40px]"
       >
-        {{ product?.name || 'Yükleniyor...' }}
+        {{ product?.name || "Yükleniyor..." }}
       </h1>
 
       <div
@@ -59,7 +59,11 @@
           <span
             class="text-2xl sm:text-3xl font-bold text-gray-900 font-montserrat tracking-tight"
           >
-            {{ product.price?.current ? `₺${formatPrice(Number(product.price.current))}` : 'Yükleniyor...' }}
+            {{
+              product.price?.current
+                ? `₺${formatPrice(Number(product.price.current))}`
+                : "Yükleniyor..."
+            }}
           </span>
           <template v-if="product.price.discount > 0">
             <span
@@ -114,25 +118,14 @@
                 :to="{ name: 'login', query: { redirect: $route.fullPath } }"
                 class="font-medium underline hover:text-blue-800"
               >
-                giriş yapmalısınız
+                buraya tıklayarak giriş yapmalısınız
               </router-link>
-            </p>
-          </div>
-        </div>
-        
-        <div
-          v-if="!isAuthenticated"
-          class="bg-green-50 border border-green-100 rounded-lg p-4"
-        >
-          <div class="flex items-center space-x-3">
-            <Info class="w-5 h-5 text-green-500" />
-            <p class="text-sm text-green-700">
-              Hesabınız yok mu?
+              veya hesabınız yoksa
               <router-link
                 :to="{ name: 'register' }"
                 class="font-medium underline hover:text-green-800"
               >
-                Hemen kayıt olun
+                buraya tıklayarak hemen kayıt olun
               </router-link>
             </p>
           </div>
@@ -179,11 +172,33 @@
         </div>
 
         <div class="text-xs sm:text-sm font-medium text-gray-600">
-          {{
-            stockInfo
-              ? `${stockInfo.quantity} ${stockInfo.unit} mevcut`
-              : `${product.stock?.quantity} ${product.stock?.unit} mevcut`
-          }}
+          <template v-if="isAvailableForPurchase">
+            {{
+              stockInfo
+                ? `${stockInfo.quantity} ${stockInfo.unit} mevcut`
+                : `${product.stock?.quantity} ${product.stock?.unit} mevcut`
+            }}
+          </template>
+          <template v-else>
+            <div class="flex items-center text-amber-600">
+              <Info class="w-4 h-4 mr-1" />
+              <span
+                >Stokta yok! Stok durumu ve sipariş için
+                <a
+                  :href="
+                    'https://wa.me/905516419012?text=' +
+                    encodeURIComponent(
+                      `${product.name} ürününün stok durumunu öğrenmek istiyorum.`
+                    )
+                  "
+                  class="font-semibold underline hover:text-amber-700"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >WhatsApp'tan bizimle iletişime geçin</a
+                >
+              </span>
+            </div>
+          </template>
         </div>
       </div>
 
@@ -266,7 +281,7 @@ import { useStockStore } from "@/stores/stockStore";
 import { useReviewStore } from "@/stores/reviewStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useRouter } from "vue-router";
-import { computed, ref, onMounted, watch,nextTick  } from "vue";
+import { computed, ref, onMounted, watch, nextTick } from "vue";
 import { storeToRefs } from "pinia";
 import { useToast } from "vue-toastification";
 import { useRoute } from "vue-router";
