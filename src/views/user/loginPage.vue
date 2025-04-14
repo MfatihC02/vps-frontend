@@ -140,7 +140,18 @@
               Şifremi unuttum
             </a>
           </div>
-
+ <!-- Kayıt Ol Link -->
+ <div class="text-center">
+            <p class="text-sm text-gray-600">
+              Henüz hesabınız yok mu?
+              <router-link
+                to="/register"
+                class="font-medium text-primary hover:text-primary-dark transition-colors"
+              >
+                Hemen Kayıt Olun
+              </router-link>
+            </p>
+          </div>
           <!-- Login Error Message -->
           <div
             v-if="auth.error"
@@ -216,18 +227,7 @@
             <span>{{ auth.loading ? "Giriş yapılıyor..." : "Giriş Yap" }}</span>
           </button>
 
-          <!-- Kayıt Ol Link -->
-          <div class="text-center">
-            <p class="text-sm text-gray-600">
-              Henüz hesabınız yok mu?
-              <router-link
-                to="/register"
-                class="font-medium text-primary hover:text-primary-dark transition-colors"
-              >
-                Hemen Kayıt Olun
-              </router-link>
-            </p>
-          </div>
+         
 
           <!-- Güvenlik Rozetleri -->
           <div class="flex items-center justify-center space-x-4">
