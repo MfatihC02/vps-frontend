@@ -36,8 +36,8 @@
               </div>
               <div>
                 <h3 class="font-semibold text-gray-800">Adres</h3>
-                <p class="text-gray-600">Şükran Mah. Sahibi Ata Cad. No:38</p>
-                <p class="text-gray-600">Meram, Konya</p>
+                <p class="text-gray-600"> MUSALLA BAĞLARI MAH, Yeni İstanbul Cd. NO:8</p>
+                <p class="text-gray-600">Selçuklu, Konya</p>
               </div>
             </div>
 
