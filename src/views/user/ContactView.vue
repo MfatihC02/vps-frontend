@@ -82,10 +82,10 @@
               <div>
                 <h3 class="font-semibold text-gray-800">E-posta</h3>
                 <a
-                  href="mailto:muhendislerticaretyeni@gmail.com"
+                  href="mailto:iletisim@tarimsepetim.com.tr"
                   class="text-gray-600 hover:text-green-600 transition-colors"
                 >
-                  muhendislerticaretyeni@gmail.com
+                  iletisim@tarimsepetim.com.tr
                 </a>
               </div>
             </div>
