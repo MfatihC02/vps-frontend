@@ -179,7 +179,7 @@
                   class="text-green-500"
                   width="20"
                 ></iconify-icon>
-                <span>0332 351 31 28</span>
+                <span>0332 235 11 28</span>
               </a>
             </li>
             <li>
