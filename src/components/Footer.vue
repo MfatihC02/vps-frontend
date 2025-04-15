@@ -195,17 +195,7 @@
                 <span>iletisim@tarimsepetim.com.tr</span>
               </a>
             </li>
-            <li class="flex items-start space-x-3">
-              <iconify-icon
-                icon="mdi:clock"
-                class="text-green-500"
-                width="20"
-              ></iconify-icon>
-              <div>
-                <p>Pazartesi - Cumartesi</p>
-                <p>09:00 - 18:00</p>
-              </div>
-            </li>
+            
           </ul>
         </div>
 
