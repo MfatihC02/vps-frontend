@@ -6,7 +6,6 @@ import { createPinia } from 'pinia'
 import Toast from 'vue-toastification'
 import "vue-toastification/dist/index.css"
 import '@/assets/style.css'
-import socketPlugin, { socketManager } from '@/plugins/socket'
 import { useAuthStore } from '@/stores/authStore'
 import Vuelidate from '@vuelidate/core'
 import { Icon } from '@iconify/vue'
@@ -47,7 +46,6 @@ router.afterEach((to) => {
 
 app.use(pinia)
 app.use(router)
-app.use(socketPlugin)
 app.use(Toast, toastOptions)
 app.use(head)
 app.use(Vuelidate)
@@ -55,10 +53,5 @@ app.component('Icon', Icon)
 
 // Pinia store'u başlattıktan sonra auth store'a erişim sağla
 const authStore = useAuthStore()
-
-// Eğer token varsa socket bağlantısını başlat
-if (authStore.token) {
-    socketManager.connect(authStore.token)
-}
 
 app.mount('#app')
