@@ -352,6 +352,7 @@
           </div>
         </div>
       </article>
+      <RecommendedProducts :currentProduct="product" />
     </div>
   </main>
 </template>
@@ -368,6 +369,7 @@ import ProductGallery from "@/components/products/ProductGallery.vue";
 import ProductDetails from "@/components/products/ProductDetails.vue";
 import ProductSpecifications from "@/components/products/ProductSpecifications.vue";
 import ProductReviews from "@/views/user/ProductReviews.vue";
+import RecommendedProducts from '@/components/products/RecommendedProducts.vue';
 
 export default {
   name: "ProductPage",
@@ -377,6 +379,7 @@ export default {
     ProductDetails,
     ProductSpecifications,
     ProductReviews,
+    RecommendedProducts,
     TabGroup,
     TabList,
     Tab,
