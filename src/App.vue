@@ -6,7 +6,8 @@
 
     </div>
 
-   
+    <!-- Kampanya Banner -->
+    <CampaignBanner />
 
     <!-- Ana İçerik: Header, Main ve Footer -->
     <div class="flex flex-col flex-grow w-full mt-[70px]">
@@ -110,6 +111,33 @@ main {
   /* Mobil için daha küçük boşluk */
   .mt-[60px] {
     margin-top: 40px;
+  }
+}
+
+/* Mobilde boşlukları azalt */
+@media (max-width: 640px) {
+  .mt-[70px], .mt-[60px] {
+    margin-top: 16px !important;
+  }
+  .mb-6, .mb-4, .mb-8, .my-6, .my-8 {
+    margin-bottom: 12px !important;
+    margin-top: 12px !important;
+  }
+  .p-6, .px-6, .py-6 {
+    padding: 12px !important;
+  }
+  .rounded-xl, .rounded-lg {
+    border-radius: 0.75rem;
+  }
+  .shadow-sm, .shadow-md {
+    box-shadow: 0 1px 6px 0 rgba(0,0,0,0.06);
+  }
+  .card, .info-card, .feature-card {
+    margin-bottom: 12px !important;
+    margin-top: 0 !important;
+  }
+  .campaign-banner {
+    margin-bottom: 8px !important;
   }
 }
 </style>
