@@ -73,7 +73,7 @@
 
       <div
         v-show="activeTab === 'address'"
-        class="transition-opacity duration-200"
+        class="transition-opacity duration-200 p-0 sm:p-6 bg-gray-50 sm:bg-white rounded-none sm:rounded-xl shadow-none sm:shadow-sm"
       >
         <AddressManagementComponent
           @success="handleSuccess"
@@ -83,7 +83,7 @@
 
       <div
         v-show="activeTab === 'security'"
-        class="transition-opacity duration-200 p-6"
+        class="transition-opacity duration-200 p-0 sm:p-6"
       >
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center">
@@ -105,57 +105,75 @@
             </p>
             <button
               @click="isPasswordMode = true"
-              class="premium-button flex items-center"
+              class="premium-button flex items-center text-sm md:text-base px-4 py-2 md:px-6 md:py-2"
             >
               Şifre Değiştir
               <ArrowRight class="ml-2 h-4 w-4" />
             </button>
           </div>
 
-          <div v-if="isPasswordMode" class="space-y-4">
-            <form @submit.prevent="handleChangePassword" class="space-y-4">
+          <div v-if="isPasswordMode" class="flex justify-center">
+            <form @submit.prevent="handleChangePassword" class="w-full max-w-md bg-white rounded-xl shadow-md p-4 sm:p-6 space-y-5">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">
                   Mevcut Şifre
                 </label>
-                <input
-                  v-model="passwordForm.currentPassword"
-                  type="password"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600"
-                  placeholder="Mevcut şifrenizi giriniz"
-                />
+                <div class="relative">
+                  <input
+                    v-model="passwordForm.currentPassword"
+                    :type="showCurrent ? 'text' : 'password'"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 pr-10"
+                    placeholder="Mevcut şifrenizi giriniz"
+                  />
+                  <button type="button" @click="showCurrent = !showCurrent" tabindex="-1" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-600">
+                    <span v-if="showCurrent">👁️</span>
+                    <span v-else>🙈</span>
+                  </button>
+                </div>
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">
                   Yeni Şifre
                 </label>
-                <input
-                  v-model="passwordForm.newPassword"
-                  type="password"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600"
-                  placeholder="Yeni şifrenizi giriniz"
-                />
+                <div class="relative">
+                  <input
+                    v-model="passwordForm.newPassword"
+                    :type="showNew ? 'text' : 'password'"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 pr-10"
+                    placeholder="Yeni şifrenizi giriniz"
+                  />
+                  <button type="button" @click="showNew = !showNew" tabindex="-1" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-600">
+                    <span v-if="showNew">👁️</span>
+                    <span v-else>🙈</span>
+                  </button>
+                </div>
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">
                   Yeni Şifre Tekrar
                 </label>
-                <input
-                  v-model="passwordForm.confirmPassword"
-                  type="password"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600"
-                  placeholder="Yeni şifrenizi tekrar giriniz"
-                />
+                <div class="relative">
+                  <input
+                    v-model="passwordForm.confirmPassword"
+                    :type="showConfirm ? 'text' : 'password'"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 pr-10"
+                    placeholder="Yeni şifrenizi tekrar giriniz"
+                  />
+                  <button type="button" @click="showConfirm = !showConfirm" tabindex="-1" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-600">
+                    <span v-if="showConfirm">👁️</span>
+                    <span v-else>🙈</span>
+                  </button>
+                </div>
               </div>
-              <div class="flex justify-end space-x-4">
+              <div class="flex flex-col sm:flex-row justify-end sm:space-x-4 gap-2 sm:gap-0 mt-2">
                 <button
                   type="button"
                   @click="isPasswordMode = false"
-                  class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                  class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors w-full sm:w-auto"
                 >
                   İptal
                 </button>
-                <button type="submit" class="premium-button">
+                <button type="submit" class="premium-button w-full sm:w-auto">
                   Şifreyi Güncelle
                 </button>
               </div>
@@ -187,6 +205,9 @@ const successMessage = ref("");
 const formError = ref("");
 const activeTab = ref("profile");
 const isPasswordMode = ref(false);
+const showCurrent = ref(false);
+const showNew = ref(false);
+const showConfirm = ref(false);
 
 const tabs = [
   { id: "profile", name: "Profil Bilgileri", icon: User },
