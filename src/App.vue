@@ -6,8 +6,7 @@
 
     </div>
 
-    <!-- Kampanya Banner -->
-    <CampaignBanner />
+ 
 
     <!-- Ana İçerik: Header, Main ve Footer -->
     <div class="flex flex-col flex-grow w-full mt-[70px]">
