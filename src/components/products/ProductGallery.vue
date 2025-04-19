@@ -59,7 +59,16 @@
               'scale-[1.6] cursor-zoom-out': zoomed,
               'cursor-zoom-in': !zoomed,
             }"
-            @click="toggleZoom"
+            @click="zoomed ? exitZoom() : onImageClick($event)"
+            @mousemove="zoomed && onImageMouseMove($event)"
+            @mouseleave="zoomed && exitZoom()"
+            @mousedown="zoomed && onImageMouseDown($event)"
+            @mouseup="zoomed && onImageMouseUp($event)"
+            @touchstart.passive="handleTouchStart"
+            @touchmove.passive="handleTouchMove"
+            @touchend.passive="handleTouchEnd"
+            ref="mainImageContainer"
+            :style="zoomed ? zoomStyle : ''"
             itemprop="image"
             fetchpriority="high"
             decoding="async"
@@ -238,6 +247,12 @@ export default {
     const showLightbox = ref(false);
     const touchStartX = ref(0);
     const touchEndX = ref(0);
+    const zoomOrigin = ref({ x: 50, y: 50 });
+    const zoomOffset = ref({ x: 0, y: 0 });
+    const isDragging = ref(false);
+    const dragStart = ref({ x: 0, y: 0 });
+    const dragOffset = ref({ x: 0, y: 0 });
+    const mainImageContainer = ref(null);
 
     const sortedImages = computed(() => {
       return props.images || [];
@@ -252,6 +267,17 @@ export default {
       return (
         currentImageIndex.value === sortedImages.value.length - 1
       );
+    });
+
+    const zoomStyle = computed(() => {
+      if (!zoomed.value) return '';
+      return {
+        transform: `scale(1.4) translate(${zoomOffset.value.x}px, ${zoomOffset.value.y}px)`,
+        'transform-origin': `${zoomOrigin.value.x}% ${zoomOrigin.value.y}%`,
+        cursor: isDragging.value ? 'grabbing' : 'zoom-out',
+        transition: isDragging.value ? 'none' : 'transform 0.2s cubic-bezier(.4,2,.6,1)',
+        'z-index': 30
+      };
     });
 
     const handleTouchStart = (e) => {
@@ -277,6 +303,58 @@ export default {
 
     const handleImageLoad = () => {
       loading.value = false;
+    };
+
+    const onImageClick = (e) => {
+      if (!zoomed.value) {
+        // Zoom başlat
+        const rect = mainImageContainer.value.getBoundingClientRect();
+        let x = ((e.clientX - rect.left) / rect.width) * 100;
+        let y = ((e.clientY - rect.top) / rect.height) * 100;
+        zoomOrigin.value = { x, y };
+        zoomOffset.value = { x: 0, y: 0 };
+        dragOffset.value = { x: 0, y: 0 };
+        zoomed.value = true;
+        document.addEventListener('keydown', onKeyDown);
+      } else {
+        exitZoom();
+      }
+    };
+
+    const onImageMouseMove = (e) => {
+      if (!zoomed.value) return;
+      if (isDragging.value) {
+        const dx = e.clientX - dragStart.value.x;
+        const dy = e.clientY - dragStart.value.y;
+        zoomOffset.value = {
+          x: dragOffset.value.x + dx,
+          y: dragOffset.value.y + dy
+        };
+      }
+    };
+
+    const onImageMouseDown = (e) => {
+      if (!zoomed.value) return;
+      isDragging.value = true;
+      dragStart.value = { x: e.clientX, y: e.clientY };
+      document.body.style.cursor = 'grabbing';
+    };
+    const onImageMouseUp = (e) => {
+      if (!zoomed.value) return;
+      isDragging.value = false;
+      dragOffset.value = { ...zoomOffset.value };
+      document.body.style.cursor = '';
+    };
+    const exitZoom = () => {
+      zoomed.value = false;
+      isDragging.value = false;
+      zoomOffset.value = { x: 0, y: 0 };
+      dragOffset.value = { x: 0, y: 0 };
+      document.removeEventListener('keydown', onKeyDown);
+      document.body.style.cursor = '';
+    };
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') exitZoom();
     };
 
     const toggleZoom = () => {
@@ -354,6 +432,13 @@ export default {
 
     return {
       zoomed,
+      zoomStyle,
+      onImageClick,
+      onImageMouseMove,
+      onImageMouseDown,
+      onImageMouseUp,
+      exitZoom,
+      mainImageContainer,
       loading,
       currentImage,
       currentImageIndex,
@@ -388,8 +473,12 @@ export default {
   transform: translateZ(0);
   backface-visibility: hidden;
   contain: paint;
+  cursor: zoom-in;
 }
-
+.product-gallery img[style*="scale(1.4)"] {
+  box-shadow: 0 0 0 100vmax rgba(0,0,0,0.18);
+  border-radius: 10px;
+}
 /* Mobil için optimize edilmiş transition'lar */
 @media (max-width: 768px) {
   .product-gallery img {
