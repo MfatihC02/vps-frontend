@@ -48,8 +48,8 @@
               </div>
               <div>
                 <h3 class="font-semibold text-gray-800">Adres</h3>
-                <p class="text-gray-600">Şükran Mah. Sahibi Ata Cad. No:38</p>
-                <p class="text-gray-600">Meram, Konya</p>
+                <p class="text-gray-600"> MUSALLA BAĞLARI MAH, Yeni İstanbul Cd. NO:8,</p>
+                <p class="text-gray-600"> Selçuklu/Konya</p>
               </div>
             </div>
 
@@ -64,9 +64,9 @@
               <div>
                 <h3 class="font-semibold text-gray-800">Telefon</h3>
                 <a
-                  href="tel:0332 235 11 28"
+                  href="tel:0551 641 90 12"
                   class="text-gray-600 hover:text-green-600 transition-colors"
-                  >0332 235 11 28</a
+                  >0551 641 90 12</a
                 >
               </div>
             </div>
