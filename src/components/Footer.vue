@@ -171,7 +171,7 @@
             </li>
             <li>
               <a
-                href="tel:0332 235 11 28"
+                href="tel:0551 641 90 12"
                 class="flex items-center space-x-3 hover:text-green-500 transition-colors duration-200"
               >
                 <iconify-icon
@@ -179,7 +179,7 @@
                   class="text-green-500"
                   width="20"
                 ></iconify-icon>
-                <span>0332 235 11 28</span>
+                <span>0551 641 90 12</span>
               </a>
             </li>
             <li>
