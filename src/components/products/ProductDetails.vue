@@ -183,7 +183,7 @@
             <div class="flex items-center text-amber-600">
               <Info class="w-4 h-4 mr-1" />
               <span
-                >Stokta yok! Stok durumu ve sipariş için
+                > Stok durumu ve sipariş için
                 <a
                   :href="
                     'https://wa.me/905516419012?text=' +
