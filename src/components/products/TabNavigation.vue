@@ -128,10 +128,16 @@ export default {
         title: 'Sizin İçin Önerilen',
       },
       {
+        id: 'fide',
+        name: '',
+        title: 'Sebze Fideleri',
+      },
+      {
         id: 'new',
         name: '',
         title: 'Yeni Ürünler',
-      }
+      },
+      
     ];
 
     // Tohum kategorileri
@@ -227,6 +233,8 @@ export default {
           return productStore.products;
         case 'new':
           return productStore.newProducts;
+        case 'fide':
+          return productStore.fideProducts;
         default:
           return [];
       }
