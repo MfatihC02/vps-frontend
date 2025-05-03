@@ -7,6 +7,7 @@ export const useProductStore = defineStore('product', {
         searchResults: [],        // Yeni eklenen state
         products: [],
         newProducts: [],
+        fideProducts: [],         // Fide ürünleri için yeni state
         categoryProducts: [],     // Kategori ürünleri için yeni state
         product: null,
         loading: false,
@@ -29,6 +30,7 @@ export const useProductStore = defineStore('product', {
         },
         getRecommendedProducts: (state) => state.products,
         getNewProducts: (state) => state.newProducts,
+        getFideProducts: (state) => state.fideProducts,
         isLoading: (state) => state.loading,
         getError: (state) => state.error,
         getSearchResults: (state) => state.searchResults,
@@ -165,12 +167,24 @@ export const useProductStore = defineStore('product', {
                 // Yeni ürünler için özel sorgu - son eklenen 24 ürün
                 const newProductsResponse = await api.get('/products', {
                     params: {
+                        search: 'yeni',
                         limit: 24,
                         sort: '-createdAt',
                         status: 'active'
                     }
                 });
                 this.newProducts = newProductsResponse.data.data.docs;
+
+                // Fide ürünleri için özel sorgu
+                const fideProductsResponse = await api.get('/products', {
+                    params: {
+                        search: 'fide',
+                        limit: 24,
+                        sort: '-createdAt',
+                        status: 'active'
+                    }
+                });
+                this.fideProducts = fideProductsResponse.data.data.docs;
 
             } catch (err) {
                 console.error('Ürünler yüklenirken hata:', err);
