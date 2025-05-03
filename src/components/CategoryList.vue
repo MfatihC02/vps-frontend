@@ -129,15 +129,35 @@ const openSubCategories = ref([]);
 
 // Kategorileri işleyip alt kategori sayılarını hesaplayan computed property
 const processedCategories = computed(() => {
-  return categoryStore.categoryTree.map((category) => ({
-    ...category,
-    totalSubCategories: calculateSubCategories(category),
-  }));
+  // Sadece aktif olan kategorileri filtrele ve recursive bir şekilde alt kategorileri de filtrele
+  const filterActiveCategories = (categories) => {
+    if (!categories) return [];
+    
+    return categories
+      .filter(cat => cat.isActive) // Sadece aktif kategorileri seç
+      .map(category => ({
+        ...category,
+        children: filterActiveCategories(category.children), // Alt kategorileri de filtrele
+        totalSubCategories: calculateSubCategories({
+          ...category,
+          children: filterActiveCategories(category.children)
+        })
+      }));
+  };
+  
+  return filterActiveCategories(categoryStore.categoryTree);
 });
 
 // Alt kategori sayısını hesaplayan yardımcı fonksiyon
 const calculateSubCategories = (category) => {
-  return category.children ? category.children.length : 0;
+  if (!category.children) return 0;
+  
+  // Sadece aktif olan alt kategorileri say
+  const activeChildren = category.children.filter(cat => cat.isActive);
+  
+  return activeChildren.length + activeChildren.reduce((sum, child) => {
+    return sum + calculateSubCategories(child);
+  }, 0);
 };
 
 // Parent kategoriyi bulan yardımcı fonksiyon
