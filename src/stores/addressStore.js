@@ -33,9 +33,17 @@ export const useAddressStore = defineStore('address', {
     actions: {
         // Hata yönetimi
         handleError(error) {
-            const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Bir hata oluştu';
-            this.error = errorMessage;
-            toast.error(errorMessage);
+            // Backend'den gelen errors dizisini kontrol et
+            if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+                // İlk hatayı mesaj olarak al veya tüm hata mesajlarını birleştir
+                const firstError = error.response.data.errors[0];
+                this.error = firstError.message || 'Bir hata oluştu';
+                toast.error(this.error);
+            } else {
+                const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Bir hata oluştu';
+                this.error = errorMessage;
+                toast.error(errorMessage);
+            }
         },
 
         // Tüm adresleri getir
