@@ -68,12 +68,14 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/authStore';
 import { useCartStore } from '@/stores/cartStore';
 import api from '@/services/axiosInstance';
 
 const route = useRoute();
 const router = useRouter();
 const cartStore = useCartStore();
+const authStore = useAuthStore();
 
 const loading = ref(true);
 const error = ref(null);
@@ -114,7 +116,7 @@ onMounted(async () => {
     router.push('/dashboard');
     return;
   }
-
+  await authStore.checkAuth(); // Kimlik doğrulama durumunu yenile
   await loadOrderDetails();
 });
 </script>
