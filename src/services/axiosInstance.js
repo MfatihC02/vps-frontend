@@ -75,6 +75,12 @@ api.interceptors.response.use(
                     const authStore = useAuthStore();
                     authStore.tokenExpiry = response.data.accessTokenExpiry;
                     authStore.refreshTokenExpiry = response.data.refreshTokenExpiry;
+                     
+                    // localStorage'a token bilgilerini yaz
+                    localStorage.setItem('tokenExpiry', response.data.accessTokenExpiry);
+                    localStorage.setItem('refreshTokenExpiry', response.data.refreshTokenExpiry);
+                    localStorage.setItem('isAuthenticated', 'true');
+                    
                     authStore.scheduleTokenRefresh();
                     isRefreshing = false;
                     return api(originalRequest);
