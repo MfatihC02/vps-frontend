@@ -383,9 +383,9 @@ const router = createRouter({
   }
 })
 
-// Auth check fonksiyonu
-const checkAuth = async (authStore) => {
-  if (!authStore.initialCheckDone && !authStore.loading) {
+const checkAuth = async (authStore, forceCheck = false) => {
+  // Critical routes like payment or after redirects should use forceCheck=true
+  if (!authStore.initialCheckDone || authStore.loading || forceCheck) {
     try {
       await authStore.checkAuth();
       return authStore.isAuthenticated;
