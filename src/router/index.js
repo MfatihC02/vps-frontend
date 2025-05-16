@@ -341,7 +341,7 @@ const routes = [
     name: 'payment-success',
     component: PaymentSuccess,
     meta: {
-      requiresAuth: true,
+      
       title: 'Ödeme Başarılı',
       description: 'Siparişiniz başarıyla tamamlandı. Sipariş detaylarınızı görüntüleyin ve kargo takibini başlatın.'
     }
