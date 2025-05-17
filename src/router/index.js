@@ -347,6 +347,15 @@ const routes = [
     }
   },
   {
+    path: '/payment/failed',
+    name: 'payment-failed',
+    component: () => import('@/views/payment/PaymentFailed.vue'),
+    meta: {
+      title: 'Ödeme Başarısız',
+      description: 'Ödeme işlemi sırasında bir sorun oluştu. Bankadan gelen yanıt ve çözüm önerileri için bu sayfayı inceleyin.'
+    }
+  },
+  {
     path: '/siparislerim',
     name: 'orders',
     component: OrdersView,
