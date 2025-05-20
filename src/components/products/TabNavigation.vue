@@ -4,7 +4,7 @@
     <!-- Content -->
     <div class="px-4">
       <div class="space-y-12 py-8">
-        <template v-for="tab in tabs" :key="tab.id">
+        <template v-for="tab in filteredTabs" :key="tab.id">
           <section :id="tab.id" class="scroll-mt-24">
             <div class="mb-8 relative">
               <div class="flex items-center gap-3">
@@ -121,7 +121,8 @@ export default {
     const activeTab = ref("recommended");
     let observers = [];
 
-    const tabs = [
+    // Tüm sekmelerin sabit listesi
+    const allTabs = [
       {
         id: 'recommended',
         name: '',
@@ -137,7 +138,6 @@ export default {
         name: '',
         title: 'Yeni Ürünler',
       },
-      
     ];
 
     // Tohum kategorileri
@@ -264,8 +264,38 @@ export default {
       observers.forEach(observer => observer.disconnect());
     });
 
+    // Sebze Fideleri kategorisinin aktif olup olmadığını kontrol et
+    const isFideCategoryActive = computed(() => {
+      console.log('Checking if Fide category is active...');
+      const categories = categoryStore.categoryTree;
+      
+      if (!categories || categories.length === 0) {
+        console.log('No categories available for Fide check');
+        return false;
+      }
+
+      // Sebze Fideleri ana kategorisini bul
+      const sebzeFideleri = categories.find(cat => cat.name === "Sebze Fideleri");
+      console.log('Sebze Fideleri Category:', sebzeFideleri);
+      
+      // Kategori yoksa veya aktif değilse false döndür
+      return sebzeFideleri?.isActive || false;
+    });
+
+    // Filtrelenmiş sekmeleri computed property olarak tanımla
+    const filteredTabs = computed(() => {
+      // Sebze Fideleri kategorisi aktif değilse, bu sekmeyi listeden çıkar
+      if (!isFideCategoryActive.value) {
+        return allTabs.filter(tab => tab.id !== 'fide');
+      }
+      
+      // Tüm sekmeleri döndür
+      return allTabs;
+    });
+
     return {
-      tabs,
+      tabs: allTabs, // Geriye dönük uyumluluk için
+      filteredTabs,
       activeTab,
       loading: computed(() => productStore.loading),
       error: computed(() => productStore.error),
