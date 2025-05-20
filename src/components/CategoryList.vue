@@ -47,7 +47,7 @@
             class="bg-gradient-to-r from-gray-50/80 to-transparent"
           >
             <div
-              v-for="subCategory in category.children"
+              v-for="subCategory in category.children.filter(sub => sub.isActive)"
               :key="subCategory._id"
               class="relative group/sub"
             >
@@ -84,7 +84,7 @@
                 class="bg-gradient-to-r from-gray-100/90 to-transparent"
               >
                 <button
-                  v-for="childCategory in subCategory.children"
+                  v-for="childCategory in subCategory.children.filter(child => child.isActive)"
                   :key="childCategory._id"
                   @click="handleCategoryClick(childCategory)"
                   class="w-full flex items-center justify-between px-5 py-2.5 pl-12 transition-all duration-300 ease-out hover:bg-gradient-to-r hover:from-gray-200/90 hover:to-gray-100/70 group/child"
